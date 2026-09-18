@@ -32,8 +32,13 @@ const INDUSTRIES = [
   "Other",
 ];
 
-function OnboardingForm() {
-  const [step, setStep] = useState<1 | 2>(1);
+function OnboardingForm({
+  step,
+  onStepChange,
+}: {
+  step: 1 | 2;
+  onStepChange: (step: 1 | 2) => void;
+}) {
   const [roles, setRoles] = useState<string[]>([]);
   const [industry, setIndustry] = useState("");
   const [state, formAction] = useActionState(finishOnboarding, { error: null });
@@ -95,7 +100,7 @@ function OnboardingForm() {
             type="button"
             className="w-full"
             disabled={!roles.length}
-            onClick={() => setStep(2)}
+            onClick={() => onStepChange(2)}
           >
             Next
           </Button>
@@ -164,7 +169,7 @@ function OnboardingForm() {
               type="button"
               variant="outline"
               className="flex-1"
-              onClick={() => setStep(1)}
+              onClick={() => onStepChange(1)}
             >
               Back
             </Button>
