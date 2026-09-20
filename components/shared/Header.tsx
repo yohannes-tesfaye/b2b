@@ -34,8 +34,8 @@ const Header = () => {
   ];
   return (
     <div>
-      <div className="flex justify-between flex-col md:flex-row md:w-[90%] w-[95%] m-auto py-5 ">
-        <div className="flex justify-between gap-1 md:gap-3 items-center md:w-max m-auto md:m-0 mb-4">
+      <div className="flex justify-between flex-col lg:flex-row lg:w-[90%] w-[95%] m-auto py-5 ">
+        <div className="flex justify-between gap-1 lg:gap-3 items-center lg:w-max m-auto lg:m-0 mb-4">
           <Globe />
           <h1 className="text-3xl md:text-2xl">GlobalTradeHUB</h1>
         </div>
@@ -60,7 +60,7 @@ const Header = () => {
           />
           <Button variant="outline">Search</Button>
         </div>
-        <div className="hidden md:flex items-center gap-2">
+        <div className="hidden lg:flex items-center gap-2">
           <Heart fill="red" />
           <Link href="/">Favourites</Link>
           <Button variant="outline">Post a Listing</Button>
