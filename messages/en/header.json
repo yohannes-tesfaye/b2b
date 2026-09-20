@@ -1,0 +1,19 @@
+{
+  "header": {
+    "brand": "GlobalTradeHUB",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "searchPlaceholder": "Enter text",
+    "search": "Search",
+    "favourites": "Favourites",
+    "postListing": "Post a Listing",
+    "sellOnHub": "Sell on GLobalTrade"
+  },
+  "topHeader": {
+    "signin": "Signin",
+    "joinFree": "Join free",
+    "contactUs": "Contact us"
+  }
+}
