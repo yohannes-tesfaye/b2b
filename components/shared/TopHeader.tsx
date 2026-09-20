@@ -1,7 +1,9 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Mail, Phone } from "lucide-react";
 
 function TopHeader() {
+  const t = useTranslations("topHeader");
   return (
     <div className="px-[3%] flex text-nowrap justify-between items-center outline-1 outline-gray-300 py-3 text-[11px] lg:text-[12px] border-b">
       <div className="flex md:gap-5 gap-2">
@@ -18,17 +20,17 @@ function TopHeader() {
 
       <ul className="flex gap-3 items-center">
         <li>
-          <Link href={"/faqs"}>Signin</Link>
+          <Link href={"/faqs"}>{t("signin")}</Link>
         </li>
         <li className="text-gray-900">|</li>
 
         <li className="hidden lg:block">
-          <Link href={"#footer"}>Join free</Link>
+          <Link href={"#footer"}>{t("joinFree")}</Link>
         </li>
         <li className="text-gray-900 hidden lg:block">|</li>
 
         <li>
-          <Link href={"/contact"}>Contact us</Link>
+          <Link href={"/contact"}>{t("contactUs")}</Link>
         </li>
       </ul>
     </div>

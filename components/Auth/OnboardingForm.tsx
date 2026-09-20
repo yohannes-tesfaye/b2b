@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useActionState } from "react";
 import { Check, ChevronRight } from "lucide-react";
 import { cn } from "cn";
+import { useTranslations } from "next-intl";
 import { Button } from "../ui/button";
 import { FieldSet } from "../ui/field";
 import { Label } from "../ui/label";
@@ -17,21 +18,6 @@ import {
 } from "../ui/select";
 import { finishOnboarding } from "@/utils/auth/onboarding-action";
 
-const ROLES = [
-  { value: "supplier", label: "I'm a Supplier" },
-  { value: "buyer", label: "I'm a Buyer" },
-  { value: "trade-service-provider", label: "I'm a Trade Service Provider" },
-];
-
-const INDUSTRIES = [
-  "Agriculture",
-  "Automotive",
-  "Electronics",
-  "Machinery",
-  "Textiles",
-  "Other",
-];
-
 function OnboardingForm({
   step,
   onStepChange,
@@ -39,6 +25,20 @@ function OnboardingForm({
   step: 1 | 2;
   onStepChange: (step: 1 | 2) => void;
 }) {
+  const t = useTranslations("auth");
+  const ROLES = [
+    { value: "supplier", label: t("roleSupplier") },
+    { value: "buyer", label: t("roleBuyer") },
+    { value: "trade-service-provider", label: t("roleTradeServiceProvider") },
+  ];
+  const INDUSTRIES = [
+    { value: "agriculture", label: t("industryAgriculture") },
+    { value: "automotive", label: t("industryAutomotive") },
+    { value: "electronics", label: t("industryElectronics") },
+    { value: "machinery", label: t("industryMachinery") },
+    { value: "textiles", label: t("industryTextiles") },
+    { value: "other", label: t("industryOther") },
+  ];
   const [roles, setRoles] = useState<string[]>([]);
   const [industry, setIndustry] = useState("");
   const [state, formAction] = useActionState(finishOnboarding, { error: null });
@@ -55,15 +55,17 @@ function OnboardingForm({
     <form action={formAction} className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">
-          {step === 1 ? "Select your role" : "Business information"}
+          {step === 1 ? t("selectRole") : t("businessInformation")}
         </h1>
-        <p className="text-sm text-muted-foreground">Step {step} of 2</p>
+        <p className="text-sm text-muted-foreground">
+          {t("stepOf", { step })}
+        </p>
       </div>
 
       {step === 1 ? (
         <>
           <p className="text-sm text-muted-foreground">
-            What best describes your business? Choose at least one.
+            {t("describeBusiness")}
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {ROLES.map((role) => {
@@ -102,56 +104,56 @@ function OnboardingForm({
             disabled={!roles.length}
             onClick={() => onStepChange(2)}
           >
-            Next
+            {t("next")}
           </Button>
         </>
       ) : (
         <>
           <FieldSet className="gap-2">
-            <Label htmlFor="companyName">Company name</Label>
+            <Label htmlFor="companyName">{t("companyName")}</Label>
             <Input
               type="text"
               id="companyName"
               name="companyName"
-              placeholder="Acme Trading Inc."
+              placeholder={t("companyNamePlaceholder")}
               required
             />
           </FieldSet>
           <FieldSet className="gap-2">
-            <Label htmlFor="phone">Phone number</Label>
+            <Label htmlFor="phone">{t("phoneNumber")}</Label>
             <Input
               type="tel"
               id="phone"
               name="phone"
-              placeholder="+1 555 000 0000"
+              placeholder={t("phonePlaceholder")}
               autoComplete="tel"
               required
             />
           </FieldSet>
           <FieldSet className="gap-2">
-            <Label htmlFor="website">Company website</Label>
+            <Label htmlFor="website">{t("companyWebsite")}</Label>
             <Input
               type="url"
               id="website"
               name="website"
-              placeholder="https://acme.com"
+              placeholder={t("websitePlaceholder")}
               autoComplete="url"
             />
           </FieldSet>
           <FieldSet className="gap-2">
-            <Label htmlFor="industry">Business category</Label>
+            <Label htmlFor="industry">{t("businessCategory")}</Label>
             <Select
               name="industry"
               value={industry}
               onValueChange={(value) => setIndustry(String(value ?? ""))}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select an industry" />
+                <SelectValue placeholder={t("selectIndustry")} />
               </SelectTrigger>
               <SelectContent>
                 {INDUSTRIES.map((item) => (
-                  <SelectItem key={item} value={item.toLowerCase()}>
-                    {item}
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -171,10 +173,10 @@ function OnboardingForm({
               className="flex-1"
               onClick={() => onStepChange(1)}
             >
-              Back
+              {t("back")}
             </Button>
             <Button type="submit" className="flex-1">
-              Continue to Marketplace
+              {t("continueToMarketplace")}
               <ChevronRight />
             </Button>
           </div>

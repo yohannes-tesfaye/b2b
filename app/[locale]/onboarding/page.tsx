@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import OnboardingForm from "@/components/Auth/OnboardingForm";
 
 function OnboardingPage() {
+  const t = useTranslations("auth");
   const [step, setStep] = useState<1 | 2>(1);
 
   return (
@@ -17,7 +19,7 @@ function OnboardingPage() {
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-4" />
-            Back to Sign Up
+            {t("backToSignUp")}
           </Link>
         ) : (
           <button
@@ -26,7 +28,7 @@ function OnboardingPage() {
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft className="size-4" />
-            Back
+            {t("back")}
           </button>
         )}
         <div className="mt-4 rounded-lg border border-border bg-card p-6">

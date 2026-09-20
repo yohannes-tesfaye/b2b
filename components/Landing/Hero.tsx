@@ -10,53 +10,55 @@ import {
   Grid,
   ChevronRight,
 } from "lucide-react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 export default function HeroSection() {
   interface CategoryItem {
-    title: string;
     href: string;
     icon: React.ElementType;
+    label: string;
     isActive?: boolean;
     hasSubcategories?: boolean;
   }
+  const t = useTranslations("hero");
   const CATEGORIES: CategoryItem[] = [
     {
-      title: "Automobiles",
       href: "/categories/automobiles",
       icon: Car,
+      label: t("categoryAutomobiles"),
       isActive: true,
     },
     {
-      title: "Home appliance",
       href: "/categories/home-appliances",
       icon: Home,
+      label: t("categoryHomeAppliance"),
     },
     {
-      title: "Tools, equipments",
       href: "/categories/tools-equipment",
       icon: Wrench,
+      label: t("categoryToolsEquipment"),
     },
     {
-      title: "Books & magazines",
       href: "/categories/books-magazines",
       icon: BookOpen,
+      label: t("categoryBooksMagazines"),
     },
     {
-      title: "Electronic gadgets",
       href: "/categories/electronics",
       icon: Smartphone,
+      label: t("categoryElectronicGadgets"),
     },
-    { title: "Clothing and wear", href: "/categories/clothing", icon: Shirt },
+    { href: "/categories/clothing", icon: Shirt, label: t("categoryClothingWear") },
     {
-      title: "Sports and outdoor",
       href: "/categories/sports-outdoors",
       icon: Trophy,
+      label: t("categorySportsOutdoor"),
     },
     {
-      title: "More category",
       href: "/categories",
       icon: Grid,
+      label: t("categoryMore"),
       hasSubcategories: true,
     },
   ];
@@ -82,7 +84,7 @@ export default function HeroSection() {
                   >
                     <div className="flex items-center gap-3">
                       <CategoryIcon className="w-4 h-4 text-slate-500" />
-                      <span>{category.title}</span>
+                      <span>{category.label}</span>
                     </div>
                     {category.hasSubcategories && (
                       <ChevronRight className="w-4 h-4 text-slate-400" />
@@ -99,13 +101,13 @@ export default function HeroSection() {
           {/* Text Content */}
           <div className="z-10 max-w-xs mb-6 sm:mb-0">
             <span className="text-sm font-semibold text-blue-600 block mb-1">
-              New trending
+              {t("newTrending")}
             </span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight mb-6">
-              Electronic items
+              {t("electronicItems")}
             </h2>
             <button className="inline-flex items-center gap-1.5 bg-white text-slate-800 text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm hover:bg-slate-50 transition-all">
-              Learn more
+              {t("learnMore")}
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
@@ -140,13 +142,13 @@ export default function HeroSection() {
 
           <div className="relative z-10">
             <p className="text-lg font-medium leading-snug max-w-[180px]">
-              Get US $10 off with new supplier
+              {t("getOfferTitle")}
             </p>
           </div>
 
           <div className="relative z-10 mt-6">
             <button className="border border-white/60 hover:border-white bg-white/10 hover:bg-white/20 text-white text-sm font-medium px-5 py-2 rounded-full transition-all">
-              Get offer
+              {t("getOffer")}
             </button>
           </div>
         </div>
