@@ -1,4 +1,5 @@
 import HeroSection from "@/components/Landing/Hero";
+import Footer from "@/components/shared/Footer";
 import Header from "@/components/shared/Header";
 import { ProductCard } from "@/components/shared/ProductCard";
 import ProductSectionSupplier from "@/components/shared/ProductSectionSupplier";
@@ -27,6 +28,8 @@ const Home = () => {
           <ProductCard type="supplier" />
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
