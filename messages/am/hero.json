@@ -1,0 +1,17 @@
+{
+  "hero": {
+    "categoryAutomobiles": "አውቶሞቢሎች",
+    "categoryHomeAppliance": "የቤት እቃዎች",
+    "categoryToolsEquipment": "መሳሪያዎች",
+    "categoryBooksMagazines": "መጻሕፍት እና መጽሔቶች",
+    "categoryElectronicGadgets": "የኤሌክትሮኒክስ መሳሪያዎች",
+    "categoryClothingWear": "አልባሳት",
+    "categorySportsOutdoor": "ስፖርት እና የውጭ እንቅስቃሴ",
+    "categoryMore": "ተጨማሪ ምድብ",
+    "newTrending": "አዲስ ተወዳጅ",
+    "electronicItems": "የኤሌክትሮኒክስ ዕቃዎች",
+    "learnMore": "ተጨማሪ ይማሩ",
+    "getOfferTitle": "ከአዲስ አቅራቢ ጋር US $10 ቅናሽ ያግኙ",
+    "getOffer": "ቅናሽ ያግኙ"
+  }
+}

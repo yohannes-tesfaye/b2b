@@ -1,0 +1,19 @@
+{
+  "header": {
+    "brand": "GlobalTradeHUB",
+    "theme": "ገጽታ",
+    "themeLight": "ብርሃን",
+    "themeDark": "ጨለማ",
+    "themeSystem": "ስርዓት",
+    "searchPlaceholder": "ጽሑፍ ያስገቡ",
+    "search": "ፍለጋ",
+    "favourites": "ተወዳጆች",
+    "postListing": "ማስታወቂያ ይለጥፉ",
+    "sellOnHub": "በግሎባልትሬድ ይሽጡ"
+  },
+  "topHeader": {
+    "signin": "ይግቡ",
+    "joinFree": "በነጻ ይቀላቀሉ",
+    "contactUs": "ያግኙን"
+  }
+}

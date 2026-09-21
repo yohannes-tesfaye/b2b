@@ -1,6 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 
 export async function finishOnboarding(
   prevState: { error: string | null },
@@ -15,5 +16,6 @@ export async function finishOnboarding(
   }
 
   // TODO: save the user's onboarding details
-  redirect("/");
+  const locale = await getLocale();
+  return redirect({ href: "/", locale });
 }

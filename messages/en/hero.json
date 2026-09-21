@@ -1,0 +1,17 @@
+{
+  "hero": {
+    "categoryAutomobiles": "Automobiles",
+    "categoryHomeAppliance": "Home appliance",
+    "categoryToolsEquipment": "Tools, equipments",
+    "categoryBooksMagazines": "Books & magazines",
+    "categoryElectronicGadgets": "Electronic gadgets",
+    "categoryClothingWear": "Clothing and wear",
+    "categorySportsOutdoor": "Sports and outdoor",
+    "categoryMore": "More category",
+    "newTrending": "New trending",
+    "electronicItems": "Electronic items",
+    "learnMore": "Learn more",
+    "getOfferTitle": "Get US $10 off with new supplier",
+    "getOffer": "Get offer"
+  }
+}

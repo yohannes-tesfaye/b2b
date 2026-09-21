@@ -1,7 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { ChevronRight, Globe, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
+import LanguageSwitcher from "./LanguageSwitcher";
 import {
   Select,
   SelectContent,
@@ -27,22 +29,23 @@ import {
 } from "@/components/ui/navigation-menu";
 
 const Header = () => {
+  const t = useTranslations("header");
   const items = [
-    { label: "Light", value: "light" },
-    { label: "Dark", value: "dark" },
-    { label: "System", value: "system" },
+    { label: t("themeLight"), value: "light" },
+    { label: t("themeDark"), value: "dark" },
+    { label: t("themeSystem"), value: "system" },
   ];
   return (
     <div>
       <div className="flex justify-between flex-col lg:flex-row lg:w-[90%] w-[95%] m-auto py-5 ">
         <div className="flex justify-between gap-1 lg:gap-3 items-center lg:w-max m-auto lg:m-0 mb-4">
           <Globe />
-          <h1 className="text-3xl md:text-2xl">GlobalTradeHUB</h1>
+          <h1 className="text-3xl md:text-2xl">{t("brand")}</h1>
         </div>
         <div className="flex justify-between">
           <Select items={items}>
             <SelectTrigger className="">
-              <SelectValue placeholder="Theme" />
+              <SelectValue placeholder={t("theme")} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -55,15 +58,16 @@ const Header = () => {
             </SelectContent>
           </Select>
           <Input
-            placeholder="Enter text"
+            placeholder={t("searchPlaceholder")}
             className="flex flex-1 md:min-w-[400px]"
           />
-          <Button variant="outline">Search</Button>
+          <Button variant="outline">{t("search")}</Button>
         </div>
         <div className="hidden lg:flex items-center gap-2">
           <Heart fill="red" />
-          <Link href="/">Favourites</Link>
-          <Button variant="outline">Post a Listing</Button>
+          <Link href="/">{t("favourites")}</Link>
+          <LanguageSwitcher />
+          <Button variant="outline">{t("postListing")}</Button>
         </div>
         {/* Navs */}
       </div>
@@ -153,7 +157,7 @@ const Header = () => {
         </NavigationMenu>
 
         <div className="flex items-center gap-2 text-[14px]">
-          <Link href={"/"}>Sell on GLobalTrade</Link>
+          <Link href={"/"}>{t("sellOnHub")}</Link>
           <ChevronRight size={20} />
         </div>
       </div>
