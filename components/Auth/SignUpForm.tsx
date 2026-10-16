@@ -8,6 +8,7 @@ import { FieldSet, FieldSeparator } from "../ui/field";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import OAuthButtons from "./OAuthButtons";
+import LocaleField from "../i18n/LocaleField";
 import { signUp } from "@/utils/auth/sign-up-action";
 
 function SignUpForm() {
@@ -16,6 +17,7 @@ function SignUpForm() {
 
   return (
     <form action={formAction} className="flex flex-col gap-4">
+      <LocaleField />
       <h1 className="text-2xl font-semibold">{t("signUp")}</h1>
       <FieldSet className="gap-2">
         <Label htmlFor="name">{t("name")}</Label>
