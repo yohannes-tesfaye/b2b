@@ -4,22 +4,12 @@ import { Input } from "@/components/ui/input";
 
 function Footer() {
   return (
-    <footer
-      className="w-full text-white"
-      style={{ backgroundColor: "#0092DB" }}
-      id="footer"
-    >
+    <footer className="w-full bg-primary text-primary-foreground" id="footer">
       {/* Newsletter Section */}
-      <div
-        className="py-16 px-6 md:px-12 lg:px-24"
-        style={{ backgroundColor: "#007AB8" }}
-      >
+      <div className="py-16 px-6 md:px-12 lg:px-24 bg-primary/90">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Join our newsletter</h2>
-          <p
-            className="mb-8 text-base leading-relaxed"
-            style={{ color: "#E0F0FF" }}
-          >
+          <p className="mb-8 text-base leading-relaxed text-primary-foreground/90">
             Subscribe to get special offers, free giveaways, and
             once-in-a-lifetime deals.
           </p>
@@ -27,19 +17,15 @@ function Footer() {
             <Input
               type="email"
               placeholder="Enter your email"
-              className="bg-white text-gray-900 placeholder-gray-500 h-12"
+              className="bg-card text-foreground placeholder-muted-foreground h-12"
             />
             <Button
-              className="text-white font-semibold h-12 px-8 transition-all hover:opacity-90"
-              style={{ backgroundColor: "#FE8614" }}
+              className="text-accent-foreground font-semibold h-12 px-8 transition-all hover:opacity-90 bg-accent"
             >
               SEND
             </Button>
           </div>
-          <p
-            className="text-xs mt-4 leading-relaxed"
-            style={{ color: "#D0E8FF" }}
-          >
+          <p className="text-xs mt-4 leading-relaxed text-primary-foreground/80">
             We respect your privacy. View our{" "}
             <Link href="/privacy-policy" className="underline hover:text-white">
               Privacy Policy
@@ -61,7 +47,7 @@ function Footer() {
           {/* Do You Need Help */}
           <div>
             <h3 className="font-bold text-lg mb-6">Do You Need Help?</h3>
-            <ul className="space-y-3 text-sm" style={{ color: "#E0F0FF" }}>
+            <ul className="space-y-3 text-sm text-primary-foreground/90">
               <li>+251 911 681 100</li>
               <li>support@globaltradehub.com</li>
               <li>Call Center: Mon-Fri 9am-6pm</li>
@@ -71,7 +57,7 @@ function Footer() {
           {/* Let Us Help You */}
           <div>
             <h3 className="font-bold text-lg mb-6">Let Us Help You</h3>
-            <ul className="space-y-3 text-sm" style={{ color: "#E0F0FF" }}>
+            <ul className="space-y-3 text-sm text-primary-foreground/90">
               <li>
                 <Link
                   href="/privacy-policy"
@@ -110,7 +96,7 @@ function Footer() {
           {/* Make Money with Us */}
           <div>
             <h3 className="font-bold text-lg mb-6">Make Money with Us</h3>
-            <ul className="space-y-3 text-sm" style={{ color: "#E0F0FF" }}>
+            <ul className="space-y-3 text-sm text-primary-foreground/90">
               <li>
                 <Link
                   href="/sell"
@@ -149,7 +135,7 @@ function Footer() {
           {/* Get to Know Us */}
           <div>
             <h3 className="font-bold text-lg mb-6">Get to Know Us</h3>
-            <ul className="space-y-3 text-sm" style={{ color: "#E0F0FF" }}>
+            <ul className="space-y-3 text-sm text-primary-foreground/90">
               <li>
                 <Link
                   href="/careers"
@@ -188,7 +174,7 @@ function Footer() {
           {/* For Buyers */}
           <div>
             <h3 className="font-bold text-lg mb-6">For Buyers</h3>
-            <ul className="space-y-3 text-sm" style={{ color: "#E0F0FF" }}>
+            <ul className="space-y-3 text-sm text-primary-foreground/90">
               <li>
                 <Link
                   href="/faq"
@@ -206,10 +192,7 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/contact"
-                  className="hover:text-white transition-colors"
-                >
+                <Link href="/contact" className="hover:text-white transition-colors">
                   Contact
                 </Link>
               </li>
@@ -233,13 +216,8 @@ function Footer() {
 
 function BottomFooter() {
   return (
-    <div
-      className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 border-t"
-      style={{ borderColor: "#007AB8" }}
-    >
-      <p className="text-sm" style={{ color: "#D0E8FF" }}>
-        © 2026 GlobalTradeHUB. All Rights Reserved.
-      </p>
+    <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-primary text-primary-foreground/80">
+      <p className="text-sm">© 2026 GlobalTradeHUB. All Rights Reserved.</p>
     </div>
   );
 }

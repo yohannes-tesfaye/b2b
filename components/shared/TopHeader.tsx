@@ -5,16 +5,16 @@ import { Mail, Phone } from "lucide-react";
 function TopHeader() {
   const t = useTranslations("topHeader");
   return (
-    <div className="px-[3%] flex text-nowrap justify-between items-center outline-1 outline-gray-300 py-3 text-[11px] lg:text-[12px] border-b">
+    <div className="px-[3%] flex text-nowrap justify-between items-center outline-1 outline-border py-3 text-[11px] lg:text-[12px] border-b">
       <div className="flex md:gap-5 gap-2">
         <div className="flex items-center gap-1">
           <Phone size={16} />
-          <p>+251901964187</p>
+          <p className="text-foreground">+251901964187</p>
         </div>
-        <div className="text-gray-900">|</div>
+        <div className="text-foreground">|</div>
         <div className="flex flex-row items-center gap-3">
           <Mail size={14} />
-          <div className="pt-px">Hello@abc.com</div>
+          <div className="pt-px text-muted-foreground">Hello@abc.com</div>
         </div>
       </div>
 
@@ -22,12 +22,12 @@ function TopHeader() {
         <li>
           <Link href={"/faqs"}>{t("signin")}</Link>
         </li>
-        <li className="text-gray-900">|</li>
+        <li className="text-muted-foreground">|</li>
 
         <li className="hidden lg:block">
           <Link href={"#footer"}>{t("joinFree")}</Link>
         </li>
-        <li className="text-gray-900 hidden lg:block">|</li>
+        <li className="text-muted-foreground hidden lg:block">|</li>
 
         <li>
           <Link href={"/contact"}>{t("contactUs")}</Link>

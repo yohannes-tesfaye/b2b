@@ -99,18 +99,12 @@ export function ProductCard({
             </span>
             <span className="font-medium">{country}</span>
           </div>
-
-          {verified && (
-            <Badge className=" bg-emerald-600/95 hover:bg-emerald-600 text-white backdrop-blur-sm text-[10px] px-2 py-0.5 gap-1 font-semibold border-none">
-              <CheckCircle2 className="w-3 h-3" /> VERIFIED
-            </Badge>
-          )}
         </div>
       </CardContent>
 
       {/* Action Footer */}
       <CardFooter className="p-3.5 pt-0">
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm h-9">
+        <Button className="w-full bg-primary hover:bg-primary/80 text-primary-foreground font-medium text-sm h-9">
           Contact
         </Button>
       </CardFooter>

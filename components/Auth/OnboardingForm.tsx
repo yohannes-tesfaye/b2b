@@ -14,7 +14,7 @@ import {
 import { cn } from "cn";
 import { useTranslations } from "next-intl";
 import { Button } from "../ui/button";
-import { FieldSet } from "../ui/field";
+import { Field, FieldLabel, FieldContent, FieldError, FieldSeparator } from "../ui/field";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import {
@@ -48,25 +48,6 @@ function StepHeader({
       <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
       {description && (
         <p className="text-sm text-muted-foreground">{description}</p>
-      )}
-    </div>
-  );
-}
-
-function FieldHint({
-  htmlFor,
-  label,
-  optional,
-}: {
-  htmlFor: string;
-  label: string;
-  optional?: string;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <Label htmlFor={htmlFor}>{label}</Label>
-      {optional && (
-        <span className="text-xs text-muted-foreground">{optional}</span>
       )}
     </div>
   );
@@ -292,101 +273,111 @@ function OnboardingForm({
             description={t("businessDetailsSubtitle")}
           />
           <div className="flex flex-col gap-4">
-            <FieldSet className="gap-2">
-              <FieldHint htmlFor="companyName" label={t("companyName")} />
-              <Input
-                type="text"
-                id="companyName"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                placeholder={t("companyNamePlaceholder")}
-                autoComplete="organization"
-              />
-            </FieldSet>
-            <FieldSet className="gap-2">
-              <FieldHint htmlFor="phone" label={t("phoneNumber")} />
-              <Input
-                type="tel"
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder={t("phonePlaceholder")}
-                autoComplete="tel"
-              />
-            </FieldSet>
-            <FieldSet className="gap-2">
-              <FieldHint
-                htmlFor="website"
-                label={t("companyWebsite")}
-                optional={t("optional")}
-              />
-              <Input
-                type="url"
-                id="website"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                placeholder={t("websitePlaceholder")}
-                autoComplete="url"
-              />
-            </FieldSet>
-            <FieldSet className="gap-2">
-              <FieldHint htmlFor="country" label={t("country")} />
-              <Input
-                type="text"
-                id="country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                placeholder={t("countryPlaceholder")}
-                autoComplete="country-name"
-              />
-            </FieldSet>
-            <FieldSet className="gap-2">
-              <FieldHint htmlFor="industry" label={t("businessCategory")} />
-              <Select
-                value={industry}
-                onValueChange={(value) => setIndustry(String(value ?? ""))}
-              >
-                <SelectTrigger id="industry" className="w-full">
-                  <SelectValue placeholder={t("selectIndustry")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {INDUSTRIES.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FieldSet>
-            <FieldSet className="gap-2">
-              <FieldHint
-                htmlFor="companySize"
-                label={t("companySize")}
-                optional={t("optional")}
-              />
-              <Select
-                value={companySize}
-                onValueChange={(value) => setCompanySize(String(value ?? ""))}
-              >
-                <SelectTrigger id="companySize" className="w-full">
-                  <SelectValue placeholder={t("selectCompanySize")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {SIZES.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </FieldSet>
+            <Field className="gap-2">
+              <FieldLabel htmlFor="companyName">{t("companyName")}</FieldLabel>
+              <FieldContent>
+                <Input
+                  type="text"
+                  id="companyName"
+                  value={companyName}
+                  onChange={(e) => setCompanyName(e.target.value)}
+                  placeholder={t("companyNamePlaceholder")}
+                  autoComplete="organization"
+                />
+              </FieldContent>
+            </Field>
+            <Field className="gap-2">
+              <FieldLabel htmlFor="phone">{t("phoneNumber")}</FieldLabel>
+              <FieldContent>
+                <Input
+                  type="tel"
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder={t("phonePlaceholder")}
+                  autoComplete="tel"
+                />
+              </FieldContent>
+            </Field>
+            <Field className="gap-2">
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="website">{t("companyWebsite")}</FieldLabel>
+                <span className="text-xs text-muted-foreground">{t("optional")}</span>
+              </div>
+              <FieldContent>
+                <Input
+                  type="url"
+                  id="website"
+                  value={website}
+                  onChange={(e) => setWebsite(e.target.value)}
+                  placeholder={t("websitePlaceholder")}
+                  autoComplete="url"
+                />
+              </FieldContent>
+            </Field>
+            <Field className="gap-2">
+              <FieldLabel htmlFor="country">{t("country")}</FieldLabel>
+              <FieldContent>
+                <Input
+                  type="text"
+                  id="country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  placeholder={t("countryPlaceholder")}
+                  autoComplete="country-name"
+                />
+              </FieldContent>
+            </Field>
+            <Field className="gap-2">
+              <FieldLabel htmlFor="industry">{t("businessCategory")}</FieldLabel>
+              <FieldContent>
+                <Select
+                  value={industry}
+                  onValueChange={(value) => setIndustry(String(value ?? ""))}
+                >
+                  <SelectTrigger id="industry" className="w-full">
+                    <SelectValue placeholder={t("selectIndustry")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {INDUSTRIES.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FieldContent>
+            </Field>
+            <Field className="gap-2">
+              <div className="flex items-center justify-between gap-2">
+                <FieldLabel htmlFor="companySize">{t("companySize")}</FieldLabel>
+                <span className="text-xs text-muted-foreground">{t("optional")}</span>
+              </div>
+              <FieldContent>
+                <Select
+                  value={companySize}
+                  onValueChange={(value) => setCompanySize(String(value ?? ""))}
+                >
+                  <SelectTrigger id="companySize" className="w-full">
+                    <SelectValue placeholder={t("selectCompanySize")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SIZES.map((item) => (
+                      <SelectItem key={item.value} value={item.value}>
+                        {item.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FieldContent>
+            </Field>
           </div>
 
-          {state.error && (
-            <p role="alert" className="text-sm text-destructive">
-              {state.error}
-            </p>
-          )}
+          <FieldError
+            errors={
+              state.error ? [{ message: state.error }] : undefined
+            }
+          />
 
           <div className="flex gap-2">
             <Button
@@ -456,11 +447,11 @@ function OnboardingForm({
             </div>
           </div>
 
-          {state.error && (
-            <p role="alert" className="text-sm text-destructive">
-              {state.error}
-            </p>
-          )}
+          <FieldError
+            errors={
+              state.error ? [{ message: state.error }] : undefined
+            }
+          />
 
           <div className="flex gap-2">
             <Button
