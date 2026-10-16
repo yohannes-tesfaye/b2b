@@ -5,6 +5,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
+import TopHeader from "@/components/shared/TopHeader";
+import Header from "@/components/shared/Header";
+import Footer from "@/components/shared/Footer";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -37,7 +40,12 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
+          <TopHeader />
+          <Header />
+          {children}
+          <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

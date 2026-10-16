@@ -6,15 +6,17 @@ import commonEn from "../messages/en/common.json";
 import headerEn from "../messages/en/header.json";
 import heroEn from "../messages/en/hero.json";
 import authEn from "../messages/en/auth.json";
+import productEn from "../messages/en/product.json";
 import commonAm from "../messages/am/common.json";
 import headerAm from "../messages/am/header.json";
 import heroAm from "../messages/am/hero.json";
 import authAm from "../messages/am/auth.json";
+import productAm from "../messages/am/product.json";
 import { routing } from "./routing";
 
 const messageFiles = {
-  en: { ...commonEn, ...headerEn, ...heroEn, ...authEn },
-  am: { ...commonAm, ...headerAm, ...heroAm, ...authAm },
+  en: { ...commonEn, ...headerEn, ...heroEn, ...authEn, ...productEn },
+  am: { ...commonAm, ...headerAm, ...heroAm, ...authAm, ...productAm },
 } as const;
 
 export type Messages = (typeof messageFiles)["en"];
