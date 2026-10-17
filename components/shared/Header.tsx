@@ -39,12 +39,6 @@ type ThemeOption = {
   icon: React.ElementType;
 };
 
-const THEME_OPTIONS: ThemeOption[] = [
-  { label: "light", value: "light", icon: Sun },
-  { label: "dark", value: "dark", icon: Moon },
-  { label: "system", value: "system", icon: Monitor },
-];
-
 const emptySubscribe = () => () => {};
 
 const Header = () => {
@@ -53,7 +47,7 @@ const Header = () => {
   const mounted = useSyncExternalStore(
     emptySubscribe,
     () => true,
-    () => false
+    () => false,
   );
 
   return (
@@ -63,32 +57,7 @@ const Header = () => {
           <Globe />
           <h1 className="text-3xl md:text-2xl">{t("brand")}</h1>
         </div>
-        <div className="flex justify-between">
-          <Select
-            value={mounted ? (theme as ThemeValue) : null}
-            onValueChange={(value: ThemeValue | null) => {
-              if (value) setTheme(value);
-            }}
-          >
-            <SelectTrigger className="">
-              <SelectValue placeholder={t("theme")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {THEME_OPTIONS.map((option) => {
-                  const Icon = option.icon;
-                  return (
-                    <SelectItem key={option.value} value={option.value}>
-                      <div className="flex items-center gap-2">
-                        <Icon className="size-4" />
-                        <span className="hidden sm:inline">{option.label}</span>
-                      </div>
-                    </SelectItem>
-                  );
-                })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+        <div className="flex justify-between gap-2 items-center lg:w-max m-auto lg:m-0 mb-4">
           <Input
             placeholder={t("searchPlaceholder")}
             className="flex flex-1 md:min-w-[400px]"
@@ -96,10 +65,8 @@ const Header = () => {
           <Button variant="outline">{t("search")}</Button>
         </div>
         <div className="hidden lg:flex items-center gap-2">
-          <Heart fill="red" />
-          <Link href="/">{t("favourites")}</Link>
           <LanguageSwitcher />
-          <Button variant="outline">{t("postListing")}</Button>
+          <Button>{t("postListing")}</Button>
         </div>
         {/* Navs */}
       </div>

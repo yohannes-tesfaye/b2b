@@ -1,9 +1,17 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Mail, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeSwitcher from "./ThemeSwitcher";
 
-function TopHeader() {
+interface TopHeaderProps {
+  variant?: "default" | "auth";
+}
+
+function TopHeader({ variant = "default" }: TopHeaderProps) {
   const t = useTranslations("topHeader");
+
   return (
     <div className="px-[3%] flex text-nowrap justify-between items-center outline-1 outline-border py-3 text-[11px] lg:text-[12px] border-b">
       <div className="flex md:gap-5 gap-2">
@@ -18,21 +26,38 @@ function TopHeader() {
         </div>
       </div>
 
-      <ul className="flex gap-3 items-center">
-        <li>
-          <Link href={"/faqs"}>{t("signin")}</Link>
-        </li>
-        <li className="text-muted-foreground">|</li>
+      {variant === "auth" ? (
+        <div className="flex items-center gap-3">
+          <ThemeSwitcher />
+          <div className="text-muted-foreground">|</div>
+          <LanguageSwitcher size="sm" />
+          <Button
+            render={<Link href="/contact" />}
+            nativeButton={false}
+            size="sm"
+          >
+            {t("contactUs")}
+          </Button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-3">
+          <ThemeSwitcher />
 
-        <li className="hidden lg:block">
-          <Link href={"#footer"}>{t("joinFree")}</Link>
-        </li>
-        <li className="text-muted-foreground hidden lg:block">|</li>
+          <div className="text-muted-foreground">|</div>
+          <ul className="flex gap-3 items-center">
+            <li>
+              <Link href={"/faqs"}>{t("signin")}</Link>
+            </li>
+            <li className="text-muted-foreground">|</li>
 
-        <li>
-          <Link href={"/contact"}>{t("contactUs")}</Link>
-        </li>
-      </ul>
+            <li className="text-muted-foreground hidden lg:block">|</li>
+
+            <li>
+              <Link href={"/contact"}>{t("contactUs")}</Link>
+            </li>
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

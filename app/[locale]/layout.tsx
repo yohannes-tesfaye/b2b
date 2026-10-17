@@ -6,9 +6,6 @@ import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { ThemeWrapper } from "@/components/shared/ThemeWrapper";
 import "../globals.css";
-import TopHeader from "@/components/shared/TopHeader";
-import Header from "@/components/shared/Header";
-import Footer from "@/components/shared/Footer";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -41,13 +38,10 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full max-w-7xl flex flex-col m-auto">
         <ThemeWrapper>
           <NextIntlClientProvider messages={messages}>
-            <TopHeader />
-            <Header />
             {children}
-            <Footer />
           </NextIntlClientProvider>
         </ThemeWrapper>
       </body>
