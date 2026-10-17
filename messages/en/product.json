@@ -1,0 +1,15 @@
+{
+  "product": {
+    "supplier": "Supplier",
+    "wanted": "Wanted",
+    "verified": "Verified",
+    "contact": "Contact",
+    "moq": "MOQ: {quantity} pcs",
+    "priceRange": "{min} - {max}",
+    "reviewCount": "({count})",
+    "ratingLabel": "Rated {rating} out of 5",
+    "ratingLabelWithCount": "Rated {rating} out of 5 from {count} reviews",
+    "imageFallback": "Product image unavailable",
+    "supplierLogoAlt": "{name} logo"
+  }
+}

@@ -24,7 +24,7 @@ function OnboardingPage() {
 
   return (
     <main className="flex flex-1">
-      <aside className="relative hidden w-[380px] shrink-0 flex-col justify-between overflow-hidden border-r border-border bg-muted/30 p-10 lg:flex">
+      <aside className="relative hidden w-95 shrink-0 flex-col justify-between overflow-hidden border-r border-border bg-muted/30 p-10 lg:flex">
         <div className="flex flex-col gap-10">
           <div className="flex items-center gap-2">
             <span className="flex size-8 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-foreground">
@@ -49,7 +49,7 @@ function OnboardingPage() {
                         ? "border-primary bg-primary text-primary-foreground"
                         : active
                           ? "border-primary text-primary"
-                          : "border-border text-muted-foreground"
+                          : "border-border text-muted-foreground",
                     )}
                   >
                     {complete ? <Check className="size-4" /> : number}
@@ -60,7 +60,7 @@ function OnboardingPage() {
                         "text-sm font-medium",
                         active || complete
                           ? "text-foreground"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       {item.title}

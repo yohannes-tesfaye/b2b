@@ -29,7 +29,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type ThemeValue = "light" | "dark" | "system";
 
@@ -45,14 +45,16 @@ const THEME_OPTIONS: ThemeOption[] = [
   { label: "system", value: "system", icon: Monitor },
 ];
 
+const emptySubscribe = () => () => {};
+
 const Header = () => {
   const t = useTranslations("header");
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   return (
     <div>

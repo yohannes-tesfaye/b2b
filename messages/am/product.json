@@ -1,0 +1,15 @@
+{
+  "product": {
+    "supplier": "አቅራቢ",
+    "wanted": "ፈላጊ",
+    "verified": "የተረጋገጠ",
+    "contact": "አግኙ",
+    "moq": "ዝቅተኛ ትዕዛዝ: {quantity} ቁራጭ",
+    "priceRange": "{min} - {max}",
+    "reviewCount": "({count})",
+    "ratingLabel": "ከ5 ውስጥ {rating} ደረጃ",
+    "ratingLabelWithCount": "ከ{count} ግምገማዎች መሰረት ከ5 ውስጥ {rating}",
+    "imageFallback": "የምርት ምስል አይገኝም",
+    "supplierLogoAlt": "የ{name} አርማ"
+  }
+}
