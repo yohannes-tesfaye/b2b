@@ -1,5 +1,7 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
-import { ChevronRight, Globe, Heart } from "lucide-react";
+import { ChevronRight, Globe, Heart, Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -9,7 +11,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -27,14 +28,22 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { useTheme } from "next-themes";
+
+type ThemeValue = "light" | "dark" | "system";
+
+type ThemeOption = { label: string; value: "light" | "dark" | "system"; icon: React.ElementType };
+
+const THEME_OPTIONS: ThemeOption[] = [
+  { label: "light", value: "light", icon: Sun },
+  { label: "dark", value: "dark", icon: Moon },
+  { label: "system", value: "system", icon: Monitor },
+];
 
 const Header = () => {
   const t = useTranslations("header");
-  const items = [
-    { label: t("themeLight"), value: "light" },
-    { label: t("themeDark"), value: "dark" },
-    { label: t("themeSystem"), value: "system" },
-  ];
+  const { theme, setTheme } = useTheme();
+
   return (
     <div>
       <div className="flex justify-between flex-col lg:flex-row lg:w-[90%] w-[95%] m-auto py-5 ">
@@ -43,17 +52,28 @@ const Header = () => {
           <h1 className="text-3xl md:text-2xl">{t("brand")}</h1>
         </div>
         <div className="flex justify-between">
-          <Select items={items}>
+          <Select
+            value={theme as ThemeValue | undefined}
+            onValueChange={(value: ThemeValue | null) => {
+              if (value) setTheme(value);
+            }}
+          >
             <SelectTrigger className="">
               <SelectValue placeholder={t("theme")} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {items.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
+                {THEME_OPTIONS.map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <SelectItem key={option.value} value={option.value}>
+                      <div className="flex items-center gap-2">
+                        <Icon className="size-4" />
+                        <span className="hidden sm:inline">{option.label}</span>
+                      </div>
+                    </SelectItem>
+                  );
+                })}
               </SelectGroup>
             </SelectContent>
           </Select>

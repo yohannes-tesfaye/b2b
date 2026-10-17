@@ -14,8 +14,7 @@ import {
 import { cn } from "cn";
 import { useTranslations } from "next-intl";
 import { Button } from "../ui/button";
-import { Field, FieldLabel, FieldContent, FieldError, FieldSeparator } from "../ui/field";
-import { Label } from "../ui/label";
+import { Field, FieldLabel, FieldContent, FieldError } from "../ui/field";
 import { Input } from "../ui/input";
 import {
   Select,
