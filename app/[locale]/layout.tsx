@@ -6,6 +6,9 @@ import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { ThemeWrapper } from "@/components/shared/ThemeWrapper";
 import "../globals.css";
+import TopHeader from "@/components/shared/TopHeader";
+import Header from "@/components/shared/Header";
+import Footer from "@/components/shared/Footer";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -44,6 +47,12 @@ export default async function LocaleLayout({
             {children}
           </NextIntlClientProvider>
         </ThemeWrapper>
+        <NextIntlClientProvider messages={messages}>
+          <TopHeader />
+          <Header />
+          {children}
+          <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   );

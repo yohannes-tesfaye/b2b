@@ -4,12 +4,184 @@
     "wanted": "ፈላጊ",
     "verified": "የተረጋገጠ",
     "contact": "አግኙ",
-    "moq": "ዝቅተኛ ትዕዛዝ: {quantity} ቁራጭ",
+    "moq": "ዝቅተኛ ትዕዛዝ: ቁራጭ",
     "priceRange": "{min} - {max}",
     "reviewCount": "({count})",
     "ratingLabel": "ከ5 ውስጥ {rating} ደረጃ",
     "ratingLabelWithCount": "ከ{count} ግምገማዎች መሰረት ከ5 ውስጥ {rating}",
     "imageFallback": "የምርት ምስል አይገኝም",
-    "supplierLogoAlt": "የ{name} አርማ"
+    "supplierLogoAlt": "የ{name} አርማ",
+    "variants": "አማራጮች",
+    "outOfStock": "(አልቋል)",
+    "contactSupplier": "አቅራቢን ያግኙ",
+    "requestQuote": "ዋጋ ይጠይቁ",
+    "addToFavorites": "ወደ ተወዳጆች ጨምር",
+    "compare": "አወዳድር",
+    "share": "አጋራ",
+    "responseRate": "የምላሽ መጠን",
+    "responseTime": "የምላሽ ጊዜ",
+    "email": "ኢሜይል",
+    "phone": "ስልክ",
+    "address": "አድራሻ",
+    "keySpecifications": "ቁልፍ ዝርዝሮች",
+    "description": "መግለጫ",
+    "fullSpecifications": "ሙሉ ዝርዝሮች",
+    "advantages": "ጥቅሞች",
+    "faqTitle": "ተደጋጋሚ ጥያቄዎች",
+    "contactTitle": "ያግኙን",
+    "contactIntro": "ስለዚህ ምርት ጥያቄ አለዎት? መልእክት ይላኩልን፤ በ24 ሰዓታት ውስጥ እንመልሳለን።",
+    "contactEmail": "support@globaltradehub.com",
+    "contactPhone": "+251 911 681 100",
+    "contactAddress": "ቦሌ፣ አዲስ አበባ፣ ኢትዮጵያ",
+    "sendMessageTitle": "መልእክት ይላኩ",
+    "name": "ስም",
+    "namePlaceholder": "ስምዎ",
+    "emailPlaceholder": "your@email.com",
+    "subject": "ርዕስ",
+    "subjectPlaceholder": "የምርት ጥያቄ",
+    "message": "መልእክት",
+    "messagePlaceholder": "ስለ ጥያቄዎ ይንገሩን...",
+    "sendMessage": "መልእክት ላክ",
+    "supplierSectionTitle": "የግብርናና የምግብ ምርት <highlight>አቅራቢ</highlight> (ይገኛል)",
+    "supplierHighlight": "አቅራቢ",
+    "wantedSectionTitle": "የግብርናና የምግብ ምርት <highlight>የገዥ ጥያቄ</highlight> (ፍላጎት)",
+    "wantedHighlight": "የገዥ ጥያቄ",
+    "demo": {
+      "title": "ከፍተኛ ጥራት ያለው የኢትዮጵያ አረቢካ ቡና ፍሬ — ደረጃ 1 ኤክስፖርት",
+      "description": "ከይርጋቸፌ ተራሮች የተገኘ ልዩ ጥራት ያለው የታጠበ አረቢካ ቡና። በእጅ የተመረጠ፣ በፀሐይ የደረቀ እና ለኤክስፖርት የተመረጠ። ለቡና መጋገሪያዎችና ለጅምላ አከፋፋዮች ተስማሚ — ቋሚ ጥራት፣ የሚታወቅ ምንጭ፣ እና ተወዳዳሪ የFOB አዲስ አበባ ዋጋ።",
+      "variants": {
+        "grade1": "ደረጃ 1 — ሙሉ ፍሬ (60ኪግ ከረጢት)",
+        "grade2": "ደረጃ 2 — ሙሉ ፍሬ (60ኪግ ከረጢት)",
+        "ground": "መካከለኛ የተጠበሰ የተፈጨ (25ኪግ ከረጢት)"
+      },
+      "specifications": {
+        "origin": { "label": "ምንጭ", "value": "ይርጋቸፌ፣ ኢትዮጵያ" },
+        "variety": { "label": "ዓይነት", "value": "አረቢካ ሄርሎም" },
+        "process": { "label": "ሂደት", "value": "የታጠበ" },
+        "moisture": { "label": "እርጥበት", "value": "10-12%" },
+        "packaging": { "label": "ማሸጊያ", "value": "GrainPro በጁት ከረጢት" },
+        "certification": { "label": "ሰርተፊኬት", "value": "ኦርጋኒክ፣ ፌር ትሬድ" }
+      },
+      "fullSpecs": {
+        "productName": { "label": "የምርት ስም", "value": "የኢትዮጵያ አረቢካ ቡና ፍሬ" },
+        "brand": { "label": "ብራንድ / ኮኦፕ", "value": "ሃይላንድ ሃርቨስት ኤክስፖርትስ" },
+        "model": { "label": "ሎት / SKU", "value": "YIR-G1-2026" },
+        "grade": { "label": "ደረጃ", "value": "ደረጃ 1 ልዩ ጥራት" },
+        "altitude": { "label": "ከፍታ", "value": "1,800-2,200 ሜ" },
+        "screenSize": { "label": "የስክሪን መጠን", "value": "15+" },
+        "cuppingScore": { "label": "የጣዕም ነጥብ", "value": "85+" },
+        "packaging": { "label": "ማሸጊያ", "value": "60ኪግ GrainPro ጁት ከረጢቶች" },
+        "shelfLife": { "label": "የመደርደሪያ ጊዜ", "value": "12 ወር (አረንጓዴ)" },
+        "certification": {
+          "label": "ሰርተፊኬት",
+          "value": "ኦርጋኒክ፣ ፌር ትሬድ፣ ECX ዝግጁ"
+        },
+        "origin": { "label": "ምንጭ", "value": "ይርጋቸፌ፣ ኢትዮጵያ" },
+        "moq": { "label": "ዝቅተኛ ትዕዛዝ", "value": "5 ከረጢት (300 ኪግ)" },
+        "supplyAbility": { "label": "የአቅርቦት አቅም", "value": "40 ሜትሪክ ቶን / ወር" }
+      },
+      "advantages": {
+        "a1": "ከይርጋቸፌ ኮኦፕሬቲቭ እስከ ኤክስፖርት የሚታወቅ የአቅርቦት ሰንሰለት",
+        "a2": "ዝቅተኛ ጉድለት ያለው ቋሚ የደረጃ 1 መመርመር",
+        "a3": "ተወዳዳሪ FOB አዲስ አበባ እና የጅቡቲ ወደብ አማራጮች",
+        "a4": "ኦርጋኒክ እና ፌር ትሬድ የተረጋገጡ ሎቶች ይገኛሉ",
+        "a5": "የናሙና ኪቶች በ5 የስራ ቀናት ውስጥ ይላካሉ",
+        "a6": "በጥያቄ ላይ ተለዋዋጭ ማሸጊያ እና የግል መለያ"
+      },
+      "faqs": {
+        "q1": {
+          "question": "ዝቅተኛው የትዕዛዝ መጠን ምንድን ነው?",
+          "answer": "ዝቅተኛው ትዕዛዝ 5 ከረጢት (300 ኪግ) ነው። ከ2 ሜትሪክ ቶን በላይ የመጠን ቅናሽ ይሰጣል።"
+        },
+        "q2": {
+          "question": "የትኞቹ ሰርተፊኬቶች ይገኛሉ?",
+          "answer": "ኦርጋኒክ እና ፌር ትሬድ ሎቶች ይገኛሉ። ለኤክስፖርት የፋይቶሳኒታሪ እና የመነሻ ሰርተፊኬቶችም እናቀርባለን።"
+        },
+        "q3": {
+          "question": "የማቅረቢያ ጊዜዎ ምን ያህል ነው?",
+          "answer": "መደበኛ የማቅረቢያ ጊዜ በሎት መገኘት እና በመጓጓዣ መንገድ (አየር ወይም ባህር) ላይ በመመስረት 10-21 ቀናት ነው።"
+        },
+        "q4": {
+          "question": "ናሙና ታቀርባላችሁ?",
+          "answer": "አዎ። ብቁ ገዥዎች 250ግ የናሙና ኪቶች መጠየቅ ይችላሉ። ለመላክ በGlobalTradeHUB ያግኙን።"
+        }
+      },
+      "supplier": {
+        "name": "ሃይላንድ ሃርቨስት ኤክስፖርትስ",
+        "country": "ኢትዮጵያ",
+        "badges": {
+          "gold": "ወርቃማ አቅራቢ",
+          "assurance": "የንግድ ዋስትና"
+        },
+        "responseTime": "< 2 ሰዓት",
+        "joinedDate": "ማርች 2019"
+      }
+    },
+    "cards": {
+      "1": {
+        "title": "ፍላጎት፡ የኤክስፖርት ጥራት አረንጓዴ ቡና (ቶን)",
+        "country": "ኢትዮጵያ"
+      },
+      "2": {
+        "title": "የጤፍ ዱቄት — ጅምላ ከረጢቶች እየፈለግኩ ነው",
+        "country": "ኢትዮጵያ"
+      },
+      "3": {
+        "title": "የተቆረጡ አበቦች — ሳምንታዊ የአየር ጭነት",
+        "country": "ኬንያ"
+      },
+      "4": {
+        "title": "ሽምብራ ያስፈልገኛል — የኮንቴይነር ጭነት",
+        "country": "ጅቡቲ"
+      },
+      "5": {
+        "title": "ኦርጋኒክ የናይል ፐርች — የቀዘቀዙ ፊሌቶች",
+        "country": "ዩጋንዳ"
+      },
+      "6": {
+        "title": "የደረቀ ቀይ ቃሪያ — የኤክስፖርት ማሸጊያ",
+        "country": "ኢትዮጵያ"
+      },
+      "7": {
+        "title": "በቀዝቃዛ የተጨመቀ የሰሊጥ ዘይት — የምግብ ደረጃ",
+        "country": "ኢትዮጵያ"
+      },
+      "8": {
+        "title": "ትኩስ ማንጎ — የኬንት ዓይነት ፓሌቶች",
+        "country": "ኢትዮጵያ"
+      },
+      "9": {
+        "title": "ከፍተኛ ጥራት ያለው የኢትዮጵያ አረቢካ ቡና — ደረጃ 1",
+        "country": "ኢትዮጵያ"
+      },
+      "10": {
+        "title": "ኦርጋኒክ ነጭ ሰሊጥ — የሁመራ ዓይነት",
+        "country": "ኢትዮጵያ"
+      },
+      "11": {
+        "title": "ጥሬ የደን ማር — የሲዳማ ተራሮች",
+        "country": "ኢትዮጵያ"
+      },
+      "12": {
+        "title": "ነጭ ጤፍ እህል — የኤክስፖርት ጥራት",
+        "country": "ኢትዮጵያ"
+      },
+      "13": {
+        "title": "ጅምላ ቀይ ባቄላ እየፈለግኩ ነው",
+        "country": "ኬንያ"
+      },
+      "14": {
+        "title": "ፍላጎት፡ የሱፍ አበባ የምግብ ዘይት (ቶን)",
+        "country": "ጅቡቲ"
+      },
+      "15": {
+        "title": "ሳምንታዊ ትኩስ አቮካዶ አቅርቦት እፈልጋለሁ",
+        "country": "ዩጋንዳ"
+      },
+      "16": {
+        "title": "ቅመማ ቅመም ድብልቅ — በርበሬ ጅምላ ያስፈልገኛል",
+        "country": "ኢትዮጵያ"
+      }
+    }
   }
 }
