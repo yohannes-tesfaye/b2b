@@ -44,15 +44,12 @@ export default async function LocaleLayout({
       <body className="min-h-full flex flex-col">
         <ThemeWrapper>
           <NextIntlClientProvider messages={messages}>
+            <TopHeader />
+            <Header />
             {children}
+            <Footer />
           </NextIntlClientProvider>
         </ThemeWrapper>
-        <NextIntlClientProvider messages={messages}>
-          <TopHeader />
-          <Header />
-          {children}
-          <Footer />
-        </NextIntlClientProvider>
       </body>
     </html>
   );

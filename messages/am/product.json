@@ -4,7 +4,7 @@
     "wanted": "ፈላጊ",
     "verified": "የተረጋገጠ",
     "contact": "አግኙ",
-    "moq": "ዝቅተኛ ትዕዛዝ: ቁራጭ",
+    "moq": "ዝቅተኛ ትዕዛዝ፡ {count} ክፍሎች",
     "priceRange": "{min} - {max}",
     "reviewCount": "({count})",
     "ratingLabel": "ከ5 ውስጥ {rating} ደረጃ",
@@ -58,7 +58,7 @@
         "origin": { "label": "ምንጭ", "value": "ይርጋቸፌ፣ ኢትዮጵያ" },
         "variety": { "label": "ዓይነት", "value": "አረቢካ ሄርሎም" },
         "process": { "label": "ሂደት", "value": "የታጠበ" },
-        "moisture": { "label": "እርጥበት", "value": "10-12%" },
+        "moisture": { "label": "እርጥበት", "value": "10–12%" },
         "packaging": { "label": "ማሸጊያ", "value": "GrainPro በጁት ከረጢት" },
         "certification": { "label": "ሰርተፊኬት", "value": "ኦርጋኒክ፣ ፌር ትሬድ" }
       },
@@ -67,15 +67,12 @@
         "brand": { "label": "ብራንድ / ኮኦፕ", "value": "ሃይላንድ ሃርቨስት ኤክስፖርትስ" },
         "model": { "label": "ሎት / SKU", "value": "YIR-G1-2026" },
         "grade": { "label": "ደረጃ", "value": "ደረጃ 1 ልዩ ጥራት" },
-        "altitude": { "label": "ከፍታ", "value": "1,800-2,200 ሜ" },
+        "altitude": { "label": "ከፍታ", "value": "1,800–2,200 ሜ" },
         "screenSize": { "label": "የስክሪን መጠን", "value": "15+" },
         "cuppingScore": { "label": "የጣዕም ነጥብ", "value": "85+" },
         "packaging": { "label": "ማሸጊያ", "value": "60ኪግ GrainPro ጁት ከረጢቶች" },
         "shelfLife": { "label": "የመደርደሪያ ጊዜ", "value": "12 ወር (አረንጓዴ)" },
-        "certification": {
-          "label": "ሰርተፊኬት",
-          "value": "ኦርጋኒክ፣ ፌር ትሬድ፣ ECX ዝግጁ"
-        },
+        "certification": { "label": "ሰርተፊኬት", "value": "ኦርጋኒክ፣ ፌር ትሬድ፣ ECX ዝግጁ" },
         "origin": { "label": "ምንጭ", "value": "ይርጋቸፌ፣ ኢትዮጵያ" },
         "moq": { "label": "ዝቅተኛ ትዕዛዝ", "value": "5 ከረጢት (300 ኪግ)" },
         "supplyAbility": { "label": "የአቅርቦት አቅም", "value": "40 ሜትሪክ ቶን / ወር" }
@@ -99,7 +96,7 @@
         },
         "q3": {
           "question": "የማቅረቢያ ጊዜዎ ምን ያህል ነው?",
-          "answer": "መደበኛ የማቅረቢያ ጊዜ በሎት መገኘት እና በመጓጓዣ መንገድ (አየር ወይም ባህር) ላይ በመመስረት 10-21 ቀናት ነው።"
+          "answer": "መደበኛ የማቅረቢያ ጊዜ በሎት መገኘት እና በመጓጓዣ መንገድ (አየር ወይም ባህር) ላይ በመመስረት 10–21 ቀናት ነው።"
         },
         "q4": {
           "question": "ናሙና ታቀርባላችሁ?",

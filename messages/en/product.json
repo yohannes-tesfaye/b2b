@@ -4,14 +4,13 @@
     "wanted": "Wanted",
     "verified": "Verified",
     "contact": "Contact",
-    "moq": "MOQ: {quantity} pcs",
+    "moq": "MOQ: {count} units",
     "priceRange": "{min} - {max}",
     "reviewCount": "({count})",
     "ratingLabel": "Rated {rating} out of 5",
     "ratingLabelWithCount": "Rated {rating} out of 5 from {count} reviews",
     "imageFallback": "Product image unavailable",
     "supplierLogoAlt": "{name} logo",
-    "moq": "MOQ: {count} units",
     "variants": "Variants",
     "outOfStock": "(Out of Stock)",
     "contactSupplier": "Contact Supplier",
@@ -19,7 +18,6 @@
     "addToFavorites": "Add to Favorites",
     "compare": "Compare",
     "share": "Share",
-    "verified": "Verified",
     "responseRate": "Response Rate",
     "responseTime": "Response Time",
     "email": "Email",
@@ -44,7 +42,6 @@
     "message": "Message",
     "messagePlaceholder": "Tell us about your inquiry...",
     "sendMessage": "Send Message",
-    "contact": "Contact",
     "supplierSectionTitle": "Agriculture and Food Product <highlight>Supplier</highlight> (Available)",
     "supplierHighlight": "Supplier",
     "wantedSectionTitle": "Agriculture and Food Product <highlight>Buyer Request</highlight> (Wanted)",
@@ -63,34 +60,19 @@
         "process": { "label": "Process", "value": "Washed" },
         "moisture": { "label": "Moisture", "value": "10–12%" },
         "packaging": { "label": "Packaging", "value": "GrainPro in jute bags" },
-        "certification": {
-          "label": "Certification",
-          "value": "Organic, Fair Trade"
-        }
+        "certification": { "label": "Certification", "value": "Organic, Fair Trade" }
       },
       "fullSpecs": {
-        "productName": {
-          "label": "Product Name",
-          "value": "Ethiopian Arabica Coffee Beans"
-        },
-        "brand": {
-          "label": "Brand / Co-op",
-          "value": "Highland Harvest Exports"
-        },
+        "productName": { "label": "Product Name", "value": "Ethiopian Arabica Coffee Beans" },
+        "brand": { "label": "Brand / Co-op", "value": "Highland Harvest Exports" },
         "model": { "label": "Lot / SKU", "value": "YIR-G1-2026" },
         "grade": { "label": "Grade", "value": "Grade 1 Specialty" },
         "altitude": { "label": "Altitude", "value": "1,800–2,200 m" },
         "screenSize": { "label": "Screen Size", "value": "15+" },
         "cuppingScore": { "label": "Cupping Score", "value": "85+" },
-        "packaging": {
-          "label": "Packaging",
-          "value": "60kg GrainPro jute bags"
-        },
+        "packaging": { "label": "Packaging", "value": "60kg GrainPro jute bags" },
         "shelfLife": { "label": "Shelf Life", "value": "12 months (green)" },
-        "certification": {
-          "label": "Certification",
-          "value": "Organic, Fair Trade, ECX ready"
-        },
+        "certification": { "label": "Certification", "value": "Organic, Fair Trade, ECX ready" },
         "origin": { "label": "Origin", "value": "Yirgacheffe, Ethiopia" },
         "moq": { "label": "MOQ", "value": "5 bags (300 kg)" },
         "supplyAbility": { "label": "Supply Ability", "value": "40 MT / month" }
