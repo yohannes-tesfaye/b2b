@@ -87,10 +87,9 @@ export function ProductCard({
         </div>
 
         {/* Country */}
-        <div className="flex justify-between">
+        <div className="flex justify-between ">
           <div className="flex items-center gap-1.5 pt-1 text-xs text-muted-foreground">
-            <span className="text-base leading-none">
-              {" "}
+            <span className="text-base leading-none rounded-full overflow-hidden">
               <img
                 src={countryFlag}
                 alt={country}

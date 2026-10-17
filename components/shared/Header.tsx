@@ -29,10 +29,15 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 type ThemeValue = "light" | "dark" | "system";
 
-type ThemeOption = { label: string; value: "light" | "dark" | "system"; icon: React.ElementType };
+type ThemeOption = {
+  label: string;
+  value: "light" | "dark" | "system";
+  icon: React.ElementType;
+};
 
 const THEME_OPTIONS: ThemeOption[] = [
   { label: "light", value: "light", icon: Sun },
@@ -43,6 +48,11 @@ const THEME_OPTIONS: ThemeOption[] = [
 const Header = () => {
   const t = useTranslations("header");
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div>
@@ -53,7 +63,7 @@ const Header = () => {
         </div>
         <div className="flex justify-between">
           <Select
-            value={theme as ThemeValue | undefined}
+            value={mounted ? (theme as ThemeValue) : null}
             onValueChange={(value: ThemeValue | null) => {
               if (value) setTheme(value);
             }}

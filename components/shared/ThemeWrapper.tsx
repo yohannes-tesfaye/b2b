@@ -3,17 +3,13 @@
 import { ThemeProvider } from "next-themes";
 import { ReactNode } from "react";
 
-export function ThemeWrapper({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function ThemeWrapper({ children }: { children: ReactNode }) {
   return (
     <ThemeProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
-      suppressHydrationWarning
+      disableTransitionOnChange
     >
       {children}
     </ThemeProvider>
