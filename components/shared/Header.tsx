@@ -1,18 +1,11 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
-import { ChevronRight, Globe, Heart } from "lucide-react";
+import { ChevronRight, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   CircleAlertIcon,
   CircleCheckIcon,
@@ -30,11 +23,7 @@ import {
 
 const Header = () => {
   const t = useTranslations("header");
-  const items = [
-    { label: t("themeLight"), value: "light" },
-    { label: t("themeDark"), value: "dark" },
-    { label: t("themeSystem"), value: "system" },
-  ];
+
   return (
     <div>
       <div className="flex justify-between flex-col lg:flex-row lg:w-[90%] w-[95%] m-auto py-5 ">
@@ -42,21 +31,7 @@ const Header = () => {
           <Globe />
           <h1 className="text-3xl md:text-2xl">{t("brand")}</h1>
         </div>
-        <div className="flex justify-between">
-          <Select items={items}>
-            <SelectTrigger className="">
-              <SelectValue placeholder={t("theme")} />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {items.map((item) => (
-                  <SelectItem key={item.value} value={item.value}>
-                    {item.label}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+        <div className="flex justify-between gap-2 items-center lg:w-max m-auto lg:m-0 mb-4">
           <Input
             placeholder={t("searchPlaceholder")}
             className="flex flex-1 md:min-w-[400px]"
@@ -64,10 +39,8 @@ const Header = () => {
           <Button variant="outline">{t("search")}</Button>
         </div>
         <div className="hidden lg:flex items-center gap-2">
-          <Heart fill="red" />
-          <Link href="/">{t("favourites")}</Link>
           <LanguageSwitcher />
-          <Button variant="outline">{t("postListing")}</Button>
+          <Button>{t("postListing")}</Button>
         </div>
         {/* Navs */}
       </div>

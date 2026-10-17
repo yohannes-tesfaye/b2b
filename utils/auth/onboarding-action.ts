@@ -1,21 +1,30 @@
 "use server";
 
-import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
+import { getActionI18n } from "@/utils/i18n/action";
 
 export async function finishOnboarding(
   prevState: { error: string | null },
   formData: FormData
 ): Promise<{ error: string | null }> {
-  const roles = formData.getAll("roles").map(String);
-  const companyName = String(formData.get("companyName") ?? "");
-  const phone = String(formData.get("phone") ?? "");
+  const { locale, t } = await getActionI18n(formData, "auth");
 
-  if (!roles.length || !companyName || !phone) {
-    return { error: "Select a role and fill in company name and phone." };
+  const roles = formData.getAll("roles").map(String).filter(Boolean);
+  const companyName = String(formData.get("companyName") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const website = String(formData.get("website") ?? "").trim();
+  const country = String(formData.get("country") ?? "").trim();
+  const industry = String(formData.get("industry") ?? "").trim();
+  const companySize = String(formData.get("companySize") ?? "").trim();
+
+  if (!roles.length || !companyName || !phone || !country || !industry) {
+    return { error: t("onboardingError") };
   }
 
   // TODO: save the user's onboarding details
-  const locale = await getLocale();
+  // (roles, companyName, phone, website, country, industry, companySize)
+  void website;
+  void companySize;
+
   return redirect({ href: "/", locale });
 }

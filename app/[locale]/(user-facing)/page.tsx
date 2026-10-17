@@ -7,10 +7,7 @@ import ProductSectionWanted from "@/components/shared/ProductSectionWanted";
 import Reviews from "@/components/shared/Reviews";
 import SuppliersByRegion from "@/components/shared/SuppliersByRegion";
 import TrustedBy from "@/components/shared/TrustedBy";
-import {
-  PRODUCT_CARD_FLAGS,
-  PRODUCT_CARD_IMAGES,
-} from "@/lib/product-demo";
+import { PRODUCT_CARD_FLAGS, PRODUCT_CARD_IMAGES } from "@/lib/product-demo";
 
 const Home = () => {
   const t = useTranslations("product");
