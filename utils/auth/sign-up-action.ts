@@ -1,6 +1,9 @@
 "use server";
 
+import { headers } from "next/headers";
+import { APIError } from "better-auth";
 import { redirect } from "@/i18n/navigation";
+import { auth } from "@/lib/auth";
 import { getActionI18n } from "@/utils/i18n/action";
 
 export async function signUp(
@@ -17,6 +20,17 @@ export async function signUp(
     return { error: t("signUpError") };
   }
 
-  // TODO: real account creation
+  try {
+    await auth.api.signUpEmail({
+      body: { name, email, password },
+      headers: await headers(),
+    });
+  } catch (error) {
+    if (error instanceof APIError) {
+      return { error: error.message };
+    }
+    return { error: t("signUpError") };
+  }
+
   return redirect({ href: "/onboarding", locale });
 }
