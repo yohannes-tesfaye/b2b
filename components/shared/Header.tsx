@@ -1,19 +1,11 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { ChevronRight, Globe, Heart, Moon, Sun, Monitor } from "lucide-react";
+import { ChevronRight, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   CircleAlertIcon,
   CircleCheckIcon,
@@ -28,27 +20,9 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { useTheme } from "next-themes";
-import { useSyncExternalStore } from "react";
-
-type ThemeValue = "light" | "dark" | "system";
-
-type ThemeOption = {
-  label: string;
-  value: "light" | "dark" | "system";
-  icon: React.ElementType;
-};
-
-const emptySubscribe = () => () => {};
 
 const Header = () => {
   const t = useTranslations("header");
-  const { theme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(
-    emptySubscribe,
-    () => true,
-    () => false,
-  );
 
   return (
     <div>
