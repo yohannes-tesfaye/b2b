@@ -147,7 +147,7 @@ export function ProductCard({
             className={`capitalize font-semibold text-xs ${
               type === "wanted"
                 ? "bg-blue-600 hover:bg-blue-700 text-white border-transparent"
-                : ""
+                : "bg-red-600/60 hover:bg-red-600/50 text-white border-transparent"
             }`}
           >
             {t(type)}
