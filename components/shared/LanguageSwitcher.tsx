@@ -12,7 +12,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-function LanguageSwitcher() {
+function LanguageSwitcher({
+  size = "default",
+  className,
+}: {
+  size?: "sm" | "default";
+  className?: string;
+}) {
   const t = useTranslations("languageSwitcher");
   const locale = useLocale();
   const pathname = usePathname();
@@ -32,7 +38,7 @@ function LanguageSwitcher() {
         }
       }}
     >
-      <SelectTrigger aria-label={t("label")}>
+      <SelectTrigger size={size} className={className} aria-label={t("label")}>
         <SelectValue placeholder={t("label")} />
       </SelectTrigger>
       <SelectContent>
