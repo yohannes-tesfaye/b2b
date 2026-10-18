@@ -5,9 +5,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
-import TopHeader from "@/components/shared/TopHeader";
-import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -41,9 +40,7 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider messages={messages}>
-          <TopHeader />
-          <Header />
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
           <Footer />
         </NextIntlClientProvider>
       </body>
