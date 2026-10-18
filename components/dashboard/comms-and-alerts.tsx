@@ -45,11 +45,13 @@ const alerts = [
 
 export function CommsAndAlerts() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Communications & Alerts</CardTitle>
+    <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-base font-semibold">
+          Communications & Alerts
+        </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-6">
         <Tabs defaultValue="messages">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="messages" className="flex items-center gap-2">
@@ -63,27 +65,30 @@ export function CommsAndAlerts() {
           </TabsList>
           <TabsContent value="messages" className="space-y-3 mt-4">
             {messages.map((message) => (
-              <div
-                key={message.id}
-                className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <Avatar>
-                  <AvatarFallback>{message.avatar}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <p className="font-semibold text-sm">{message.name}</p>
-                  <p className="text-sm text-muted-foreground line-clamp-1">
-                    {message.preview}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {message.time}
-                  </p>
+              <Link key={message.id} href="/messages">
+                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                  <Avatar className="h-9 w-9">
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
+                      {message.avatar}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="font-semibold text-sm text-foreground">
+                      {message.name}
+                    </p>
+                    <p className="text-sm text-muted-foreground line-clamp-1 leading-relaxed">
+                      {message.preview}
+                    </p>
+                    <p className="text-xs text-muted-foreground/70 mt-2">
+                      {message.time}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
             <Link
               href="/messages"
-              className="block text-center text-sm text-blue-600 hover:underline mt-2"
+              className="block text-center text-sm text-primary hover:text-primary/80 transition-colors mt-2"
             >
               View All Messages
             </Link>
@@ -92,15 +97,19 @@ export function CommsAndAlerts() {
             {alerts.map((alert) => (
               <div
                 key={alert.id}
-                className="flex items-start gap-3 p-3 rounded-lg bg-orange-50 border border-orange-100"
+                className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors"
               >
-                <Bell className="h-4 w-4 text-orange-600 mt-1" />
+                <div className="p-2 rounded-full bg-primary/10 text-primary">
+                  <Bell className="h-4 w-4" />
+                </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-sm">{alert.title}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="font-semibold text-sm text-foreground">
+                    {alert.title}
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {alert.description}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="text-xs text-muted-foreground/70 mt-2">
                     {alert.time}
                   </p>
                 </div>

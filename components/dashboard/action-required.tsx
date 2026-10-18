@@ -5,24 +5,18 @@ import { AlertTriangle, Clock, RefreshCw } from "lucide-react";
 const actions = [
   {
     icon: Clock,
-    iconColor: "text-red-600",
-    bgColor: "bg-red-100",
     title: "Closing Soon",
     description: "In 2 hours - RFQ #12345 closing",
     urgency: "urgent",
   },
   {
     icon: AlertTriangle,
-    iconColor: "text-orange-600",
-    bgColor: "bg-orange-100",
     title: "Listing Expiring",
     description: "In 1 day - Industrial Aluminum Ingots",
     urgency: "warning",
   },
   {
     icon: RefreshCw,
-    iconColor: "text-blue-600",
-    bgColor: "bg-blue-100",
     title: "Membership Renewal",
     description: "In 5 days - Enterprise Plan",
     urgency: "info",
@@ -31,25 +25,31 @@ const actions = [
 
 export function ActionRequired() {
   return (
-    <Card className="border-orange-200 bg-orange-50/50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-orange-900">
-          <AlertTriangle className="h-5 w-5" />
+    <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-base font-semibold flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-destructive/10 text-destructive">
+            <AlertTriangle className="h-4 w-4" />
+          </div>
           Action Required
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-3">
+      <CardContent className="space-y-3 pb-6">
         {actions.map((action, index) => (
           <div
             key={index}
-            className="flex items-start gap-3 p-3 rounded-lg bg-white border border-orange-100"
+            className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors"
           >
-            <div className={`p-2 rounded-full ${action.bgColor} ${action.iconColor}`}>
+            <div className="p-2 rounded-full bg-primary/10 text-primary">
               <action.icon className="h-4 w-4" />
             </div>
             <div className="flex-1">
-              <p className="font-semibold text-sm">{action.title}</p>
-              <p className="text-sm text-muted-foreground">{action.description}</p>
+              <p className="font-semibold text-sm text-foreground">
+                {action.title}
+              </p>
+              <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                {action.description}
+              </p>
             </div>
             <Badge
               variant={
@@ -59,7 +59,7 @@ export function ActionRequired() {
                     ? "secondary"
                     : "outline"
               }
-              className="text-xs"
+              className={`text-xs ${action.urgency === "urgent" ? "animate-pulse" : ""}`}
             >
               {action.urgency}
             </Badge>
