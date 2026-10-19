@@ -3,19 +3,30 @@
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getActionI18n } from "@/utils/i18n/action";
-
-type ForgotPasswordState = { error: string | null; success: boolean };
+import {
+  forgotPasswordSchema,
+  zodIssuesToFieldErrors,
+  type FormState,
+  type Translate,
+} from "@/lib/validation/auth";
 
 export async function forgotPassword(
-  prevState: ForgotPasswordState,
+  _prevState: FormState,
   formData: FormData
-): Promise<ForgotPasswordState> {
+): Promise<FormState> {
   const { locale, t } = await getActionI18n(formData, "auth");
+  const translate = t as unknown as Translate;
 
-  const email = String(formData.get("email") ?? "").trim();
+  const parsed = forgotPasswordSchema.safeParse({
+    email: String(formData.get("email") ?? ""),
+  });
 
-  if (!email) {
-    return { error: t("forgotPasswordError"), success: false };
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: translate("validation.formError"),
+      fieldErrors: zodIssuesToFieldErrors(parsed.error, translate),
+    };
   }
 
   const baseUrl = process.env.BETTER_AUTH_URL ?? "http://localhost:3000";
@@ -23,7 +34,7 @@ export async function forgotPassword(
   try {
     await auth.api.requestPasswordReset({
       body: {
-        email,
+        email: parsed.data.email,
         redirectTo: `${baseUrl}/${locale}/reset-password`,
       },
       headers: await headers(),
@@ -32,5 +43,5 @@ export async function forgotPassword(
     // Swallow errors so we never reveal whether an account exists.
   }
 
-  return { error: null, success: true };
+  return { status: "success", message: translate("resetLinkSent") };
 }

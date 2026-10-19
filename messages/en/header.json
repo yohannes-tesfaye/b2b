@@ -9,7 +9,12 @@
     "search": "Search",
     "favourites": "Favourites",
     "postListing": "Post a Listing",
-    "sellOnHub": "Sell on GLobalTrade"
+    "sellOnHub": "Sell on GLobalTrade",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "myAccount": "My account",
+    "signOut": "Sign out",
+    "loading": "Loading..."
   },
   "topHeader": {
     "signin": "Signin",

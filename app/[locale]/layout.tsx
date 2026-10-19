@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { ThemeWrapper } from "@/components/shared/ThemeWrapper";
+import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
 
 const inter = Inter({
@@ -42,6 +43,7 @@ export default async function LocaleLayout({
         <ThemeWrapper>
           <NextIntlClientProvider messages={messages}>
             {children}
+            <Toaster richColors closeButton position="top-right" />
           </NextIntlClientProvider>
         </ThemeWrapper>
       </body>

@@ -1,7 +1,9 @@
 "use client";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 function GoogleIcon() {
   return (
@@ -37,11 +39,16 @@ const providers = [
 ] as const;
 
 function OAuthButtons() {
+  const t = useTranslations("auth");
   const handleSignIn = async (provider: string) => {
-    await authClient.signIn.social({
-      provider,
-      callbackURL: window.location.origin,
-    });
+    try {
+      await authClient.signIn.social({
+        provider,
+        callbackURL: window.location.origin,
+      });
+    } catch {
+      toast.error(t("errors.generic"));
+    }
   };
 
   return (

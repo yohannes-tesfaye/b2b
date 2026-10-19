@@ -1,44 +1,52 @@
 "use server";
 
 import { headers } from "next/headers";
-import { APIError } from "better-auth";
-import { redirect } from "@/i18n/navigation";
 import { auth } from "@/lib/auth";
 import { getActionI18n } from "@/utils/i18n/action";
+import { resolveAuthErrorMessage } from "@/utils/auth/errors";
+import {
+  resetPasswordSchema,
+  zodIssuesToFieldErrors,
+  type FormState,
+  type Translate,
+} from "@/lib/validation/auth";
 
 export async function resetPassword(
-  prevState: { error: string | null },
+  _prevState: FormState,
   formData: FormData
-): Promise<{ error: string | null }> {
-  const { locale, t } = await getActionI18n(formData, "auth");
+): Promise<FormState> {
+  const { t } = await getActionI18n(formData, "auth");
+  const translate = t as unknown as Translate;
 
-  const token = String(formData.get("token") ?? "");
-  const password = String(formData.get("password") ?? "");
-  const confirmPassword = String(formData.get("confirmPassword") ?? "");
+  const parsed = resetPasswordSchema.safeParse({
+    token: String(formData.get("token") ?? ""),
+    password: String(formData.get("password") ?? ""),
+    confirmPassword: String(formData.get("confirmPassword") ?? ""),
+  });
 
-  if (!token) {
-    return { error: t("invalidTokenError") };
-  }
-
-  if (password.length < 8) {
-    return { error: t("passwordTooShort") };
-  }
-
-  if (password !== confirmPassword) {
-    return { error: t("passwordMismatch") };
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: translate("validation.formError"),
+      fieldErrors: zodIssuesToFieldErrors(parsed.error, translate),
+    };
   }
 
   try {
     await auth.api.resetPassword({
-      body: { newPassword: password, token },
+      body: {
+        newPassword: parsed.data.password,
+        token: parsed.data.token,
+      },
       headers: await headers(),
     });
   } catch (error) {
-    if (error instanceof APIError) {
-      return { error: error.message };
-    }
-    return { error: t("resetPasswordError") };
+    return { status: "error", message: resolveAuthErrorMessage(error, translate) };
   }
 
-  return redirect({ href: "/log-in", locale });
+  return {
+    status: "success",
+    message: translate("resetPasswordSuccess"),
+    redirectTo: "/log-in",
+  };
 }

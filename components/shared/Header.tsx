@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
+import UserMenu from "@/components/Auth/UserMenu";
 import {
   CircleAlertIcon,
   CircleCheckIcon,
@@ -37,9 +38,14 @@ const Header = () => {
             className="flex flex-1 md:min-w-[400px]"
           />
           <Button variant="outline">{t("search")}</Button>
+          <div className="flex items-center gap-2 lg:hidden">
+            <LanguageSwitcher />
+            <UserMenu />
+          </div>
         </div>
         <div className="hidden lg:flex items-center gap-2">
           <LanguageSwitcher />
+          <UserMenu />
           <Button>{t("postListing")}</Button>
         </div>
         {/* Navs */}
