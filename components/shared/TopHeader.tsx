@@ -63,3 +63,4 @@ function TopHeader({ variant = "default" }: TopHeaderProps) {
 }
 
 export default TopHeader;
+

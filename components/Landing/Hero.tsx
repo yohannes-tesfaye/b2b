@@ -50,7 +50,11 @@ export default function HeroSection() {
       icon: Smartphone,
       label: t("categoryElectronicGadgets"),
     },
-    { href: "/categories/clothing", icon: Shirt, label: t("categoryClothingWear") },
+    {
+      href: "/categories/clothing",
+      icon: Shirt,
+      label: t("categoryClothingWear"),
+    },
     {
       href: "/categories/sports-outdoors",
       icon: Trophy,
@@ -101,15 +105,13 @@ export default function HeroSection() {
         <div className="flex-1 relative overflow-hidden rounded-xl bg-gradient-to-r from-cyan-100 via-sky-100 to-blue-200 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between min-h-[300px] lg:min-h-[360px]">
           {/* Text Content */}
           <div className="z-10 max-w-xs mb-6 sm:mb-0">
-            <span className="text-sm font-semibold text-primary block mb-1">
+            <span className="text-sm font-semibold text-primary block mb-1 dark:text-blue-300">
               {t("newTrending")}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground leading-tight mb-6">
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground leading-tight mb-6 dark:text-black">
               {t("electronicItems")}
             </h2>
-            <Button
-              className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm bg-white text-slate-900 hover:bg-slate-50 transition-all"
-            >
+            <Button className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm dark:bg-blue-700 dark:text-white transition-all">
               {t("learnMore")}
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -134,9 +136,9 @@ export default function HeroSection() {
         </div>
 
         {/* 3. Right Column: Promo Callout Card */}
-        <div className="w-full lg:w-72 shrink-0 relative overflow-hidden rounded-xl bg-primary text-primary-foreground p-6 flex flex-col justify-between min-h-[200px] lg:min-h-[360px]">
+        <div className="w-full lg:w-72 shrink-0 relative overflow-hidden rounded-xl bg-blue-600 text-white p-6 flex flex-col justify-between min-h-[200px] lg:min-h-[360px]">
           {/* Background Image Placeholder */}
-          <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/80 to-accent/40 opacity-90" />
+          <div className="absolute inset-0 bg-gradient-to-t from-blue-600 via-blue-600/80 to-blue-400/40 opacity-90" />
 
           {/* Profile/Photo Placeholder */}
           <div className="absolute right-0 bottom-0 w-36 h-48 bg-muted/50 rounded-tl-full flex items-end justify-center pb-4 text-muted-foreground text-xs italic">
@@ -150,9 +152,7 @@ export default function HeroSection() {
           </div>
 
           <div className="relative z-10 mt-6">
-            <Button
-              className="text-sm font-medium px-5 py-2 rounded-full transition-all bg-white/10 hover:bg-white/20 text-white border border-white/60 hover:border-white"
-            >
+            <Button className="text-sm font-medium px-5 py-2 rounded-full border text-amber-50 border-white bg-white/10 hover:bg-white/20 transition-all">
               {t("getOffer")}
             </Button>
           </div>

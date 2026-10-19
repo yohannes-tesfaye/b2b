@@ -18,19 +18,19 @@ export function FAQSection({ faqs }: FAQSectionProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold text-gray-900 mb-6">{t("faqTitle")}</h2>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">{t("faqTitle")}</h2>
 
       {faqs.map((faq, index) => (
         <div
           key={index}
-          className="border border-gray-200 rounded-lg overflow-hidden"
+          className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden"
         >
           <button
             type="button"
             onClick={() => setOpenIndex(openIndex === index ? null : index)}
-            className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+            className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:bg-gray-800 transition-colors"
           >
-            <span className="font-medium text-gray-900 text-left">
+            <span className="font-medium text-gray-900 dark:text-gray-100 text-left">
               {faq.question}
             </span>
             <ChevronDown
@@ -41,8 +41,8 @@ export function FAQSection({ faqs }: FAQSectionProps) {
           </button>
 
           {openIndex === index && (
-            <div className="p-4 bg-white border-t border-gray-200">
-              <p className="text-sm text-gray-700">{faq.answer}</p>
+            <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+              <p className="text-sm text-gray-700 dark:text-gray-300">{faq.answer}</p>
             </div>
           )}
         </div>
@@ -50,3 +50,4 @@ export function FAQSection({ faqs }: FAQSectionProps) {
     </div>
   );
 }
+

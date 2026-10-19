@@ -89,3 +89,4 @@ export function CompanyProfileSummary() {
     </Card>
   );
 }
+

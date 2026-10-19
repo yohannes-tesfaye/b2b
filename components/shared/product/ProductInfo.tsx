@@ -19,11 +19,11 @@ export function ProductInfo({ product }: ProductInfoProps) {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           {product.title}
         </h1>
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-2xl font-bold text-gray-900">
+          <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
             {product.currency} {product.priceRange.min.toFixed(2)} –{" "}
             {product.priceRange.max.toFixed(2)}
             <span className="text-sm font-medium text-gray-500 ml-1">/ kg</span>
@@ -36,7 +36,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
       {product.variants.length > 0 && (
         <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
             {t("variants")}
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -116,3 +116,4 @@ export function ProductInfo({ product }: ProductInfoProps) {
     </div>
   );
 }
+

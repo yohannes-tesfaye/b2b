@@ -264,7 +264,7 @@ export function ProductCard({
         </CardContent>
 
         <CardFooter className="p-3.5 pt-3">
-          <span className="inline-flex w-full h-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-medium text-sm">
+          <span className="inline-flex w-full h-9 items-center justify-center rounded-lg bg-blue-600 text-white font-medium text-sm">
             {t("contact")}
           </span>
         </CardFooter>
@@ -272,3 +272,4 @@ export function ProductCard({
     </Link>
   );
 }
+

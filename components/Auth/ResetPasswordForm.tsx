@@ -115,3 +115,4 @@ function ResetPasswordForm({ token }: { token: string }) {
 }
 
 export default ResetPasswordForm;
+
