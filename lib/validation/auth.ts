@@ -45,7 +45,7 @@ export const resetPasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export const onboardingSchema = z.object({
+export const businessFieldsSchema = z.object({
   roles: z.array(z.string()).min(1, { message: "validation.rolesRequired" }),
   companyName: z
     .string()
@@ -63,11 +63,42 @@ export const onboardingSchema = z.object({
   companySize: z.string().optional(),
 });
 
+export const onboardingSchema = businessFieldsSchema;
+
+export const profileSchema = businessFieldsSchema.extend({
+  name: nameField,
+});
+
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z
+      .string()
+      .min(1, { message: "validation.currentPasswordRequired" }),
+    password: passwordField,
+    confirmPassword: z
+      .string()
+      .min(1, { message: "validation.confirmRequired" }),
+  })
+  .refine((values) => values.password === values.confirmPassword, {
+    message: "validation.passwordMismatch",
+    path: ["confirmPassword"],
+  });
+
+export const deleteAccountSchema = z.object({
+  confirmation: z
+    .string()
+    .trim()
+    .min(1, { message: "validation.deleteConfirmRequired" }),
+});
+
 export type SignUpValues = z.infer<typeof signUpSchema>;
 export type LogInValues = z.infer<typeof logInSchema>;
 export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 export type OnboardingValues = z.infer<typeof onboardingSchema>;
+export type BusinessFieldsValues = z.infer<typeof businessFieldsSchema>;
+export type ProfileValues = z.infer<typeof profileSchema>;
+export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
 
 /**
  * Normalised shape every auth Server Action returns to `useActionState`.

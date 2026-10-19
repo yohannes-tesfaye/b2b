@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession, authClient } from "@/lib/auth-client";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -75,6 +75,13 @@ function UserMenu() {
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="cursor-pointer"
+          render={<Link href="/profile" />}
+        >
+          <UserRound className="mr-2 h-4 w-4" />
+          {t("myProfile")}
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           {t("signOut")}

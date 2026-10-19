@@ -14,6 +14,8 @@ const AUTH_ERROR_KEYS: Record<string, string> = {
   INVALID_TOKEN: "errors.invalidToken",
   TOKEN_EXPIRED: "errors.tokenExpired",
   SESSION_EXPIRED: "errors.sessionExpired",
+  INVALID_PASSWORD: "profile.currentPasswordInvalid",
+  CREDENTIAL_ACCOUNT_NOT_FOUND: "profile.noPasswordSet",
 };
 
 function errorCode(error: APIError): string {

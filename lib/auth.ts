@@ -51,6 +51,9 @@ export const auth = betterAuth({
       industry: { type: "string", required: false },
       companySize: { type: "string", required: false },
     },
+    deleteUser: {
+      enabled: true,
+    },
   },
   plugins: [
     admin({
