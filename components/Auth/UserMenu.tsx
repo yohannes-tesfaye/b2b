@@ -1,11 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LogOut, User, UserRound } from "lucide-react";
+import { LogOut, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession, authClient } from "@/lib/auth-client";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { initialsFrom } from "@/lib/profile";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,7 +61,12 @@ function UserMenu() {
           className="flex items-center gap-2"
           aria-label={t("myAccount")}
         >
-          <User className="h-4 w-4" />
+          <Avatar size="sm">
+            {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
+            <AvatarFallback>
+              {initialsFrom(user.name || user.email)}
+            </AvatarFallback>
+          </Avatar>
           <span className="hidden sm:inline">{user.name || user.email}</span>
         </Button>
       </DropdownMenuTrigger>
@@ -80,7 +87,7 @@ function UserMenu() {
           render={<Link href="/profile" />}
         >
           <UserRound className="mr-2 h-4 w-4" />
-          {t("myProfile")}
+          {t("profileLink")}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
