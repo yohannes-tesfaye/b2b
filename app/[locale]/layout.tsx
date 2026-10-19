@@ -7,6 +7,8 @@ import { routing } from "@/i18n/routing";
 import { ThemeWrapper } from "@/components/shared/ThemeWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
+import Footer from "@/components/shared/Footer";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -39,13 +41,10 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full max-w-7xl flex flex-col m-auto">
-        <ThemeWrapper>
-          <NextIntlClientProvider messages={messages}>
-            {children}
-            <Toaster richColors closeButton position="top-right" />
-          </NextIntlClientProvider>
-        </ThemeWrapper>
+      <body className="min-h-full flex flex-col">
+        <NextIntlClientProvider messages={messages}>
+          <TooltipProvider>{children}</TooltipProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
