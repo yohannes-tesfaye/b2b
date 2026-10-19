@@ -1,22 +1,49 @@
 "use server";
 
-import { redirect } from "@/i18n/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { getActionI18n } from "@/utils/i18n/action";
+import { resolveAuthErrorMessage } from "@/utils/auth/errors";
+import {
+  signUpSchema,
+  zodIssuesToFieldErrors,
+  type FormState,
+  type Translate,
+} from "@/lib/validation/auth";
 
 export async function signUp(
-  prevState: { error: string | null },
+  _prevState: FormState,
   formData: FormData
-): Promise<{ error: string | null }> {
-  const { locale, t } = await getActionI18n(formData, "auth");
+): Promise<FormState> {
+  const { t } = await getActionI18n(formData, "auth");
+  const translate = t as unknown as Translate;
 
-  const name = String(formData.get("name") ?? "").trim();
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
+  const parsed = signUpSchema.safeParse({
+    name: String(formData.get("name") ?? ""),
+    email: String(formData.get("email") ?? ""),
+    password: String(formData.get("password") ?? ""),
+  });
 
-  if (!name || !email || !password) {
-    return { error: t("signUpError") };
+  if (!parsed.success) {
+    return {
+      status: "error",
+      message: translate("validation.formError"),
+      fieldErrors: zodIssuesToFieldErrors(parsed.error, translate),
+    };
   }
 
-  // TODO: real account creation
-  return redirect({ href: "/onboarding", locale });
+  try {
+    await auth.api.signUpEmail({
+      body: parsed.data,
+      headers: await headers(),
+    });
+  } catch (error) {
+    return { status: "error", message: resolveAuthErrorMessage(error, translate) };
+  }
+
+  return {
+    status: "success",
+    message: translate("signUpSuccess"),
+    redirectTo: "/onboarding",
+  };
 }

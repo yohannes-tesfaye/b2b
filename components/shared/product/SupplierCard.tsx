@@ -17,11 +17,11 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
   return (
     <Card className="p-6">
       <div className="flex items-start gap-4 mb-4">
-        <div className="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-2xl">
+        <div className="w-16 h-16 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-2xl">
           {supplier.logo}
         </div>
         <div className="flex-1">
-          <h3 className="font-bold text-gray-900 mb-1">{supplier.name}</h3>
+          <h3 className="font-bold text-gray-900 dark:text-gray-100 mb-1">{supplier.name}</h3>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span>{supplier.countryFlag}</span>
             <span>{supplier.country}</span>
@@ -45,11 +45,11 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
       <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
         <div>
           <p className="text-gray-500">{t("responseRate")}</p>
-          <p className="font-semibold text-gray-900">{supplier.responseRate}</p>
+          <p className="font-semibold text-gray-900 dark:text-gray-100">{supplier.responseRate}</p>
         </div>
         <div>
           <p className="text-gray-500">{t("responseTime")}</p>
-          <p className="font-semibold text-gray-900">{supplier.responseTime}</p>
+          <p className="font-semibold text-gray-900 dark:text-gray-100">{supplier.responseTime}</p>
         </div>
       </div>
 
@@ -66,7 +66,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
             />
           ))}
         </div>
-        <span className="text-sm font-semibold text-gray-900">
+        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
           {supplier.rating.toFixed(1)}
         </span>
       </div>
@@ -76,7 +76,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
           <p className="text-gray-500">{t("email")}</p>
           <a
             href={`mailto:${supplier.contactEmail}`}
-            className="text-gray-900 hover:underline"
+            className="text-gray-900 dark:text-gray-100 hover:underline"
           >
             {supplier.contactEmail}
           </a>
@@ -85,7 +85,7 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
           <p className="text-gray-500">{t("phone")}</p>
           <a
             href={`tel:${supplier.contactPhone.replace(/\s/g, "")}`}
-            className="text-gray-900 hover:underline"
+            className="text-gray-900 dark:text-gray-100 hover:underline"
           >
             {supplier.contactPhone}
           </a>
@@ -102,3 +102,4 @@ export function SupplierCard({ supplier }: SupplierCardProps) {
     </Card>
   );
 }
+

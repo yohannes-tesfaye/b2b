@@ -17,3 +17,4 @@ function LocaleField() {
 }
 
 export default LocaleField;
+

@@ -24,6 +24,14 @@ import {
   SelectValue,
 } from "../ui/select";
 import { finishOnboarding } from "@/utils/auth/onboarding-action";
+import { useActionFeedback } from "@/hooks/use-action-feedback";
+import { toast } from "sonner";
+import {
+  initialFormState,
+  onboardingSchema,
+  zodIssuesToFieldErrors,
+  type Translate,
+} from "@/lib/validation/auth";
 import LocaleField from "../i18n/LocaleField";
 
 export type OnboardingStep = 1 | 2 | 3 | 4;
@@ -71,6 +79,7 @@ function OnboardingForm({
   onStepChange: (step: OnboardingStep) => void;
 }) {
   const t = useTranslations("auth");
+  const translate = t as unknown as Translate;
 
   const ROLES: Role[] = [
     {
@@ -115,7 +124,37 @@ function OnboardingForm({
   const [country, setCountry] = useState("");
   const [industry, setIndustry] = useState("");
   const [companySize, setCompanySize] = useState("");
-  const [state, formAction] = useActionState(finishOnboarding, { error: null });
+  const [state, formAction] = useActionState(finishOnboarding, initialFormState);
+  const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
+
+  useActionFeedback(state);
+
+  const errors = { ...state.fieldErrors, ...clientErrors };
+  const fieldError = (name: string) =>
+    errors[name] ? [{ message: errors[name] }] : undefined;
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const parsed = onboardingSchema.safeParse({
+      roles,
+      companyName,
+      phone,
+      website,
+      country,
+      industry,
+      companySize,
+    });
+
+    if (!parsed.success) {
+      event.preventDefault();
+      const fieldErrors = zodIssuesToFieldErrors(parsed.error, translate);
+      setClientErrors(fieldErrors);
+      toast.error(translate("validation.formError"));
+      onStepChange(fieldErrors.roles ? 2 : 3);
+      return;
+    }
+
+    setClientErrors({});
+  };
 
   const toggleRole = (value: string) => {
     setRoles((prev) =>
@@ -155,7 +194,7 @@ function OnboardingForm({
   ];
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-6">
       {step === 1 && (
         <div className="flex flex-col gap-6">
           <div className="flex size-11 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -243,6 +282,7 @@ function OnboardingForm({
               );
             })}
           </div>
+          <FieldError errors={fieldError("roles")} />
           <div className="flex gap-2">
             <Button
               type="button"
@@ -272,7 +312,7 @@ function OnboardingForm({
             description={t("businessDetailsSubtitle")}
           />
           <div className="flex flex-col gap-4">
-            <Field className="gap-2">
+            <Field className="gap-2" data-invalid={Boolean(errors.companyName)}>
               <FieldLabel htmlFor="companyName">{t("companyName")}</FieldLabel>
               <FieldContent>
                 <Input
@@ -282,10 +322,12 @@ function OnboardingForm({
                   onChange={(e) => setCompanyName(e.target.value)}
                   placeholder={t("companyNamePlaceholder")}
                   autoComplete="organization"
+                  aria-invalid={Boolean(errors.companyName)}
                 />
+                <FieldError errors={fieldError("companyName")} />
               </FieldContent>
             </Field>
-            <Field className="gap-2">
+            <Field className="gap-2" data-invalid={Boolean(errors.phone)}>
               <FieldLabel htmlFor="phone">{t("phoneNumber")}</FieldLabel>
               <FieldContent>
                 <Input
@@ -295,10 +337,12 @@ function OnboardingForm({
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder={t("phonePlaceholder")}
                   autoComplete="tel"
+                  aria-invalid={Boolean(errors.phone)}
                 />
+                <FieldError errors={fieldError("phone")} />
               </FieldContent>
             </Field>
-            <Field className="gap-2">
+            <Field className="gap-2" data-invalid={Boolean(errors.website)}>
               <div className="flex items-center justify-between gap-2">
                 <FieldLabel htmlFor="website">{t("companyWebsite")}</FieldLabel>
                 <span className="text-xs text-muted-foreground">{t("optional")}</span>
@@ -311,10 +355,12 @@ function OnboardingForm({
                   onChange={(e) => setWebsite(e.target.value)}
                   placeholder={t("websitePlaceholder")}
                   autoComplete="url"
+                  aria-invalid={Boolean(errors.website)}
                 />
+                <FieldError errors={fieldError("website")} />
               </FieldContent>
             </Field>
-            <Field className="gap-2">
+            <Field className="gap-2" data-invalid={Boolean(errors.country)}>
               <FieldLabel htmlFor="country">{t("country")}</FieldLabel>
               <FieldContent>
                 <Input
@@ -324,10 +370,12 @@ function OnboardingForm({
                   onChange={(e) => setCountry(e.target.value)}
                   placeholder={t("countryPlaceholder")}
                   autoComplete="country-name"
+                  aria-invalid={Boolean(errors.country)}
                 />
+                <FieldError errors={fieldError("country")} />
               </FieldContent>
             </Field>
-            <Field className="gap-2">
+            <Field className="gap-2" data-invalid={Boolean(errors.industry)}>
               <FieldLabel htmlFor="industry">{t("businessCategory")}</FieldLabel>
               <FieldContent>
                 <Select
@@ -345,6 +393,7 @@ function OnboardingForm({
                     ))}
                   </SelectContent>
                 </Select>
+                <FieldError errors={fieldError("industry")} />
               </FieldContent>
             </Field>
             <Field className="gap-2">
@@ -371,12 +420,6 @@ function OnboardingForm({
               </FieldContent>
             </Field>
           </div>
-
-          <FieldError
-            errors={
-              state.error ? [{ message: state.error }] : undefined
-            }
-          />
 
           <div className="flex gap-2">
             <Button
@@ -446,12 +489,6 @@ function OnboardingForm({
             </div>
           </div>
 
-          <FieldError
-            errors={
-              state.error ? [{ message: state.error }] : undefined
-            }
-          />
-
           <div className="flex gap-2">
             <Button
               type="button"
@@ -484,3 +521,4 @@ function OnboardingForm({
 }
 
 export default OnboardingForm;
+

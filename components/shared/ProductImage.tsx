@@ -33,3 +33,4 @@ export function ProductImage({ src, alt, fallbackLabel }: ProductImageProps) {
     />
   );
 }
+

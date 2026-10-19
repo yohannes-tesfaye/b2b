@@ -4,12 +4,12 @@ import { Input } from "@/components/ui/input";
 
 function Footer() {
   return (
-    <footer className="w-full bg-primary text-primary-foreground" id="footer">
+    <footer className="w-full bg-blue-600 text-white" id="footer">
       {/* Newsletter Section */}
-      <div className="py-16 px-6 md:px-12 lg:px-24 bg-primary/90">
+      <div className="py-16 px-6 md:px-12 lg:px-24 bg-blue-600/90">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-bold mb-4">Join our newsletter</h2>
-          <p className="mb-8 text-base leading-relaxed text-primary-foreground/90">
+          <p className="mb-8 text-base leading-relaxed text-white/90">
             Subscribe to get special offers, free giveaways, and
             once-in-a-lifetime deals.
           </p>
@@ -25,7 +25,7 @@ function Footer() {
               SEND
             </Button>
           </div>
-          <p className="text-xs mt-4 leading-relaxed text-primary-foreground/80">
+          <p className="text-xs mt-4 leading-relaxed text-white/80">
             We respect your privacy. View our{" "}
             <Link href="/privacy-policy" className="underline hover:text-white">
               Privacy Policy
@@ -47,7 +47,7 @@ function Footer() {
           {/* Do You Need Help */}
           <div>
             <h3 className="font-bold text-lg mb-6">Do You Need Help?</h3>
-            <ul className="space-y-3 text-sm text-primary-foreground/90">
+            <ul className="space-y-3 text-sm text-white/90">
               <li>+251 911 681 100</li>
               <li>support@globaltradehub.com</li>
               <li>Call Center: Mon-Fri 9am-6pm</li>
@@ -57,7 +57,7 @@ function Footer() {
           {/* Let Us Help You */}
           <div>
             <h3 className="font-bold text-lg mb-6">Let Us Help You</h3>
-            <ul className="space-y-3 text-sm text-primary-foreground/90">
+            <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
                   href="/privacy-policy"
@@ -96,7 +96,7 @@ function Footer() {
           {/* Make Money with Us */}
           <div>
             <h3 className="font-bold text-lg mb-6">Make Money with Us</h3>
-            <ul className="space-y-3 text-sm text-primary-foreground/90">
+            <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
                   href="/sell"
@@ -135,7 +135,7 @@ function Footer() {
           {/* Get to Know Us */}
           <div>
             <h3 className="font-bold text-lg mb-6">Get to Know Us</h3>
-            <ul className="space-y-3 text-sm text-primary-foreground/90">
+            <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
                   href="/careers"
@@ -174,7 +174,7 @@ function Footer() {
           {/* For Buyers */}
           <div>
             <h3 className="font-bold text-lg mb-6">For Buyers</h3>
-            <ul className="space-y-3 text-sm text-primary-foreground/90">
+            <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
                   href="/faq"
@@ -216,10 +216,12 @@ function Footer() {
 
 function BottomFooter() {
   return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-primary text-primary-foreground/80">
+    <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-primary text-white/80">
       <p className="text-sm">© 2026 GlobalTradeHUB. All Rights Reserved.</p>
     </div>
   );
 }
 
 export default Footer;
+
+

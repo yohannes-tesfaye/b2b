@@ -21,7 +21,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
             className={`relative w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
               selectedImage === index
                 ? "border-blue-600"
-                : "border-gray-200 hover:border-gray-300"
+                : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
             }`}
           >
             <Image
@@ -35,7 +35,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
         ))}
       </div>
 
-      <div className="flex-1 relative aspect-square rounded-lg overflow-hidden border border-gray-200">
+      <div className="flex-1 relative aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
         <Image
           src={images[selectedImage]}
           alt={title}
@@ -48,3 +48,4 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
     </div>
   );
 }
+

@@ -37,20 +37,20 @@ export function ContactSection() {
         </div>
       </div>
 
-      <div className="lg:col-span-2 bg-white border border-gray-200 p-8 rounded-lg">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">
+      <div className="lg:col-span-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-8 rounded-lg">
+        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">
           {t("sendMessageTitle")}
         </h2>
         <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("name")}
               </label>
               <Input placeholder={t("namePlaceholder")} name="name" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t("email")}
               </label>
               <Input
@@ -61,13 +61,13 @@ export function ContactSection() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("subject")}
             </label>
             <Input placeholder={t("subjectPlaceholder")} name="subject" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t("message")}
             </label>
             <textarea
@@ -88,3 +88,4 @@ export function ContactSection() {
     </div>
   );
 }
+

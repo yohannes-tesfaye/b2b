@@ -9,7 +9,13 @@
     "search": "ፍለጋ",
     "favourites": "ተወዳጆች",
     "postListing": "ማስታወቂያ ይለጥፉ",
-    "sellOnHub": "በግሎባልትሬድ ይሽጡ"
+    "sellOnHub": "በግሎባልትሬድ ይሽጡ",
+    "signIn": "ይግቡ",
+    "signUp": "ይመዝገቡ",
+    "myAccount": "መለያዬ",
+    "profileLink": "መገለጫ ይመልከቱ",
+    "signOut": "ይውጡ",
+    "loading": "በመጫን ላይ..."
   },
   "topHeader": {
     "signin": "ይግቡ",

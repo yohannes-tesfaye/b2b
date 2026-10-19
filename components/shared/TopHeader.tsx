@@ -46,7 +46,7 @@ function TopHeader({ variant = "default" }: TopHeaderProps) {
           <div className="text-muted-foreground">|</div>
           <ul className="flex gap-3 items-center">
             <li>
-              <Link href={"/faqs"}>{t("signin")}</Link>
+              <Link href={"/sign-up"}>{t("signin")}</Link>
             </li>
             <li className="text-muted-foreground">|</li>
 

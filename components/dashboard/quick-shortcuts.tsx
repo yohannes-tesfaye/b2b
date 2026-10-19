@@ -60,3 +60,4 @@ export function QuickShortcuts() {
     </div>
   );
 }
+

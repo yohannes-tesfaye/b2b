@@ -5,8 +5,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { ThemeWrapper } from "@/components/shared/ThemeWrapper";
+import { Toaster } from "@/components/ui/sonner";
 import "../globals.css";
-import Footer from "@/components/shared/Footer";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 const inter = Inter({
@@ -41,10 +41,12 @@ export default async function LocaleLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider messages={messages}>
-          <TooltipProvider>{children}</TooltipProvider>
-          <Footer />
-        </NextIntlClientProvider>
+        <ThemeWrapper>
+          <NextIntlClientProvider messages={messages}>
+            <TooltipProvider>{children}</TooltipProvider>
+            <Toaster richColors closeButton position="top-center" />
+          </NextIntlClientProvider>
+        </ThemeWrapper>
       </body>
     </html>
   );

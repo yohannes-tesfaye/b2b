@@ -15,7 +15,7 @@ export default function ProductSectionSupplier() {
 
   return (
     <div className="w-full px-4 mt-20">
-      <h1 className="text-xl font-bold text-gray-900 mb-4 text-center">
+      <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
         {t.rich("supplierSectionTitle", {
           highlight: (chunks) => <span className="text-red-600">{chunks}</span>,
         })}
@@ -37,3 +37,4 @@ export default function ProductSectionSupplier() {
     </div>
   );
 }
+
