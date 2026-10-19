@@ -4,11 +4,12 @@ import { useTranslations } from "next-intl";
 import { LogOut, User } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useSession, authClient } from "@/lib/auth-client";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -18,6 +19,7 @@ import {
 function UserMenu() {
   const t = useTranslations("header");
   const { data: session, isPending } = useSession();
+  const router = useRouter();
 
   if (isPending) {
     return <Skeleton className="h-9 w-20" />;
@@ -39,12 +41,19 @@ function UserMenu() {
   const user = session.user;
 
   const handleSignOut = async () => {
-    await authClient.signOut();
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/");
+          router.refresh();
+        },
+      },
+    });
   };
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
           className="flex items-center gap-2"
@@ -55,16 +64,18 @@ function UserMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="truncate">
-          <div className="text-sm font-medium">{user.name || t("myAccount")}</div>
-          {user.email ? (
-            <div className="truncate text-xs text-muted-foreground">
-              {user.email}
-            </div>
-          ) : null}
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="truncate">
+            <div className="text-sm font-medium">{user.name || t("myAccount")}</div>
+            {user.email ? (
+              <div className="truncate text-xs text-muted-foreground">
+                {user.email}
+              </div>
+            ) : null}
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onSelect={handleSignOut} className="cursor-pointer">
+        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           {t("signOut")}
         </DropdownMenuItem>
