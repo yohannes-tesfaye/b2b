@@ -44,7 +44,7 @@ export default async function LocaleLayout({
         <ThemeWrapper>
           <NextIntlClientProvider messages={messages}>
             <TooltipProvider>{children}</TooltipProvider>
-            <Toaster richColors closeButton position="top-right" />
+            <Toaster richColors closeButton position="top-center" />
           </NextIntlClientProvider>
         </ThemeWrapper>
       </body>
