@@ -5,14 +5,13 @@ import { routing } from "./i18n/routing";
 
 const handleI18nRouting = createMiddleware(routing);
 
-// Auth pages a logged-in user should never see. `onboarding` and
-// `reset-password` stay reachable: the former is part of the post-signup
-// flow, the latter may be opened from a reset link while already signed in.
+// Auth pages a logged-in user should never see. `onboarding` is intentionally
+// absent: it is part of the post-signup flow, and the (main) layout bounces
+// users back to it until their profile is complete.
 const GUEST_ONLY_SEGMENTS = [
   "log-in",
   "sign-up",
   "forgot-password",
-  "onboarding",
   "reset-password",
 ];
 

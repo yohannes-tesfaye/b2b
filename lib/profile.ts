@@ -83,6 +83,17 @@ export function parseRoles(role: string | null | undefined): string[] {
     .filter(Boolean);
 }
 
+export function isOnboardingComplete(user: {
+  companyName?: string | null;
+  phone?: string | null;
+  country?: string | null;
+  industry?: string | null;
+}) {
+  return Boolean(
+    user.companyName && user.phone && user.country && user.industry
+  );
+}
+
 export function initialsFrom(name: string | null | undefined, fallback = "?") {
   const source = (name ?? "").trim();
   if (!source) return fallback;
