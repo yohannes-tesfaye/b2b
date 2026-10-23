@@ -37,13 +37,13 @@ export async function signUp(
       body: parsed.data,
       headers: await headers(),
     });
+
+    return {
+      status: "success",
+      message: translate("signUpSuccess"),
+      redirectTo: "/onboarding",
+    };
   } catch (error) {
     return { status: "error", message: resolveAuthErrorMessage(error, translate) };
   }
-
-  return {
-    status: "success",
-    message: translate("signUpSuccess"),
-    redirectTo: "/onboarding",
-  };
 }
