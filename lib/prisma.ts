@@ -7,7 +7,7 @@ const globalForPrisma = globalThis as unknown as {
 
 const adapter = new PrismaPg(
   process.env.DATABASE_URL || "",
-  { schema: process.env.DATABASE_SCHEMA || "dev" }
+  { schema: process.env.DATABASE_SCHEMA || "public" }
 );
 
 export const prisma =
