@@ -5,10 +5,16 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const adapter = new PrismaPg(
-  process.env.DATABASE_URL || "",
-  { schema: process.env.DATABASE_SCHEMA || "public" }
-);
+function resolveSchema() {
+  if (process.env.DATABASE_SCHEMA) return process.env.DATABASE_SCHEMA;
+  try {
+    return new URL(process.env.DATABASE_URL || "").searchParams.get("schema") || "public";
+  } catch {
+    return "public";
+  }
+}
+
+const adapter = new PrismaPg(process.env.DATABASE_URL || "", { schema: resolveSchema() });
 
 export const prisma =
   globalForPrisma.prisma ?? new PrismaClient({ adapter });
