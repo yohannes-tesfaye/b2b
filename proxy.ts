@@ -17,6 +17,9 @@ const GUEST_ONLY_SEGMENTS = [
 
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Expose the request pathname to server components (e.g. banned-user guard).
+  request.headers.set("x-pathname", pathname);
   const withoutLocale = pathname.replace(
     new RegExp(`^/(${routing.locales.join("|")})(?=/|$)`),
     "",

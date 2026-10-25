@@ -1,4 +1,6 @@
 import { headers } from "next/headers";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 import { auth } from "@/lib/auth";
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 
@@ -8,6 +10,10 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const session = await auth.api.getSession({ headers: await headers() }).catch(() => null);
+  const banned = (session?.user as { banned?: boolean | null } | undefined)?.banned ?? false;
+  if (session && banned) {
+    redirect({ href: "/log-in?banned=1", locale: await getLocale() });
+  }
   const user = session?.user
     ? {
         name: session.user.name ?? session.user.email ?? "User",

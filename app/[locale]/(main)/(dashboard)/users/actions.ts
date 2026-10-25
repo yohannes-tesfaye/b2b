@@ -18,10 +18,13 @@ async function requireAdmin() {
 export async function banUser(userId: string, reason: string) {
   const session = await requireAdmin();
   if (session.user.id === userId) throw new Error("Cannot ban yourself");
-  await prisma.user.update({
-    where: { id: userId },
-    data: { banned: true, banReason: reason || "Banned by admin" },
-  });
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: userId },
+      data: { banned: true, banReason: reason || "Banned by admin" },
+    }),
+    prisma.session.deleteMany({ where: { userId } }),
+  ]);
   revalidatePath("/[locale]/users", "page");
   revalidatePath("/[locale]/users/[id]", "page");
 }

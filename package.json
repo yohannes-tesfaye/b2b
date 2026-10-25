@@ -7,11 +7,13 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx prisma/seed.ts"  },
+    "seed": "tsx prisma/seed.ts"
+  },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
     "@prisma/adapter-pg": "^7.10.1",
     "@prisma/client": "^7.10.1",
+    "@tanstack/react-table": "^8.21.3",
     "better-auth": "^1.7.10",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.3.0",
