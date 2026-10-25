@@ -1,7 +1,21 @@
-export default function DashboardLayout({
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { DashboardShell } from "@/components/dashboard/dashboard-shell";
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <main className="flex-1 p-6 md:p-8">{children}</main>;
+  const session = await auth.api.getSession({ headers: await headers() }).catch(() => null);
+  const user = session?.user
+    ? {
+        name: session.user.name ?? session.user.email ?? "User",
+        email: session.user.email ?? "",
+        image: session.user.image ?? null,
+        role: (session.user as { role?: string | null }).role ?? null,
+      }
+    : { name: "Guest", email: "", image: null, role: null };
+
+  return <DashboardShell user={user}>{children}</DashboardShell>;
 }
