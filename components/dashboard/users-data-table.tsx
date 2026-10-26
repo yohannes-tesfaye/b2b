@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Globe } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -35,6 +36,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "sonner";
 import { initialsFrom } from "@/lib/profile";
 import type { UserRow } from "./user-list";
 import { banUser, unbanUser, deleteUser } from "@/app/[locale]/(main)/(dashboard)/users/actions";
@@ -51,6 +53,17 @@ interface Props {
   dir: "asc" | "desc";
 }
 
+function roleVariant(role: string) {
+  switch (role) {
+    case "superadmin":
+      return "secondary";
+    case "admin":
+      return "outline";
+    default:
+      return "default";
+  }
+}
+
 function StatusCell({ user }: { user: UserRow }) {
   const router = useRouter();
   const [reasonMode, setReasonMode] = useState(false);
@@ -59,13 +72,24 @@ function StatusCell({ user }: { user: UserRow }) {
 
   const handleUnban = () => {
     startTransition(async () => {
-      await unbanUser(user.id);
+      try {
+        await unbanUser(user.id);
+        toast.success("User unbanned");
+      } catch {
+        toast.error("Failed to unban user");
+      }
+      setReasonMode(false);
       router.refresh();
     });
   };
   const handleBan = () => {
     startTransition(async () => {
-      await banUser(user.id, reason || "Banned by admin");
+      try {
+        await banUser(user.id, reason || "Banned by admin");
+        toast.success("User banned");
+      } catch {
+        toast.error("Failed to ban user");
+      }
       setReasonMode(false);
       setReason("");
       router.refresh();
@@ -177,7 +201,12 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
   const handleDelete = (u: UserRow) => {
     if (!window.confirm(`Delete ${u.name || u.email}? This cannot be undone.`)) return;
     startTransition(async () => {
-      await deleteUser(u.id);
+      try {
+        await deleteUser(u.id);
+        toast.success("User deleted");
+      } catch {
+        toast.error("Failed to delete user");
+      }
       router.refresh();
     });
   };
@@ -190,7 +219,7 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
         const u = row.original;
         return (
           <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-7 w-7">
               {u.image ? <AvatarImage src={u.image} alt={u.name} /> : null}
               <AvatarFallback className="text-xs">{initialsFrom(u.name || u.email)}</AvatarFallback>
             </Avatar>
@@ -198,7 +227,7 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
               <Link href={`/users/${u.id}`} className="font-medium hover:underline truncate block">
                 {u.name || "Unnamed"}
               </Link>
-              <div className="text-xs text-muted-foreground truncate">{u.email}</div>
+              <div className="text-[10px] text-muted-foreground truncate">{u.email}</div>
             </div>
           </div>
         );
@@ -207,7 +236,7 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
     {
       accessorKey: "role",
       header: "Role",
-      cell: ({ row }) => <Badge variant="secondary">{row.original.role || "buyer"}</Badge>,
+      cell: ({ row }) => <Badge variant={roleVariant(row.original.role || "buyer")}>{row.original.role || "buyer"}</Badge>,
     },
     {
       accessorKey: "banned",
@@ -215,7 +244,20 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
       cell: ({ row }) => <StatusCell user={row.original} />,
     },
     { accessorKey: "companyName", header: "Company", cell: ({ row }) => row.original.companyName || "—" },
-    { accessorKey: "country", header: "Country", cell: ({ row }) => row.original.country || "—" },
+    {
+      accessorKey: "country",
+      header: "Country",
+      cell: ({ row }) => {
+        const c = row.original.country;
+        if (!c) return <span className="text-muted-foreground">—</span>;
+        return (
+          <div className="flex items-center gap-1.5">
+            <Globe className="size-3.5 text-muted-foreground" aria-hidden="true" />
+            <span className="text-sm">{c}</span>
+          </div>
+        );
+      },
+    },
     { accessorKey: "industry", header: "Industry", cell: ({ row }) => row.original.industry || "—" },
     { accessorKey: "companySize", header: "Size", cell: ({ row }) => row.original.companySize || "—" },
     {
@@ -323,7 +365,11 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
                     className={h.column.id !== "actions" && h.column.id !== "banned" ? "cursor-pointer select-none" : ""}
                   >
                     {flexRender(h.column.columnDef.header, h.getContext())}
-                    {sort === h.column.id ? (dir === "asc" ? " ↑" : " ↓") : ""}
+                    {sort === h.column.id ? (
+                      <span className="ml-1 text-[10px] text-muted-foreground">
+                        {dir === "asc" ? "▲" : "▼"}
+                      </span>
+                    ) : ""}
                   </TableHead>
                 ))}
               </TableRow>
@@ -331,8 +377,8 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
           </TableHeader>
           <TableBody>
             {users.length ? (
-              users.map((u) => (
-                <TableRow key={u.id}>
+              users.map((u, i) => (
+                <TableRow key={u.id} className={i % 2 === 1 ? "bg-muted/50" : ""}>
                   {table.getRowModel().rows.find((r) => r.original.id === u.id)?.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -342,8 +388,9 @@ export function UsersDataTable({ users, total, page, pageSize, q, role, status, 
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No users found.
+                <TableCell colSpan={columns.length} className="h-32 flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                  <div className="text-sm font-medium">No users found.</div>
+                  <div className="text-xs">Try clearing your search or filters.</div>
                 </TableCell>
               </TableRow>
             )}

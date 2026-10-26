@@ -44,6 +44,7 @@ import { SidebarUserFooter } from "@/components/dashboard/sidebar-footer";
 
 const coreItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
+  { title: "Users", url: "/users", icon: Users },
   { title: "Marketplace", url: "/marketplace", icon: Store },
   { title: "My Listings", url: "/listings", icon: Package },
   { title: "Contacts", url: "/contacts", icon: Users },
@@ -70,8 +71,6 @@ const settingsItems = [
   { title: "Support", url: "/support", icon: HelpCircle },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
-
-const userItems = [{ title: "Users", url: "/users", icon: User }];
 
 type SidebarItem = { title: string; url: string; icon: React.ComponentType<{ className?: string }> };
 function renderGroup(label: string, items: SidebarItem[]) {
@@ -103,16 +102,31 @@ export function DashboardShell({
   user,
 }: {
   children: React.ReactNode;
-  user: { name: string; email: string; image?: string | null; role?: string | null };
+  user: {
+    name: string;
+    email: string;
+    image?: string | null;
+    role?: string | null;
+    companyName?: string | null;
+    country?: string | null;
+    industry?: string | null;
+    companySize?: string | null;
+    phone?: string | null;
+    website?: string | null;
+    emailVerified?: boolean | null;
+    banned?: boolean | null;
+    banReason?: string | null;
+    createdAt?: Date | null;
+  };
 }) {
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon">
-        <SidebarHeader className="h-16 flex items-center justify-between border-b px-3">
-          <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden w-full">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm shadow-sm">
-              <Building2 className="h-5 w-5" />
-            </div>
+<SidebarHeader className="h-16 flex items-center justify-between border-b px-2">
+  <Link href="/dashboard" className="flex items-center gap-3 overflow-hidden w-full">
+    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-sm shadow-sm">
+      <Building2 className="h-4 w-4" />
+    </div>
             <div className="flex flex-col truncate group-data-[collapsible=icon]:hidden">
               <span className="text-sm font-bold leading-tight text-foreground truncate">
                 B2B Marketplace
@@ -128,7 +142,6 @@ export function DashboardShell({
           {renderGroup("ANALYTICS", analyticsItems)}
           {renderGroup("COMMUNICATIONS", communicationsItems)}
           {renderGroup("ACCOUNT", accountItems)}
-          {renderGroup("USERS", userItems)}
           {renderGroup("SETTINGS", settingsItems)}
         </SidebarContent>
         <SidebarFooter>

@@ -17,6 +17,9 @@ export type UserRow = {
   country: string | null;
   industry: string | null;
   companySize: string | null;
+  phone: string | null;
+  website: string | null;
+  emailVerified: boolean | null;
   createdAt: Date;
 };
 
