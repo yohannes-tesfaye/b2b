@@ -15,7 +15,7 @@ export function DashboardNav({ userId }: { userId: string }) {
     { title: "Overview", url: base, icon: LayoutDashboard },
     { title: "My Listings", url: listings, icon: Package },
     { title: "New Listing", url: newListing, icon: Plus },
-    { title: "Profile", url: "/profile", icon: User },
+    { title: "Profile", url: `${base}/profile`, icon: User },
   ];
 
   return (

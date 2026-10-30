@@ -91,7 +91,7 @@ function UserMenu() {
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
-          render={<Link href="/profile" />}
+          render={<Link href={`/${user.id}/dashboard/profile`} />}
         >
           <UserRound className="mr-2 h-4 w-4" />
           {t("profileLink")}
