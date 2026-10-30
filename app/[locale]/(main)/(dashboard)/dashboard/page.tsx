@@ -6,8 +6,11 @@ import { MarketplaceInsights } from "@/components/dashboard/marketplace-insights
 import { CommsAndAlerts } from "@/components/dashboard/comms-and-alerts";
 import { CompanyProfileSummary } from "@/components/dashboard/company-profile-summary";
 import { QuickShortcuts } from "@/components/dashboard/quick-shortcuts";
+import { requireAdmin } from "@/lib/dashboard-access";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  await requireAdmin();
+
   return (
     <div className="flex flex-col gap-6">
       <MetricCards />

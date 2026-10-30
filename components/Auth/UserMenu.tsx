@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { LogOut, UserRound } from "lucide-react";
+import { LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useSession, authClient } from "@/lib/auth-client";
@@ -82,6 +82,13 @@ function UserMenu() {
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="cursor-pointer"
+          render={<Link href={`/${user.id}/dashboard`} />}
+        >
+          <LayoutDashboard className="mr-2 h-4 w-4" />
+          {t("myDashboard")}
+        </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
           render={<Link href="/profile" />}

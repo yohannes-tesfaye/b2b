@@ -22,7 +22,6 @@ import UserMenu from "@/components/Auth/UserMenu";
 import {
   LayoutDashboard,
   Store,
-  Package,
   Users,
   BarChart3,
   FileText,
@@ -36,8 +35,8 @@ import {
   Settings,
   Search,
   Plus,
-  User,
   Building2,
+  Package,
 } from "lucide-react";
 import { Breadcrumbs } from "@/components/dashboard/breadcrumbs";
 import { SidebarUserFooter } from "@/components/dashboard/sidebar-footer";
@@ -45,8 +44,8 @@ import { SidebarUserFooter } from "@/components/dashboard/sidebar-footer";
 const coreItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Users", url: "/users", icon: Users },
+  { title: "Created", url: "/dashboard/created", icon: Package },
   { title: "Marketplace", url: "/marketplace", icon: Store },
-  { title: "My Listings", url: "/listings", icon: Package },
   { title: "Contacts", url: "/contacts", icon: Users },
 ];
 

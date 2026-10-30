@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getActionI18n } from "@/utils/i18n/action";
 import { resolveAuthErrorMessage } from "@/utils/auth/errors";
+import { dashboardLandingPath } from "@/lib/dashboard-paths";
 import {
   logInSchema,
   zodIssuesToFieldErrors,
@@ -31,10 +32,17 @@ export async function logIn(
     };
   }
 
+  let redirectTo = "/";
+
   try {
-    await auth.api.signInEmail({
+    const result = await auth.api.signInEmail({
       body: parsed.data,
       headers: await headers(),
+    });
+
+    redirectTo = dashboardLandingPath({
+      id: result.user.id,
+      role: (result.user as { role?: string | null }).role ?? null,
     });
   } catch (error) {
     return { status: "error", message: resolveAuthErrorMessage(error, translate) };
@@ -43,6 +51,6 @@ export async function logIn(
   return {
     status: "success",
     message: translate("logInSuccess"),
-    redirectTo: "/",
+    redirectTo,
   };
 }
