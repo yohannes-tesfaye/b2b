@@ -179,7 +179,12 @@ export function AdminListingsTable({ listings, status, type }: Props) {
                             variant="outline"
                             disabled={isPending}
                             onClick={() => {
-                              const reason = window.prompt("Rejection reason (optional):") ?? "";
+                              const reason =
+                                window.prompt("Rejection reason (required):") ?? "";
+                              if (reason.trim().length < 5) {
+                                toast.error("A rejection reason is required");
+                                return;
+                              }
                               run(
                                 () => rejectListing(listing.id, reason),
                                 "Listing rejected",

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
-import { addDays, effectiveStatus } from "@/lib/listings";
+import { effectiveStatus } from "@/lib/listings";
 import {
   listingIssuesToFieldErrors,
   listingSchema,
@@ -102,9 +102,9 @@ export async function createListing(
       data: {
         ...listingPayload(parsed.data),
         userId: user.id,
-        // New listings always wait for admin approval.
+        // New listings always wait for admin approval. The expiry clock starts
+        // when an admin approves the listing.
         status: "pending",
-        expiresAt: addDays(new Date(), parsed.data.durationDays),
       },
     });
   } catch {
@@ -116,8 +116,6 @@ export async function createListing(
 
   revalidateListings(user.id);
 
-  // TODO: when the admin approval screen is wired, set expiresAt from the
-  // approval date instead of the submission date.
   return {
     status: "success",
     message: "Listing submitted for approval.",
@@ -160,10 +158,11 @@ export async function updateListing(
       data: {
         ...listingPayload(parsed.data),
         // Edits need to be reviewed again. This also moves an active listing
-        // back to pending, which is the simplest acceptable workflow.
+        // back to pending, which is the simplest acceptable workflow. The
+        // expiry clock restarts on approval.
         status: "pending",
         rejectionReason: null,
-        expiresAt: addDays(new Date(), parsed.data.durationDays),
+        expiresAt: null,
       },
     });
     if (!result.count) {
@@ -226,10 +225,11 @@ export async function renewListing(id: string): Promise<void> {
   const result = await prisma.listing.updateMany({
     where: { id, userId: user.id },
     data: {
-      // Renewals go back through approval as well.
+      // Renewals go back through approval as well, and the expiry clock
+      // restarts when an admin approves the renewal.
       status: "pending",
       rejectionReason: null,
-      expiresAt: addDays(new Date(), listing.durationDays),
+      expiresAt: null,
     },
   });
   if (!result.count) throw new Error("Listing not found");

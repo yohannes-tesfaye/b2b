@@ -122,6 +122,29 @@ export const listingSchema = z
     images.forEach((image) => addUrlIssue(image, "images", ctx));
   });
 
+export const listingModerationNoteSchema = z.object({
+  notes: z
+    .string()
+    .trim()
+    .max(2000, "Notes must be 2,000 characters or fewer.")
+    .default(""),
+});
+
+export const listingRejectionSchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(5, "Give the user a clear reason (at least 5 characters).")
+    .max(1000, "Rejection reason must be 1,000 characters or fewer."),
+});
+
+export const listingBulkRejectionSchema = listingRejectionSchema.extend({
+  ids: z
+    .array(z.string().trim().min(1))
+    .min(1, "Select at least one listing.")
+    .max(100, "Select up to 100 listings at a time."),
+});
+
 export type ListingFormValues = z.infer<typeof listingSchema>;
 
 export type ListingFormState = {

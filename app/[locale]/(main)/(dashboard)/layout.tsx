@@ -1,5 +1,6 @@
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
 import { requireAdmin } from "@/lib/dashboard-access";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardLayout({
   children,
@@ -7,6 +8,9 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const fullUser = await requireAdmin();
+  const pendingListings = await prisma.listing.count({
+    where: { status: "pending" },
+  });
 
   const user = {
     name: fullUser.name ?? fullUser.email ?? "User",
@@ -25,5 +29,9 @@ export default async function DashboardLayout({
     createdAt: fullUser.createdAt,
   };
 
-  return <DashboardShell user={user}>{children}</DashboardShell>;
+  return (
+    <DashboardShell user={user} pendingListings={pendingListings}>
+      {children}
+    </DashboardShell>
+  );
 }
