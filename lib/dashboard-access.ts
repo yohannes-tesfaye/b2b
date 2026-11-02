@@ -27,7 +27,13 @@ export async function requireOwnDashboard(userId: string) {
   return user;
 }
 
-/** Ensures the signed-in user has an admin or superadmin role. */
+/**
+ * Ensures the signed-in user has an admin or superadmin role.
+ *
+ * TODO(dev): role check temporarily disabled so any signed-in user can reach
+ * `/dashboard` and all its routes during development. Re-enable the admin
+ * gate below before shipping.
+ */
 export async function requireAdmin() {
   const user = await getCurrentUser();
 
@@ -35,13 +41,13 @@ export async function requireAdmin() {
     return redirect({ href: "/log-in", locale: await getLocale() });
   }
 
-  const roles = parseRoles(user.role);
-  if (!roles.some((role) => adminRoles.includes(role))) {
-    return redirect({
-      href: userDashboardPath(user.id),
-      locale: await getLocale(),
-    });
-  }
+  // const roles = parseRoles(user.role);
+  // if (!roles.some((role) => adminRoles.includes(role))) {
+  //   return redirect({
+  //     href: userDashboardPath(user.id),
+  //     locale: await getLocale(),
+  //   });
+  // }
 
   return user;
 }
