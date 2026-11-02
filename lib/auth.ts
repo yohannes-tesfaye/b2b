@@ -4,6 +4,7 @@ import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 import { prisma } from "@/lib/prisma";
 import { ac, adminRoles, roles } from "@/lib/permissions";
+import { getSiteOrigin, getSiteUrl } from "@/lib/site-url";
 
 const socialProviders: NonNullable<
   BetterAuthOptions["socialProviders"]
@@ -32,6 +33,17 @@ if (process.env.TIKTOK_CLIENT_KEY && process.env.TIKTOK_CLIENT_SECRET) {
 
 export const auth = betterAuth({
   appName: "GlobalTradeHUB",
+  // Explicit baseURL so a stale BETTER_AUTH_URL in the environment can never
+  // override the real deployment URL (e.g. localhost leaking into prod).
+  baseURL: getSiteUrl(),
+  trustedOrigins: [
+    getSiteOrigin(),
+    // Keep localhost trusted during development (e.g. hitting the API
+    // from a non-standard port).
+    ...(process.env.NODE_ENV !== "production"
+      ? ["http://localhost:3000"]
+      : []),
+  ],
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
