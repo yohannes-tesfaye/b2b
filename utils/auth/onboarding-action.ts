@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getActionI18n } from "@/utils/i18n/action";
+import { dashboardLandingPath } from "@/lib/dashboard-paths";
 import {
   onboardingSchema,
   zodIssuesToFieldErrors,
@@ -62,6 +63,9 @@ export async function finishOnboarding(
   return {
     status: "success",
     message: translate("onboardingSuccess"),
-    redirectTo: "/",
+    redirectTo: dashboardLandingPath({
+      id: session.user.id,
+      role: parsed.data.roles.join(","),
+    }),
   };
 }

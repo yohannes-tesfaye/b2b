@@ -12,6 +12,7 @@ import {
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
@@ -22,7 +23,6 @@ import UserMenu from "@/components/Auth/UserMenu";
 import {
   LayoutDashboard,
   Store,
-  Package,
   Users,
   BarChart3,
   FileText,
@@ -36,17 +36,17 @@ import {
   Settings,
   Search,
   Plus,
-  User,
   Building2,
+  ClipboardList,
 } from "lucide-react";
 import { Breadcrumbs } from "@/components/dashboard/breadcrumbs";
 import { SidebarUserFooter } from "@/components/dashboard/sidebar-footer";
 
 const coreItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Users", url: "/users", icon: Users },
+  { title: "Users", url: "/dashboard/user", icon: Users },
+  { title: "Listings", url: "/dashboard/listing", icon: ClipboardList },
   { title: "Marketplace", url: "/marketplace", icon: Store },
-  { title: "My Listings", url: "/listings", icon: Package },
   { title: "Contacts", url: "/contacts", icon: Users },
 ];
 
@@ -72,7 +72,12 @@ const settingsItems = [
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
-type SidebarItem = { title: string; url: string; icon: React.ComponentType<{ className?: string }> };
+type SidebarItem = {
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: number;
+};
 function renderGroup(label: string, items: SidebarItem[]) {
   return (
     <SidebarGroup key={label}>
@@ -89,6 +94,11 @@ function renderGroup(label: string, items: SidebarItem[]) {
                   <span>{item.title}</span>
                 </SidebarMenuButton>
               </Link>
+              {item.badge ? (
+                <SidebarMenuBadge className="rounded-full bg-primary px-1.5 text-[10px] text-primary-foreground">
+                  {item.badge > 99 ? "99+" : item.badge}
+                </SidebarMenuBadge>
+              ) : null}
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
@@ -100,8 +110,10 @@ function renderGroup(label: string, items: SidebarItem[]) {
 export function DashboardShell({
   children,
   user,
+  pendingListings = 0,
 }: {
   children: React.ReactNode;
+  pendingListings?: number;
   user: {
     name: string;
     email: string;
@@ -138,7 +150,14 @@ export function DashboardShell({
           </Link>
         </SidebarHeader>
         <SidebarContent>
-          {renderGroup("CORE", coreItems)}
+          {renderGroup(
+            "CORE",
+            coreItems.map((item) =>
+              item.title === "Listings"
+                ? { ...item, badge: pendingListings }
+                : item
+            )
+          )}
           {renderGroup("ANALYTICS", analyticsItems)}
           {renderGroup("COMMUNICATIONS", communicationsItems)}
           {renderGroup("ACCOUNT", accountItems)}

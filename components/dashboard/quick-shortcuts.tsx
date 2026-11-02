@@ -6,7 +6,7 @@ const shortcuts = [
   {
     icon: Package,
     title: "Available Listings",
-    href: "/listings",
+    href: "/dashboard/listing",
   },
   {
     icon: Search,

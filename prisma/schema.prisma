@@ -12,25 +12,28 @@ datasource db {
 }
 
 model User {
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean   @default(false)
-  image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  role          String?
-  banned        Boolean?  @default(false)
-  banReason     String?
-  banExpires    DateTime?
-  companyName   String?
-  phone         String?
-  website       String?
-  country       String?
-  industry      String?
-  companySize   String?
-  sessions      Session[]
-  accounts      Account[]
+  id                   String                 @id
+  name                 String
+  email                String
+  emailVerified        Boolean                @default(false)
+  image                String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  role                 String?
+  banned               Boolean?               @default(false)
+  banReason            String?
+  banExpires           DateTime?
+  companyName          String?
+  phone                String?
+  website              String?
+  country              String?
+  industry             String?
+  companySize          String?
+  sessions             Session[]
+  accounts             Account[]
+  listings             Listing[]
+  reviewedListings     Listing[]              @relation("ListingReviews")
+  listingStatusChanges ListingStatusHistory[]
 
   @@unique([email])
   @@map("user")
@@ -83,4 +86,67 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Listing {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type            String
+  title           String
+  description     String
+  category        String
+  quantity        String
+  location        String
+  durationDays    Int
+  status          String    @default("pending")
+  rejectionReason String?
+  reviewedById    String?
+  reviewedBy      User?     @relation("ListingReviews", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt      DateTime?
+  moderationNotes String?
+  expiresAt       DateTime?
+  views           Int       @default(0)
+  inquiries       Int       @default(0)
+
+  // Wanted listing fields
+  qualityStandard   String?
+  deliveryTimeline  String?
+  preferredRegion   String?
+  budgetRange       String?
+  technicalDocument String?
+
+  // Available listing fields
+  images          String[] @default([])
+  price           String?
+  deliveryOptions String?
+  technicalSpecs  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  statusHistory ListingStatusHistory[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([type])
+  @@index([expiresAt])
+  @@index([reviewedById])
+  @@map("listing")
+}
+
+model ListingStatusHistory {
+  id          String   @id @default(cuid())
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  fromStatus  String?
+  toStatus    String
+  reason      String?
+  changedById String?
+  changedBy   User?    @relation(fields: [changedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  @@index([listingId])
+  @@index([changedById])
+  @@map("listing_status_history")
 }

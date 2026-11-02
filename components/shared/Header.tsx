@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
 import UserMenu from "@/components/Auth/UserMenu";
+import { useSession } from "@/lib/auth-client";
 import {
   CircleAlertIcon,
   CircleCheckIcon,
@@ -24,6 +25,7 @@ import {
 
 const Header = () => {
   const t = useTranslations("header");
+  const { data: session } = useSession();
 
   return (
     <div>
@@ -46,7 +48,20 @@ const Header = () => {
         <div className="hidden lg:flex items-center gap-2">
           <LanguageSwitcher />
           <UserMenu />
-          <Button>{t("postListing")}</Button>
+          <Button
+            render={
+              <Link
+                href={
+                  session
+                    ? `/${session.user.id}/dashboard/listings/new`
+                    : "/sign-up"
+                }
+              />
+            }
+            nativeButton={false}
+          >
+            {t("postListing")}
+          </Button>
         </div>
         {/* Navs */}
       </div>
