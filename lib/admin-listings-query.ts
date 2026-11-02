@@ -35,6 +35,6 @@ export function adminListingsHref(query: AdminListingQuery): string {
   if (query.page > 1) params.set("page", String(query.page));
   if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
   const search = params.toString();
-  return search ? `/listings?${search}` : "/listings";
+  return search ? `/dashboard/listing?${search}` : "/dashboard/listing";
 }
 

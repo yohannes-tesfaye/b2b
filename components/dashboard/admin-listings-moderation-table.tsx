@@ -142,7 +142,7 @@ function ListingActions({
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuLabel>Listing</DropdownMenuLabel>
         <DropdownMenuItem
-          onClick={() => router.push(`/listings/${listing.id}`)}
+          onClick={() => router.push(`/dashboard/listing/${listing.id}`)}
         >
           View details
         </DropdownMenuItem>
@@ -314,7 +314,7 @@ export function AdminListingsModerationTable({
                 <TableRow
                   key={listing.id}
                   className="cursor-pointer"
-                  onClick={() => router.push(`/listings/${listing.id}`)}
+                  onClick={() => router.push(`/dashboard/listing/${listing.id}`)}
                 >
                   <TableCell onClick={(event) => event.stopPropagation()}>
                     {listing.status === "pending" ? (
@@ -334,7 +334,7 @@ export function AdminListingsModerationTable({
                       <Thumbnail listing={listing} />
                       <div className="min-w-0">
                         <Link
-                          href={`/listings/${listing.id}`}
+                          href={`/dashboard/listing/${listing.id}`}
                           onClick={(event) => event.stopPropagation()}
                           className="block truncate text-sm font-medium hover:underline"
                         >
@@ -403,7 +403,7 @@ export function AdminListingsModerationTable({
             <Card
               key={listing.id}
               className="cursor-pointer"
-              onClick={() => router.push(`/listings/${listing.id}`)}
+              onClick={() => router.push(`/dashboard/listing/${listing.id}`)}
             >
               <CardContent className="space-y-3">
                 <div className="flex items-start gap-3">
@@ -596,7 +596,7 @@ function EmptyState({
             : "Nothing to show for this view."}
       </p>
       {!pending && hasFilters ? (
-        <Button render={<Link href="/listings" />} variant="outline" size="sm" nativeButton={false}>
+        <Button render={<Link href="/dashboard/listing" />} variant="outline" size="sm" nativeButton={false}>
           Clear filters
         </Button>
       ) : null}

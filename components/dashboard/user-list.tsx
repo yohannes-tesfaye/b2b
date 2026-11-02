@@ -56,7 +56,7 @@ export function UserList({ users }: { users: UserRow[] }) {
               <div>{u.companyName || "—"} · {u.country || "—"}</div>
               <div>{u.industry || "—"} · {u.companySize || "—"}</div>
             </div>
-            <Button render={<Link href={`/users/${u.id}`} />} size="sm" className="w-full">View details</Button>
+            <Button render={<Link href={`/dashboard/user/${u.id}`} />} size="sm" className="w-full">View details</Button>
           </CardContent>
         </Card>
       ))}

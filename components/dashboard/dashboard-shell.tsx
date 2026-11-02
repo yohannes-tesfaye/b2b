@@ -44,8 +44,8 @@ import { SidebarUserFooter } from "@/components/dashboard/sidebar-footer";
 
 const coreItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Users", url: "/users", icon: Users },
-  { title: "Listings", url: "/listings", icon: ClipboardList },
+  { title: "Users", url: "/dashboard/user", icon: Users },
+  { title: "Listings", url: "/dashboard/listing", icon: ClipboardList },
   { title: "Marketplace", url: "/marketplace", icon: Store },
   { title: "Contacts", url: "/contacts", icon: Users },
 ];

@@ -16,7 +16,7 @@ export function Breadcrumbs() {
   if (crumbs.length === 0) crumbs.push({ label: "Dashboard", href: "/dashboard" });
   const items = crumbs.map((c, i) => {
     const prev = i > 0 ? crumbs[i - 1].label : "";
-    const isId = c.label.length > 20 || (prev.toLowerCase() === "users" && i === crumbs.length - 1);
+    const isId = c.label.length > 20 || (prev.toLowerCase() === "user" && i === crumbs.length - 1);
     const label = isId ? "Details" : c.label.charAt(0).toUpperCase() + c.label.slice(1).replace(/-/g, " ");
     return { ...c, label, isLast: i === crumbs.length - 1 };
   });

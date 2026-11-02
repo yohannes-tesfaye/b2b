@@ -162,7 +162,7 @@ function UserActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuLabel>User</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => router.push(`/users/${user.id}`)}>
+        <DropdownMenuItem onClick={() => router.push(`/dashboard/user/${user.id}`)}>
           View details
         </DropdownMenuItem>
         {isSelf ? (
@@ -260,7 +260,7 @@ export function AdminUsersTable({
                   <TableRow
                     key={user.id}
                     className="cursor-pointer"
-                    onClick={() => router.push(`/users/${user.id}`)}
+                    onClick={() => router.push(`/dashboard/user/${user.id}`)}
                   >
                     <TableCell className="max-w-72">
                       <UserCell user={user} isSelf={isSelf} />
@@ -325,7 +325,7 @@ export function AdminUsersTable({
               <Card
                 key={user.id}
                 className="cursor-pointer"
-                onClick={() => router.push(`/users/${user.id}`)}
+                onClick={() => router.push(`/dashboard/user/${user.id}`)}
               >
                 <CardContent className="space-y-3">
                   <div className="flex items-start gap-3">
@@ -481,7 +481,7 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
       </p>
       {hasFilters ? (
         <Button
-          render={<Link href="/users" />}
+          render={<Link href="/dashboard/user" />}
           variant="outline"
           size="sm"
           nativeButton={false}

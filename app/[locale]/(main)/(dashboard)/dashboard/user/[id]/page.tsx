@@ -81,7 +81,7 @@ export default async function AdminUserDetailPage({
     <div className="flex flex-col gap-6">
       <div>
         <Button
-          render={<Link href="/users" />}
+          render={<Link href="/dashboard/user" />}
           variant="ghost"
           size="sm"
           nativeButton={false}
@@ -280,7 +280,7 @@ export default async function AdminUserDetailPage({
                 </CardDescription>
               </div>
               <Button
-                render={<Link href={`/listings?q=${encodeURIComponent(user.email)}`} />}
+                render={<Link href={`/dashboard/listing?q=${encodeURIComponent(user.email)}`} />}
                 variant="outline"
                 size="sm"
                 nativeButton={false}
@@ -299,7 +299,7 @@ export default async function AdminUserDetailPage({
                     >
                       <div className="min-w-0 space-y-1">
                         <Link
-                          href={`/listings/${listing.id}`}
+                          href={`/dashboard/listing/${listing.id}`}
                           className="block truncate text-sm font-medium hover:underline"
                         >
                           {listing.title}

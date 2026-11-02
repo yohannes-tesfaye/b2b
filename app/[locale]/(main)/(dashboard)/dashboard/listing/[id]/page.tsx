@@ -78,7 +78,7 @@ export default async function AdminListingDetailPage({
     <div className="flex flex-col gap-6">
       <div>
         <Button
-          render={<Link href="/listings" />}
+          render={<Link href="/dashboard/listing" />}
           variant="ghost"
           size="sm"
           nativeButton={false}
@@ -290,7 +290,7 @@ export default async function AdminListingDetailPage({
                       </div>
                     </div>
                     <Button
-                      render={<Link href={`/users/${owner.id}`} />}
+                      render={<Link href={`/dashboard/user/${owner.id}`} />}
                       variant="outline"
                       size="sm"
                       nativeButton={false}

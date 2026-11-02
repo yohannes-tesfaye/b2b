@@ -22,7 +22,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { banUser, deleteUser, unbanUser } from "@/app/[locale]/(main)/(dashboard)/users/actions";
+import { banUser, deleteUser, unbanUser } from "@/app/[locale]/(main)/(dashboard)/dashboard/user/actions";
 
 export type UserTarget = {
   id: string;

@@ -25,5 +25,5 @@ export function adminUsersHref(query: AdminUserQuery): string {
   if (query.page > 1) params.set("page", String(query.page));
   if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
   const search = params.toString();
-  return search ? `/users?${search}` : "/users";
+  return search ? `/dashboard/user?${search}` : "/dashboard/user";
 }
