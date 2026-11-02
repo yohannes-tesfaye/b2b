@@ -1,80 +1,80 @@
-import { headers } from "next/headers";
-import { getLocale } from "next-intl/server";
-import { redirect } from "@/i18n/navigation";
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { adminRoles } from "@/lib/permissions";
-import { UsersDataTable } from "@/components/dashboard/users-data-table";
+import { requireAdmin } from "@/lib/dashboard-access";
+import {
+  ADMIN_USER_PAGE_SIZES,
+  getAdminUserCounts,
+  getAdminUsers,
+  normaliseAdminUserFilters,
+} from "@/lib/admin-users";
+import type { AdminUserQuery } from "@/lib/admin-users-query";
+import { AdminUsersFilters } from "@/components/dashboard/admin-users-filters";
+import { AdminUsersStats } from "@/components/dashboard/admin-users-stats";
+import { AdminUsersTable } from "@/components/dashboard/admin-users-table";
 
 type SearchParams = Promise<{
   page?: string;
   pageSize?: string;
   q?: string;
-  role?: string;
   status?: string;
+  role?: string;
   sort?: string;
-  dir?: string;
 }>;
 
-const ALLOWED_PAGE_SIZES = [10, 20];
-
-export default async function UsersPage({ searchParams }: { searchParams: SearchParams }) {
+export default async function UsersPage({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const admin = await requireAdmin();
   const sp = await searchParams;
-  const session = await auth.api.getSession({ headers: await headers() });
-  const role = (session?.user as { role?: string | null } | undefined)?.role ?? null;
-  if (!session || !role || !adminRoles.includes(role)) {
-    redirect({ href: "/dashboard", locale: await getLocale() });
-  }
 
   const page = Math.max(1, Number(sp.page ?? "1") || 1);
-  const pageSize = ALLOWED_PAGE_SIZES.includes(Number(sp.pageSize)) ? Number(sp.pageSize) : 10;
-  const q = (sp.q ?? "").trim();
-  const roleFilter = sp.role ?? "all";
-  const statusFilter = sp.status ?? "all";
-  const sort = sp.sort ?? "createdAt";
-  const dir = sp.dir === "asc" ? "asc" : "desc";
+  const pageSize = ADMIN_USER_PAGE_SIZES.includes(
+    Number(sp.pageSize) as (typeof ADMIN_USER_PAGE_SIZES)[number]
+  )
+    ? Number(sp.pageSize)
+    : 10;
+  const filters = normaliseAdminUserFilters({
+    q: sp.q,
+    status: sp.status,
+    role: sp.role,
+    sort: sp.sort,
+  });
 
-  const where: Record<string, unknown> = {};
-  if (roleFilter !== "all") where.role = roleFilter;
-  if (statusFilter === "banned") where.banned = true;
-  if (statusFilter === "active") where.banned = false;
-  if (q) {
-    where.OR = [
-      { name: { contains: q, mode: "insensitive" } },
-      { email: { contains: q, mode: "insensitive" } },
-      { companyName: { contains: q, mode: "insensitive" } },
-      { country: { contains: q, mode: "insensitive" } },
-    ];
-  }
-
-  const orderBy = { [sort]: dir } as Record<string, "asc" | "desc">;
-
-  const [users, total] = await Promise.all([
-    prisma.user.findMany({
-      where,
-      orderBy,
-      skip: (page - 1) * pageSize,
-      take: pageSize,
-    }),
-    prisma.user.count({ where }),
+  const [counts, { users, total }] = await Promise.all([
+    getAdminUserCounts(),
+    getAdminUsers({ filters, page, pageSize }),
   ]);
+
+  const query: AdminUserQuery = {
+    ...filters,
+    page,
+    pageSize,
+  };
 
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h2 className="text-2xl font-bold">Users</h2>
-        <p className="text-sm text-muted-foreground">Manage platform users, bans, and access.</p>
+        <p className="text-sm text-muted-foreground">
+          Manage platform users, bans, and access.
+        </p>
       </div>
-      <UsersDataTable
+
+      <AdminUsersStats counts={counts} query={query} />
+      <AdminUsersFilters query={query} />
+      <AdminUsersTable
+        key={[
+          filters.q,
+          filters.status,
+          filters.role,
+          filters.sort,
+          page,
+          pageSize,
+        ].join("|")}
         users={users}
         total={total}
-        page={page}
-        pageSize={pageSize}
-        q={q}
-        role={roleFilter}
-        status={statusFilter}
-        sort={sort}
-        dir={dir}
+        query={query}
+        currentUserId={admin.id}
       />
     </div>
   );

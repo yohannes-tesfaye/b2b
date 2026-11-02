@@ -6,6 +6,7 @@ import {
   Clock,
   Package,
   Plus,
+  UserRound,
 } from "lucide-react";
 import { RoleBadges } from "@/components/dashboard/role-badges";
 import { ListingStatusBadge } from "@/components/dashboard/listing-status-badge";
@@ -20,6 +21,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { requireOwnDashboard } from "@/lib/dashboard-access";
 import { userDashboardPath } from "@/lib/dashboard-paths";
+import { isOnboardingComplete } from "@/lib/profile";
 import {
   categoryLabel,
   daysLeftLabel,
@@ -58,28 +60,41 @@ export default async function UserDashboardPage({
       value: listings.length,
       icon: Package,
       hint: "All listings you have created",
+      href: `${base}/listings`,
+      active: true,
+      highlight: true,
     },
     {
       label: "Active",
       value: active,
       icon: CheckCircle2,
       hint: "Live and visible to buyers",
+      href: `${base}/listings?status=active`,
+      active: false,
+      highlight: false,
     },
     {
       label: "Pending approval",
       value: pending,
       icon: Clock,
       hint: "Waiting for an admin review",
+      href: `${base}/listings?status=pending`,
+      active: false,
+      highlight: false,
     },
     {
       label: "Expiring soon",
       value: expiringSoon,
       icon: CalendarClock,
       hint: "Active and ending in 7 days",
+      href: `${base}/listings?status=active`,
+      active: false,
+      highlight: false,
     },
   ];
 
   const firstName = user.name?.trim().split(/\s+/)[0] || "there";
+  const profileComplete = isOnboardingComplete(user);
 
   return (
     <div className="flex flex-col gap-6">
@@ -109,24 +124,78 @@ export default async function UserDashboardPage({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      {!profileComplete ? (
+        <Card className="border-primary/30">
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
+            <div className="flex items-center gap-3">
+              <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <UserRound className="size-4" aria-hidden="true" />
+              </span>
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium">Complete your profile</p>
+                <p className="text-xs text-muted-foreground">
+                  Add your company, phone, country and business category so
+                  buyers and suppliers can reach you.
+                </p>
+              </div>
+            </div>
+            <Button
+              render={<Link href={`${base}/profile`} />}
+              variant="outline"
+              size="sm"
+              nativeButton={false}
+            >
+              Finish setup
+              <ArrowRight />
+            </Button>
+          </CardContent>
+        </Card>
+      ) : null}
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
-            <Card key={stat.label}>
-              <CardHeader className="flex flex-row items-start justify-between gap-3 pb-1">
-                <div className="space-y-1">
-                  <CardDescription>{stat.label}</CardDescription>
-                  <div className="text-3xl font-bold">{stat.value}</div>
-                </div>
-                <span className="flex size-9 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                  <Icon className="size-4" aria-hidden="true" />
-                </span>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-muted-foreground">{stat.hint}</p>
-              </CardContent>
-            </Card>
+            <Link
+              key={stat.label}
+              href={stat.href}
+              className="rounded-xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <Card
+                className={
+                  stat.highlight
+                    ? "h-full ring-2 ring-primary/50 transition-colors"
+                    : "h-full transition-colors hover:bg-muted/40"
+                }
+              >
+                <CardContent className="flex items-start justify-between gap-3">
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {stat.label}
+                    </p>
+                    <p
+                      className={
+                        stat.highlight
+                          ? "text-3xl font-semibold text-primary"
+                          : "text-3xl font-semibold"
+                      }
+                    >
+                      {stat.value}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{stat.hint}</p>
+                  </div>
+                  <span
+                    className={
+                      stat.highlight
+                        ? "flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary"
+                        : "flex size-9 items-center justify-center rounded-lg bg-muted text-muted-foreground"
+                    }
+                  >
+                    <Icon className="size-4" aria-hidden="true" />
+                  </span>
+                </CardContent>
+              </Card>
+            </Link>
           );
         })}
       </div>
