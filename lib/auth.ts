@@ -50,7 +50,10 @@ export const auth = betterAuth({
     minPasswordLength: 8,
     sendResetPassword: async ({ user, url }) => {
       // TODO: send this through an email provider (e.g. Resend)
-      console.log(`Password reset for ${user.email}: ${url}`);
+      // Only print the reset URL in development; never leak it in prod logs.
+      if (process.env.NODE_ENV !== "production") {
+        console.log(`Password reset for ${user.email}: ${url}`);
+      }
     },
   },
   socialProviders,
