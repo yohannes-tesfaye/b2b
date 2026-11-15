@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
 import { ac, adminRoles, roles } from "@/lib/permissions";
 import { getSiteOrigin, getSiteUrl } from "@/lib/site-url";
 
@@ -49,11 +50,11 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     sendResetPassword: async ({ user, url }) => {
-      // TODO: send this through an email provider (e.g. Resend)
-      // Only print the reset URL in development; never leak it in prod logs.
-      if (process.env.NODE_ENV !== "production") {
-        console.log(`Password reset for ${user.email}: ${url}`);
-      }
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your password",
+        html: `<p>Hi ${user.name ?? ""},</p><p>Reset your password: <a href="${url}">${url}</a></p>`,
+      });
     },
   },
   socialProviders,

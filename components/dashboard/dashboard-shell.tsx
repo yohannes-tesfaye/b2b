@@ -46,30 +46,6 @@ const coreItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Users", url: "/dashboard/user", icon: Users },
   { title: "Listings", url: "/dashboard/listing", icon: ClipboardList },
-  { title: "Marketplace", url: "/marketplace", icon: Store },
-  { title: "Contacts", url: "/contacts", icon: Users },
-];
-
-const analyticsItems = [
-  { title: "Analytics", url: "/analytics", icon: BarChart3 },
-  { title: "Reports", url: "/reports", icon: FileText },
-];
-
-const communicationsItems = [
-  { title: "Messages", url: "/messages", icon: MessageSquare },
-  { title: "Notifications", url: "/notifications", icon: Bell },
-];
-
-const accountItems = [
-  { title: "Company", url: "/company", icon: Home },
-  { title: "Reviews", url: "/reviews", icon: Star },
-  { title: "Membership", url: "/membership", icon: CreditCard },
-  { title: "Verification", url: "/verification", icon: Shield },
-];
-
-const settingsItems = [
-  { title: "Support", url: "/support", icon: HelpCircle },
-  { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 type SidebarItem = {
@@ -158,10 +134,7 @@ export function DashboardShell({
                 : item
             )
           )}
-          {renderGroup("ANALYTICS", analyticsItems)}
-          {renderGroup("COMMUNICATIONS", communicationsItems)}
-          {renderGroup("ACCOUNT", accountItems)}
-          {renderGroup("SETTINGS", settingsItems)}
+
         </SidebarContent>
         <SidebarFooter>
           <SidebarUserFooter user={user} />

@@ -45,7 +45,7 @@ export function QuickShortcuts() {
           </Link>
         ))}
       </div>
-      <Link href="/settings">
+      <Link href="#">
         <Card className="border-border/50 bg-card hover:shadow-md hover:-translate-y-0.5 hover:border-primary/50 transition-all duration-200 cursor-pointer">
           <CardContent className="p-4 flex items-center gap-3">
             <div className="p-3 rounded-full bg-primary/10 text-primary">

@@ -65,7 +65,7 @@ export function CommsAndAlerts() {
           </TabsList>
           <TabsContent value="messages" className="space-y-3 mt-4">
             {messages.map((message) => (
-              <Link key={message.id} href="/messages">
+              <Link key={message.id} href="#">
                 <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
                   <Avatar className="h-9 w-9">
                     <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
@@ -87,7 +87,7 @@ export function CommsAndAlerts() {
               </Link>
             ))}
             <Link
-              href="/messages"
+              href="#"
               className="block text-center text-sm text-primary hover:text-primary/80 transition-colors mt-2"
             >
               View All Messages

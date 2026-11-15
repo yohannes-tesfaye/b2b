@@ -77,14 +77,14 @@ const Header = () => {
               <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="w-96">
-                  <ListItem href="/docs" title="Introduction">
+                  <ListItem href="#" title="Introduction">
                     Re-usable components built with Tailwind CSS.
                   </ListItem>
-                  <ListItem href="/docs/installation" title="Installation">
+                  <ListItem href="#" title="Installation">
                     How to install dependencies and structure your app.
                   </ListItem>
                   <ListItem
-                    href="/docs/primitives/typography"
+                    href="#"
                     title="Typography"
                   >
                     Styles for headings, paragraphs, lists...etc
@@ -144,7 +144,7 @@ const Header = () => {
             <NavigationMenuItem>
               <NavigationMenuLink
                 className={navigationMenuTriggerStyle()}
-                render={<Link href="/docs">Docs</Link>}
+                render={<Link href="#">Docs</Link>}
               />
             </NavigationMenuItem>
           </NavigationMenuList>
