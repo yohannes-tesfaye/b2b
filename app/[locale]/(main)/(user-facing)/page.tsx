@@ -23,7 +23,7 @@ export default async function Home() {
     prisma.listing.findMany({
       where: { ...activeWhere, type: "wanted" },
       orderBy: { createdAt: "desc" },
-      take: 4,
+      take: 8,
     }),
   ]);
 

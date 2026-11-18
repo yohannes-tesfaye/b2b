@@ -21,19 +21,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import UserMenu from "@/components/Auth/UserMenu";
 import { useSession } from "@/lib/auth-client";
 import {
-  CircleAlertIcon,
-  CircleCheckIcon,
-  CircleDashedIcon,
 } from "lucide-react";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
 import {
   Drawer,
   DrawerClose,
@@ -127,12 +115,6 @@ const Header = () => {
                   }
                   icon={<Store className="h-[18px] w-[18px]" />}
                   label={t("sellOnHub")}
-                  onNavigate={closeMenu}
-                />
-                <MobileNavLink
-                  href="/contact"
-                  icon={<Mail className="h-[18px] w-[18px]" />}
-                  label="Contact us"
                   onNavigate={closeMenu}
                 />
               </nav>
@@ -252,17 +234,20 @@ const Header = () => {
               {t("brand")}
             </Link>
           </div>
-          <div className="mb-4 flex items-center gap-2 lg:m-0 lg:w-max">
+          <form
+            onSubmit={submitSearch}
+            className="mb-4 flex items-center gap-2 lg:m-0 lg:w-max"
+          >
             <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               placeholder={t("searchPlaceholder")}
               className="flex flex-1 md:min-w-[400px]"
             />
-            <Button variant="outline">{t("search")}</Button>
-            <div className="flex items-center gap-2 lg:hidden">
-              <LanguageSwitcher />
-              <UserMenu />
-            </div>
-          </div>
+            <Button variant="outline" type="submit">
+              {t("search")}
+            </Button>
+          </form>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
             <UserMenu />
@@ -284,88 +269,18 @@ const Header = () => {
         </div>
         <hr className="m-auto mb-1 w-[90%]" />
         <div className="m-auto flex w-[90%] items-center justify-between">
-          <NavigationMenu>
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>Getting started</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="w-96">
-                    <ListItem href="#" title="Introduction">
-                      Re-usable components built with Tailwind CSS.
-                    </ListItem>
-                    <ListItem href="#" title="Installation">
-                      How to install dependencies and structure your app.
-                    </ListItem>
-                    <ListItem href="#" title="Typography">
-                      Styles for headings, paragraphs, lists...etc
-                    </ListItem>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem className="hidden md:flex">
-                <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[400px] gap-2 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-                    {components.map((component) => (
-                      <ListItem
-                        key={component.title}
-                        title={component.title}
-                        href={component.href}
-                      >
-                        {component.description}
-                      </ListItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>With Icon</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid w-[200px]">
-                    <li>
-                      <NavigationMenuLink
-                        render={
-                          <Link href="#" className="flex-row items-center gap-2">
-                            <CircleAlertIcon />
-                            Backlog
-                          </Link>
-                        }
-                      />
-                      <NavigationMenuLink
-                        render={
-                          <Link href="#" className="flex-row items-center gap-2">
-                            <CircleDashedIcon />
-                            To Do
-                          </Link>
-                        }
-                      />
-                      <NavigationMenuLink
-                        render={
-                          <Link href="#" className="flex-row items-center gap-2">
-                            <CircleCheckIcon />
-                            Done
-                          </Link>
-                        }
-                      />
-                    </li>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuLink
-                  className={navigationMenuTriggerStyle()}
-                  render={<Link href="#">Docs</Link>}
-                />
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+          <nav className="flex items-center gap-1">
+            <DesktopNavLink href="/" label="Home" />
+            <DesktopNavLink href="/products" label="Products" />
+          </nav>
 
           <div className="flex items-center gap-2 text-[14px]">
-            <Link href="/products" className="hover:underline">
-              Products
+            <Link
+              href="/sign-up"
+              className="rounded-lg px-3 py-1.5 font-medium transition-colors hover:bg-muted"
+            >
+              {t("sellOnHub")}
             </Link>
-            <Link href={"/sign-up"}>{t("sellOnHub")}</Link>
-            <ChevronRight size={20} />
           </div>
         </div>
         <hr className="m-auto mt-1 w-[90%]" />
@@ -373,6 +288,17 @@ const Header = () => {
     </header>
   );
 };
+
+function DesktopNavLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="flex h-9 items-center rounded-lg px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-active:text-foreground"
+    >
+      {label}
+    </Link>
+  );
+}
 
 function MobileNavLink({
   href,
@@ -398,65 +324,5 @@ function MobileNavLink({
   );
 }
 
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
-  },
-  {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—one tab panel is displayed at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
-];
 
-function ListItem({
-  title,
-  children,
-  href,
-  ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
-  return (
-    <li {...props}>
-      <NavigationMenuLink
-        render={
-          <Link href={href}>
-            <div className="flex flex-col gap-1 text-sm">
-              <div className="font-medium leading-none">{title}</div>
-              <div className="line-clamp-2 text-muted-foreground">
-                {children}
-              </div>
-            </div>
-          </Link>
-        }
-      />
-    </li>
-  );
-}
 export default Header;
