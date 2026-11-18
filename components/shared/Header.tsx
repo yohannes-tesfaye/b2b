@@ -32,7 +32,9 @@ const Header = () => {
       <div className="flex justify-between flex-col lg:flex-row lg:w-[90%] w-[95%] m-auto py-5 ">
         <div className="flex justify-between gap-1 lg:gap-3 items-center lg:w-max m-auto lg:m-0 mb-4">
           <Globe />
-          <h1 className="text-3xl md:text-2xl">{t("brand")}</h1>
+          <Link href="/" className="text-3xl md:text-2xl font-bold hover:opacity-80 transition-opacity">
+            {t("brand")}
+          </Link>
         </div>
         <div className="flex justify-between gap-2 items-center lg:w-max m-auto lg:m-0 mb-4">
           <Input
@@ -151,6 +153,7 @@ const Header = () => {
         </NavigationMenu>
 
         <div className="flex items-center gap-2 text-[14px]">
+          <Link href="/marketplace" className="hover:underline">Marketplace</Link>
           <Link href={"/sign-up"}>{t("sellOnHub")}</Link>
           <ChevronRight size={20} />
         </div>
