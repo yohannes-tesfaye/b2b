@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { LISTING_CATEGORIES } from "@/lib/listings";
 import { ProductListingCard } from "@/components/product/product-listing-card";
 import { ProductFilters } from "@/components/product/product-filters";
 import { ProductPagination } from "@/components/product/product-pagination";
@@ -23,7 +24,10 @@ export default async function ProductPage({
 }) {
   const sp = await searchParams;
   const type = sp.type === "wanted" || sp.type === "available" ? sp.type : undefined;
-  const category = sp.category && sp.category !== "all" ? sp.category : undefined;
+  const allowed = new Set<string>(LISTING_CATEGORIES.map((c) => c.value));
+  const categories = sp.category
+    ? Array.from(new Set(sp.category.split(",").filter((c) => allowed.has(c))))
+    : [];
   const q = sp.q?.trim();
   const sort = sp.sort ?? "newest";
   const requestedPage = Number.parseInt(sp.page ?? "1", 10);
@@ -34,7 +38,7 @@ export default async function ProductPage({
   ];
 
   if (type) and.push({ type });
-  if (category) and.push({ category });
+  if (categories.length) and.push({ category: { in: categories } });
   if (q) {
     and.push({
       OR: [
@@ -111,7 +115,7 @@ export default async function ProductPage({
             totalPages={totalPages}
             query={{
               type,
-              category,
+              category: categories.join(",") || undefined,
               q,
               sort: sort !== "newest" ? sort : undefined,
             }}

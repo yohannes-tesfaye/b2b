@@ -42,8 +42,38 @@ export function ProductGallery({
   };
 
   return (
-    <div className="space-y-0 lg:space-y-3">
-      <div className="relative overflow-hidden bg-muted lg:rounded-2xl lg:border">
+    <div className="lg:flex lg:gap-3">
+      {/* Desktop: vertical thumbnail rail, Amazon-style */}
+      {images.length > 1 ? (
+        <div className="hidden w-20 shrink-0 flex-col gap-2 overflow-y-auto scrollbar-none lg:flex">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              type="button"
+              aria-label={`Show image ${i + 1}`}
+              onClick={() => scrollTo(i)}
+              className={cn(
+                "relative aspect-square w-full shrink-0 overflow-hidden rounded-lg border bg-muted transition-all",
+                i === index
+                  ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                  : "opacity-75 hover:opacity-100"
+              )}
+            >
+              <Image
+                src={img}
+                alt={`${title} thumbnail ${i + 1}`}
+                fill
+                sizes="80px"
+                className="object-cover"
+                unoptimized
+              />
+            </button>
+          ))}
+        </div>
+      ) : null}
+
+      {/* Main slider — swipe on phones, arrows everywhere */}
+      <div className="relative min-w-0 flex-1 overflow-hidden bg-muted lg:rounded-2xl lg:border">
         <div
           ref={trackRef}
           onScroll={onScroll}
@@ -58,7 +88,7 @@ export function ProductGallery({
                 src={img}
                 alt={`${title} ${i + 1}`}
                 fill
-                sizes="(max-width: 1024px) 100vw, 60vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 60vw"
                 className="object-cover"
                 unoptimized
                 priority={i === 0}
@@ -82,11 +112,13 @@ export function ProductGallery({
 
         {images.length > 1 ? (
           <>
-            <span className="absolute right-3 top-3 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium tabular-nums text-white backdrop-blur lg:bottom-3 lg:top-auto">
+            {/* Image counter */}
+            <span className="absolute bottom-6 right-3 rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium tabular-nums text-white backdrop-blur lg:bottom-4">
               {index + 1} / {images.length}
             </span>
 
-            <div className="absolute bottom-1 left-1/2 flex -translate-x-1/2 items-center gap-1 lg:hidden">
+            {/* Mobile dots */}
+            <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-1 lg:hidden">
               {images.map((_, i) => (
                 <button
                   key={i}
@@ -109,7 +141,7 @@ export function ProductGallery({
               type="button"
               aria-label="Previous image"
               onClick={() => scrollTo(Math.max(index - 1, 0))}
-              className="absolute left-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/85 shadow backdrop-blur transition-opacity disabled:opacity-40 lg:flex"
+              className="absolute left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/85 text-foreground shadow backdrop-blur transition-opacity disabled:opacity-40 lg:left-3"
               disabled={index === 0}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -118,7 +150,7 @@ export function ProductGallery({
               type="button"
               aria-label="Next image"
               onClick={() => scrollTo(Math.min(index + 1, images.length - 1))}
-              className="absolute right-3 top-1/2 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/85 shadow backdrop-blur transition-opacity disabled:opacity-40 lg:flex"
+              className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-background/85 text-foreground shadow backdrop-blur transition-opacity disabled:opacity-40 lg:right-3"
               disabled={index === images.length - 1}
             >
               <ChevronRight className="h-4 w-4" />
@@ -126,34 +158,6 @@ export function ProductGallery({
           </>
         ) : null}
       </div>
-
-      {images.length > 1 ? (
-        <div className="hidden grid-cols-6 gap-2.5 lg:grid">
-          {images.slice(0, 6).map((img, i) => (
-            <button
-              key={i}
-              type="button"
-              aria-label={`Show image ${i + 1}`}
-              onClick={() => scrollTo(i)}
-              className={cn(
-                "relative aspect-square overflow-hidden rounded-xl border bg-muted transition-all",
-                i === index
-                  ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                  : "opacity-75 hover:opacity-100"
-              )}
-            >
-              <Image
-                src={img}
-                alt={`${title} thumbnail ${i + 1}`}
-                fill
-                sizes="120px"
-                className="object-cover"
-                unoptimized
-              />
-            </button>
-          ))}
-        </div>
-      ) : null}
     </div>
   );
 }

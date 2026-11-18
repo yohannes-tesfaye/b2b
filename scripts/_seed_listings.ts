@@ -8,6 +8,13 @@ const prisma=new PrismaClient({adapter});
 const now = new Date();
 const addDays = (d: Date, days: number) => new Date(d.getTime() + days*86400000);
 
+const GALLERY = [
+  "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=800&auto=format&fit=crop&q=80",
+  "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&auto=format&fit=crop&q=80",
+];
+
 async function main() {
   // Remove placeholder/test listings
   const del = await prisma.listing.deleteMany({});
@@ -31,7 +38,7 @@ async function main() {
       price: "",
       deliveryOptions: "",
       technicalSpecs: "",
-      images: [],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 60),
     },
@@ -52,7 +59,7 @@ async function main() {
       price: "",
       deliveryOptions: "",
       technicalSpecs: "",
-      images: [],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 45),
     },
@@ -73,7 +80,7 @@ async function main() {
       price: "",
       deliveryOptions: "",
       technicalSpecs: "",
-      images: [],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 90),
     },
@@ -94,7 +101,7 @@ async function main() {
       price: "",
       deliveryOptions: "",
       technicalSpecs: "",
-      images: [],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 120),
     },
@@ -115,7 +122,7 @@ async function main() {
       price: "$5.20 per kg (FOB)",
       deliveryOptions: "FOB Djibouti, CIF available on request",
       technicalSpecs: "Moisture 10.5%, screen 16+, density 0.72g/ml",
-      images: ["https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&auto=format&fit=crop&q=80"],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 90),
     },
@@ -136,7 +143,7 @@ async function main() {
       price: "$210 per tire (FOB)",
       deliveryOptions: "FOB Santos, container shipping available",
       technicalSpecs: "Load index 154, speed rating A8, tubeless",
-      images: ["https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=800&auto=format&fit=crop&q=80"],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 60),
     },
@@ -157,7 +164,7 @@ async function main() {
       price: "Quote on request",
       deliveryOptions: "Door-to-door, port-to-port, DDP available",
       technicalSpecs: "Licensed customs broker, ISO 9001 certified",
-      images: [],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 365),
     },
@@ -178,7 +185,7 @@ async function main() {
       price: "$3.80 per meter (FOB)",
       deliveryOptions: "FOB Mumbai, air freight available",
       technicalSpecs: "Width 150cm, shrinkage <3%, color fastness 4-5",
-      images: ["https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=800&auto=format&fit=crop&q=80"],
+      images: GALLERY,
       status: "active",
       expiresAt: addDays(now, 90),
     },

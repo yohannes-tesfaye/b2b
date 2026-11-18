@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { LISTING_CATEGORIES as ALL_CATEGORIES } from "@/lib/listings";
+
+const CATEGORIES = ALL_CATEGORIES.map((c) => c.value);
 import {
   Select,
   SelectContent,
@@ -24,18 +35,6 @@ import {
 } from "@/components/ui/drawer";
 import { cn } from "cn";
 
-const CATEGORIES = [
-  "agriculture",
-  "automotive",
-  "chemicals",
-  "electronics",
-  "food-beverage",
-  "machinery",
-  "services",
-  "textiles",
-  "other",
-];
-
 const label = (c: string) =>
   c.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
 
@@ -46,8 +45,11 @@ export function ProductFilters() {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(sp.get("q") ?? "");
 
+  const currentParams = () =>
+    typeof window !== "undefined" ? window.location.search : sp.toString();
+
   const update = (key: string, value: string) => {
-    const params = new URLSearchParams(sp.toString());
+    const params = new URLSearchParams(currentParams());
     params.delete("page");
     if (value && value !== "all") params.set(key, value);
     else params.delete(key);
@@ -55,7 +57,7 @@ export function ProductFilters() {
   };
 
   const updateMany = (next: Record<string, string>) => {
-    const params = new URLSearchParams(sp.toString());
+    const params = new URLSearchParams(currentParams());
     params.delete("page");
     for (const [key, value] of Object.entries(next)) {
       if (value && value !== "all") params.set(key, value);
@@ -72,10 +74,28 @@ export function ProductFilters() {
   };
 
   const type = sp.get("type") ?? "all";
-  const category = sp.get("category") ?? "all";
+  const categoryParam = sp.get("category") ?? "";
+  const parseCategories = (value: string) =>
+    value ? Array.from(new Set(value.split(",").filter(Boolean))) : [];
+  const categoriesRef = useRef<string[]>(parseCategories(categoryParam));
+  const lastCategoryParam = useRef(categoryParam);
+  if (lastCategoryParam.current !== categoryParam) {
+    lastCategoryParam.current = categoryParam;
+    categoriesRef.current = parseCategories(categoryParam);
+  }
+  const categories = categoriesRef.current;
   const sort = sp.get("sort") ?? "newest";
   const activeCount =
-    [type, category].filter((v) => v !== "all").length + (sp.get("q") ? 1 : 0);
+    (type === "all" ? 0 : 1) + (categories.length ? 1 : 0) + (sp.get("q") ? 1 : 0);
+
+  const toggleCategory = (c: string) => {
+    const current = categoriesRef.current;
+    const next = current.includes(c)
+      ? current.filter((x) => x !== c)
+      : [...current, c];
+    categoriesRef.current = next;
+    update("category", next.join(","));
+  };
 
   return (
     <div className="space-y-3">
@@ -183,10 +203,11 @@ export function ProductFilters() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => update("category", "all")}
+                    aria-pressed={categories.length === 0}
+                    onClick={() => update("category", "")}
                     className={cn(
                       "h-10 rounded-full border px-3 text-xs font-medium",
-                      category === "all"
+                      categories.length === 0
                         ? "border-primary bg-primary/10 text-primary"
                         : "active:bg-muted"
                     )}
@@ -197,10 +218,11 @@ export function ProductFilters() {
                     <button
                       key={c}
                       type="button"
-                      onClick={() => update("category", c)}
+                      aria-pressed={categories.includes(c)}
+                      onClick={() => toggleCategory(c)}
                       className={cn(
                         "h-10 rounded-full border px-3 text-xs font-medium",
-                        category === c
+                        categories.includes(c)
                           ? "border-primary bg-primary/10 text-primary"
                           : "active:bg-muted"
                       )}
@@ -261,8 +283,8 @@ export function ProductFilters() {
       {/* Quick category chips (mobile) */}
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-0.5 scrollbar-none lg:hidden">
         <QuickChip
-          active={category === "all" && type === "all"}
-          onClick={() => updateMany({ type: "all", category: "all" })}
+          active={categories.length === 0 && type === "all"}
+          onClick={() => updateMany({ type: "all", category: "" })}
         >
           All
         </QuickChip>
@@ -279,8 +301,8 @@ export function ProductFilters() {
         {CATEGORIES.map((c) => (
           <QuickChip
             key={c}
-            active={category === c}
-            onClick={() => update("category", c)}
+            active={categories.includes(c)}
+            onClick={() => toggleCategory(c)}
           >
             {label(c)}
           </QuickChip>
@@ -300,19 +322,40 @@ export function ProductFilters() {
           </SelectContent>
         </Select>
 
-        <Select value={category} onValueChange={(v) => v && update("category", v)}>
-          <SelectTrigger className="w-full lg:w-44">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All categories</SelectItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="outline"
+                className="h-9 w-44 justify-between font-normal"
+              />
+            }
+          >
+            {categories.length
+              ? `${categories.length} categor${categories.length === 1 ? "y" : "ies"}`
+              : "All categories"}
+            <ChevronDown className="h-4 w-4 opacity-60" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-52">
+            <DropdownMenuLabel>Categories</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuCheckboxItem
+              checked={categories.length === 0}
+              onCheckedChange={() => update("category", "")}
+            >
+              All categories
+            </DropdownMenuCheckboxItem>
             {CATEGORIES.map((c) => (
-              <SelectItem key={c} value={c}>
+              <DropdownMenuCheckboxItem
+                key={c}
+                checked={categories.includes(c)}
+                onCheckedChange={() => toggleCategory(c)}
+              >
                 {label(c)}
-              </SelectItem>
+              </DropdownMenuCheckboxItem>
             ))}
-          </SelectContent>
-        </Select>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <Select value={sort} onValueChange={(v) => v && update("sort", v)}>
           <SelectTrigger className="w-full lg:w-40">
