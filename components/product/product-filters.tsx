@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,7 @@ export function ProductFilters() {
   const sp = useSearchParams();
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState(sp.get("q") ?? "");
+  const pendingCategoryRef = useRef<string | null>(null);
 
   const currentParams = () =>
     typeof window !== "undefined" ? window.location.search : sp.toString();
@@ -70,31 +71,31 @@ export function ProductFilters() {
 
   const clear = () => {
     setQ("");
+    pendingCategoryRef.current = "";
     router.replace(pathname);
   };
 
   const type = sp.get("type") ?? "all";
   const categoryParam = sp.get("category") ?? "";
-  const parseCategories = (value: string) =>
+  const parseCategories = (value: string | null) =>
     value ? Array.from(new Set(value.split(",").filter(Boolean))) : [];
-  const categoriesRef = useRef<string[]>(parseCategories(categoryParam));
-  const lastCategoryParam = useRef(categoryParam);
-  if (lastCategoryParam.current !== categoryParam) {
-    lastCategoryParam.current = categoryParam;
-    categoriesRef.current = parseCategories(categoryParam);
-  }
-  const categories = categoriesRef.current;
+
+  useEffect(() => {
+    pendingCategoryRef.current = null;
+  }, [categoryParam]);
+
+  const categories = parseCategories(categoryParam);
   const sort = sp.get("sort") ?? "newest";
   const activeCount =
     (type === "all" ? 0 : 1) + (categories.length ? 1 : 0) + (sp.get("q") ? 1 : 0);
 
   const toggleCategory = (c: string) => {
-    const current = categoriesRef.current;
+    const current = parseCategories(pendingCategoryRef.current ?? categoryParam);
     const next = current.includes(c)
       ? current.filter((x) => x !== c)
       : [...current, c];
-    categoriesRef.current = next;
-    update("category", next.join(","));
+    pendingCategoryRef.current = next.join(",");
+    update("category", pendingCategoryRef.current);
   };
 
   return (
@@ -204,7 +205,10 @@ export function ProductFilters() {
                   <button
                     type="button"
                     aria-pressed={categories.length === 0}
-                    onClick={() => update("category", "")}
+                    onClick={() => {
+                      pendingCategoryRef.current = "";
+                      update("category", "");
+                    }}
                     className={cn(
                       "h-10 rounded-full border px-3 text-xs font-medium",
                       categories.length === 0
@@ -284,7 +288,10 @@ export function ProductFilters() {
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-0.5 scrollbar-none lg:hidden">
         <QuickChip
           active={categories.length === 0 && type === "all"}
-          onClick={() => updateMany({ type: "all", category: "" })}
+          onClick={() => {
+            pendingCategoryRef.current = "";
+            updateMany({ type: "all", category: "" });
+          }}
         >
           All
         </QuickChip>
@@ -324,6 +331,7 @@ export function ProductFilters() {
 
         <DropdownMenu>
           <DropdownMenuTrigger
+            nativeButton
             render={
               <Button
                 variant="outline"

@@ -52,6 +52,7 @@ export function ProductListingCard({
             }
             className="object-cover transition-transform duration-500 ease-out sm:group-hover:scale-105"
             unoptimized
+            loading="eager"
           />
           <div
             className={cn(

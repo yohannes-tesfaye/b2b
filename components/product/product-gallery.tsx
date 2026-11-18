@@ -91,6 +91,7 @@ export function ProductGallery({
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 60vw"
                 className="object-cover"
                 unoptimized
+                loading={i === 0 ? "eager" : undefined}
                 priority={i === 0}
               />
             </div>
