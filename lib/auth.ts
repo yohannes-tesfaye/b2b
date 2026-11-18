@@ -42,7 +42,7 @@ export const auth = betterAuth({
     // Keep localhost trusted during development (e.g. hitting the API
     // from a non-standard port).
     ...(process.env.NODE_ENV !== "production"
-      ? ["http://localhost:3000"]
+      ? ["http://localhost:3000", "http://localhost:3010"]
       : []),
   ],
   database: prismaAdapter(prisma, { provider: "postgresql" }),
