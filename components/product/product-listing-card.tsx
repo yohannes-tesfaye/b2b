@@ -41,6 +41,11 @@ export function ProductListingCard({ listing }: { listing: ListingRow }) {
           <Badge className="absolute right-3 top-3 bg-background/90 text-foreground shadow-md backdrop-blur">
             {categoryLabel(listing.category)}
           </Badge>
+          {listing.images && listing.images.length > 1 ? (
+            <Badge className="absolute bottom-3 right-3 bg-black/60 text-white shadow-md backdrop-blur">
+              {listing.images.length} photos
+            </Badge>
+          ) : null}
         </div>
 
         <CardContent className="flex flex-1 flex-col gap-2 p-4">

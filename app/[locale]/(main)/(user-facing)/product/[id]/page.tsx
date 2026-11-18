@@ -9,8 +9,21 @@ import {
 } from "@/lib/listings";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { Globe, Package, Calendar, MapPin } from "lucide-react";
+import {
+  Globe,
+  Package,
+  Calendar,
+  MapPin,
+  Eye,
+  MessageSquare,
+  Star,
+  ShieldCheck,
+  Building2,
+  Link as LinkIcon,
+} from "lucide-react";
+import { Link } from "@/i18n/navigation";
 
 export default async function ProductDetailPage({
   params,
@@ -18,15 +31,36 @@ export default async function ProductDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const listing = await prisma.listing.findUnique({ where: { id } });
+  const listing = await prisma.listing.findUnique({
+    where: { id },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          companyName: true,
+          country: true,
+          industry: true,
+          image: true,
+          email: true,
+          role: true,
+        },
+      },
+    },
+  });
   if (!listing) notFound();
 
-  const image = listing.images?.[0];
+  // best-effort view counter
+  void prisma.listing
+    .update({ where: { id }, data: { views: { increment: 1 } } })
+    .catch(() => {});
+
+  const images = listing.images?.length ? listing.images : [];
   const isWanted = listing.type === "wanted";
+  const owner = listing.user;
 
   return (
     <div className="mx-auto max-w-6xl space-y-8 px-4 py-8">
-      {/* Breadcrumb-ish header */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           <Badge
@@ -59,13 +93,30 @@ export default async function ProductDetailPage({
           <span className="font-medium text-foreground">
             {daysLeftLabel(listing.expiresAt)}
           </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Eye className="h-4 w-4" /> {listing.views} views
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <MessageSquare className="h-4 w-4" /> {listing.inquiries} inquiries
+          </span>
         </div>
       </div>
 
-      {/* Hero image */}
-      {image ? (
-        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-muted shadow-lg">
-          <Image src={image} alt={listing.title} fill className="object-cover" unoptimized />
+      {/* Image gallery */}
+      {images.length ? (
+        <div className="space-y-3">
+          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-muted shadow-lg">
+            <Image src={images[0]} alt={listing.title} fill className="object-cover" unoptimized />
+          </div>
+          {images.length > 1 ? (
+            <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+              {images.slice(1).map((img, i) => (
+                <div key={i} className="relative aspect-square overflow-hidden rounded-lg bg-muted">
+                  <Image src={img} alt={`${listing.title} ${i + 2}`} fill className="object-cover" unoptimized />
+                </div>
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : (
         <div className="flex aspect-[16/9] w-full items-center justify-center rounded-2xl bg-muted text-muted-foreground">
@@ -74,7 +125,6 @@ export default async function ProductDetailPage({
       )}
 
       <div className="grid gap-6 md:grid-cols-3">
-        {/* Description + specs */}
         <Card className="md:col-span-2 overflow-hidden">
           <CardHeader className="border-b bg-muted/30">
             <h2 className="text-lg font-semibold">Description</h2>
@@ -91,21 +141,83 @@ export default async function ProductDetailPage({
                   <Spec label="Delivery timeline" value={listing.deliveryTimeline} />
                   <Spec label="Preferred region" value={listing.preferredRegion} />
                   <Spec label="Budget range" value={listing.budgetRange} />
-                  <Spec label="Technical document" value={listing.technicalDocument} />
+                  <Spec
+                    label="Technical document"
+                    value={listing.technicalDocument}
+                    link
+                  />
                 </>
               ) : (
                 <>
                   <Spec label="Price" value={listing.price} />
+                  <Spec label="Currency" value={listing.currency} />
+                  <Spec label="Min. order qty" value={listing.moq} />
+                  <Spec label="Incoterms" value={listing.incoterms} />
+                  <Spec label="Country of origin" value={listing.originCountry} />
                   <Spec label="Delivery options" value={listing.deliveryOptions} />
+                  <Spec label="Certifications" value={listing.certifications} />
                   <Spec label="Technical specs" value={listing.technicalSpecs} />
                 </>
               )}
             </div>
+
+            {listing.technicalDocument ? (
+              <a
+                href={listing.technicalDocument}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+              >
+                <LinkIcon className="h-4 w-4" /> Open technical document
+              </a>
+            ) : null}
           </CardContent>
         </Card>
 
-        {/* Sidebar summary */}
         <div className="space-y-6">
+          {/* Owner card */}
+          {owner ? (
+            <Card>
+              <CardHeader className="border-b bg-muted/30">
+                <h2 className="text-lg font-semibold">
+                  {isWanted ? "Buyer" : "Supplier"}
+                </h2>
+              </CardHeader>
+              <CardContent className="space-y-3 p-6 text-sm">
+                <div className="flex items-center gap-3">
+                  {owner.image ? (
+                    <Image
+                      src={owner.image}
+                      alt={owner.name ?? ""}
+                      width={48}
+                      height={48}
+                      className="h-12 w-12 rounded-full object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted text-lg font-semibold">
+                      {(owner.name ?? "?").charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{owner.name || "Unnamed"}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {owner.companyName || "—"}
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-2 border-t pt-3">
+                  <Row label="Country" value={owner.country} />
+                  <Row label="Industry" value={owner.industry} />
+                  <Row label="Role" value={owner.role} />
+                </div>
+                <div className="flex items-center gap-2 text-xs text-emerald-600">
+                  <ShieldCheck className="h-4 w-4" /> Verified trader
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
           <Card>
             <CardHeader className="border-b bg-muted/30">
               <h2 className="text-lg font-semibold">Summary</h2>
@@ -138,9 +250,12 @@ export default async function ProductDetailPage({
 
           <Card>
             <CardContent className="flex flex-col gap-3 p-6">
-              <button className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+              <a
+                href={owner?.email ? `mailto:${owner.email}` : "#"}
+                className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+              >
                 Contact {isWanted ? "buyer" : "supplier"}
-              </button>
+              </a>
               <button className="inline-flex h-11 w-full items-center justify-center rounded-lg border text-sm font-semibold transition-colors hover:bg-muted">
                 Save listing
               </button>
@@ -152,12 +267,33 @@ export default async function ProductDetailPage({
   );
 }
 
-function Spec({ label, value }: { label: string; value: string | null }) {
+function Spec({ label, value, link }: { label: string; value: string | null; link?: boolean }) {
   if (!value) return null;
   return (
     <div>
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
-      <p className="whitespace-pre-line font-medium">{value}</p>
+      {link ? (
+        <a
+          href={value}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="break-all font-medium text-primary hover:underline"
+        >
+          {value}
+        </a>
+      ) : (
+        <p className="whitespace-pre-line font-medium">{value}</p>
+      )}
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string | null }) {
+  if (!value) return null;
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="truncate font-medium">{value}</span>
     </div>
   );
 }

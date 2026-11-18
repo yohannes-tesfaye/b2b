@@ -29,6 +29,11 @@ function parseListingForm(formData: FormData) {
     price: String(formData.get("price") ?? ""),
     deliveryOptions: String(formData.get("deliveryOptions") ?? ""),
     technicalSpecs: String(formData.get("technicalSpecs") ?? ""),
+    currency: String(formData.get("currency") ?? ""),
+    moq: String(formData.get("moq") ?? ""),
+    certifications: String(formData.get("certifications") ?? ""),
+    incoterms: String(formData.get("incoterms") ?? ""),
+    originCountry: String(formData.get("originCountry") ?? ""),
   });
 }
 
@@ -58,6 +63,11 @@ function listingPayload(values: ListingFormValues) {
     price: wanted ? null : values.price,
     deliveryOptions: wanted ? null : values.deliveryOptions,
     technicalSpecs: wanted ? null : values.technicalSpecs || null,
+    currency: wanted ? null : values.currency || null,
+    moq: wanted ? null : values.moq || null,
+    certifications: wanted ? null : values.certifications || null,
+    incoterms: wanted ? null : values.incoterms || null,
+    originCountry: wanted ? null : values.originCountry || null,
   };
 }
 
