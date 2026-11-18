@@ -1,204 +1,163 @@
-import { getTranslations } from "next-intl/server";
-import { ProductGallery } from "@/components/shared/product/ProductGallery";
-import { ProductInfo } from "@/components/shared/product/ProductInfo";
-import { SupplierCard } from "@/components/shared/product/SupplierCard";
-import { KeySpecifications } from "@/components/shared/product/KeySpecifications";
-import { ProductTabs } from "@/components/shared/product/ProductTabs";
-import { ContactSection } from "@/components/shared/product/ContactSection";
-import { FAQSection } from "@/components/shared/product/FAQSection";
-import { Product } from "@/types/product";
-import { PRODUCT_DEMO_IMAGES } from "@/lib/product-demo";
+import { notFound } from "next/navigation";
+import { prisma } from "@/lib/prisma";
+import {
+  categoryLabel,
+  daysLeftLabel,
+  effectiveStatus,
+  formatListingDate,
+  typeLabel,
+} from "@/lib/listings";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import Image from "next/image";
+import { Globe, Package, Calendar, MapPin } from "lucide-react";
 
-export default async function ProductPage({
+export default async function ProductDetailPage({
   params,
 }: {
-  params: Promise<{ id: string; locale: string }>;
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const t = await getTranslations("product");
+  const listing = await prisma.listing.findUnique({ where: { id } });
+  if (!listing) notFound();
 
-  // TODO: Fetch product by `id` from API; demo copy is localized for now
-  void id;
-
-  const product: Product = {
-    id,
-    title: t("demo.title"),
-    images: [...PRODUCT_DEMO_IMAGES],
-    priceRange: { min: 4.2, max: 6.8 },
-    currency: "USD",
-    moq: 300,
-    variants: [
-      {
-        id: "1",
-        name: t("demo.variants.grade1"),
-        price: 6.8,
-        inStock: true,
-      },
-      {
-        id: "2",
-        name: t("demo.variants.grade2"),
-        price: 5.4,
-        inStock: true,
-      },
-      {
-        id: "3",
-        name: t("demo.variants.ground"),
-        price: 4.2,
-        inStock: false,
-      },
-    ],
-    specifications: [
-      {
-        label: t("demo.specifications.origin.label"),
-        value: t("demo.specifications.origin.value"),
-      },
-      {
-        label: t("demo.specifications.variety.label"),
-        value: t("demo.specifications.variety.value"),
-      },
-      {
-        label: t("demo.specifications.process.label"),
-        value: t("demo.specifications.process.value"),
-      },
-      {
-        label: t("demo.specifications.moisture.label"),
-        value: t("demo.specifications.moisture.value"),
-      },
-      {
-        label: t("demo.specifications.packaging.label"),
-        value: t("demo.specifications.packaging.value"),
-      },
-      {
-        label: t("demo.specifications.certification.label"),
-        value: t("demo.specifications.certification.value"),
-      },
-    ],
-    supplier: {
-      id: "1",
-      name: t("demo.supplier.name"),
-      logo: "☕",
-      country: t("demo.supplier.country"),
-      countryFlag: "🇪🇹",
-      verified: true,
-      rating: 4.8,
-      responseRate: "98%",
-      responseTime: t("demo.supplier.responseTime"),
-      joinedDate: t("demo.supplier.joinedDate"),
-      badges: [
-        t("demo.supplier.badges.gold"),
-        t("demo.supplier.badges.assurance"),
-      ],
-      contactEmail: "sales@highlandharvest.et",
-      contactPhone: "+251 911 234 567",
-    },
-    description: t("demo.description"),
-    fullSpecs: [
-      {
-        label: t("demo.fullSpecs.productName.label"),
-        value: t("demo.fullSpecs.productName.value"),
-      },
-      {
-        label: t("demo.fullSpecs.brand.label"),
-        value: t("demo.fullSpecs.brand.value"),
-      },
-      {
-        label: t("demo.fullSpecs.model.label"),
-        value: t("demo.fullSpecs.model.value"),
-      },
-      {
-        label: t("demo.fullSpecs.grade.label"),
-        value: t("demo.fullSpecs.grade.value"),
-      },
-      {
-        label: t("demo.fullSpecs.altitude.label"),
-        value: t("demo.fullSpecs.altitude.value"),
-      },
-      {
-        label: t("demo.fullSpecs.screenSize.label"),
-        value: t("demo.fullSpecs.screenSize.value"),
-      },
-      {
-        label: t("demo.fullSpecs.cuppingScore.label"),
-        value: t("demo.fullSpecs.cuppingScore.value"),
-      },
-      {
-        label: t("demo.fullSpecs.packaging.label"),
-        value: t("demo.fullSpecs.packaging.value"),
-      },
-      {
-        label: t("demo.fullSpecs.shelfLife.label"),
-        value: t("demo.fullSpecs.shelfLife.value"),
-      },
-      {
-        label: t("demo.fullSpecs.certification.label"),
-        value: t("demo.fullSpecs.certification.value"),
-      },
-      {
-        label: t("demo.fullSpecs.origin.label"),
-        value: t("demo.fullSpecs.origin.value"),
-      },
-      {
-        label: t("demo.fullSpecs.moq.label"),
-        value: t("demo.fullSpecs.moq.value"),
-      },
-      {
-        label: t("demo.fullSpecs.supplyAbility.label"),
-        value: t("demo.fullSpecs.supplyAbility.value"),
-      },
-    ],
-    advantages: [
-      t("demo.advantages.a1"),
-      t("demo.advantages.a2"),
-      t("demo.advantages.a3"),
-      t("demo.advantages.a4"),
-      t("demo.advantages.a5"),
-      t("demo.advantages.a6"),
-    ],
-    faqs: [
-      {
-        question: t("demo.faqs.q1.question"),
-        answer: t("demo.faqs.q1.answer"),
-      },
-      {
-        question: t("demo.faqs.q2.question"),
-        answer: t("demo.faqs.q2.answer"),
-      },
-      {
-        question: t("demo.faqs.q3.question"),
-        answer: t("demo.faqs.q3.answer"),
-      },
-      {
-        question: t("demo.faqs.q4.question"),
-        answer: t("demo.faqs.q4.answer"),
-      },
-    ],
-  };
+  const image = listing.images?.[0];
+  const isWanted = listing.type === "wanted";
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-12">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
-          <ProductGallery images={product.images} title={product.title} />
+    <div className="mx-auto max-w-6xl space-y-8 px-4 py-8">
+      {/* Breadcrumb-ish header */}
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge
+            className={
+              isWanted
+                ? "bg-blue-600 text-white hover:bg-blue-700"
+                : "bg-emerald-600 text-white hover:bg-emerald-700"
+            }
+          >
+            {typeLabel(listing.type)}
+          </Badge>
+          <Badge variant="outline">{categoryLabel(listing.category)}</Badge>
+          <Badge variant="outline" className="capitalize">
+            {effectiveStatus(listing)}
+          </Badge>
         </div>
-        <div className="lg:col-span-1">
-          <ProductInfo product={product} />
-        </div>
-        <div className="lg:col-span-1">
-          <SupplierCard supplier={product.supplier} />
+        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+          {listing.title}
+        </h1>
+        <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin className="h-4 w-4" /> {listing.location}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Package className="h-4 w-4" /> {listing.quantity}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Calendar className="h-4 w-4" /> {formatListingDate(listing.createdAt)}
+          </span>
+          <span className="font-medium text-foreground">
+            {daysLeftLabel(listing.expiresAt)}
+          </span>
         </div>
       </div>
 
-      <KeySpecifications specifications={product.specifications} />
+      {/* Hero image */}
+      {image ? (
+        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-muted shadow-lg">
+          <Image src={image} alt={listing.title} fill className="object-cover" unoptimized />
+        </div>
+      ) : (
+        <div className="flex aspect-[16/9] w-full items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+          No image available
+        </div>
+      )}
 
-      <ProductTabs
-        description={product.description}
-        fullSpecs={product.fullSpecs}
-        advantages={product.advantages}
-      />
+      <div className="grid gap-6 md:grid-cols-3">
+        {/* Description + specs */}
+        <Card className="md:col-span-2 overflow-hidden">
+          <CardHeader className="border-b bg-muted/30">
+            <h2 className="text-lg font-semibold">Description</h2>
+          </CardHeader>
+          <CardContent className="space-y-5 p-6 text-sm leading-relaxed">
+            <p className="whitespace-pre-line">{listing.description}</p>
 
-      <ContactSection />
+            <div className="grid grid-cols-2 gap-4 rounded-xl border bg-muted/20 p-4">
+              <Spec label="Quantity" value={listing.quantity} />
+              <Spec label="Location" value={listing.location} />
+              {isWanted ? (
+                <>
+                  <Spec label="Quality standard" value={listing.qualityStandard} />
+                  <Spec label="Delivery timeline" value={listing.deliveryTimeline} />
+                  <Spec label="Preferred region" value={listing.preferredRegion} />
+                  <Spec label="Budget range" value={listing.budgetRange} />
+                  <Spec label="Technical document" value={listing.technicalDocument} />
+                </>
+              ) : (
+                <>
+                  <Spec label="Price" value={listing.price} />
+                  <Spec label="Delivery options" value={listing.deliveryOptions} />
+                  <Spec label="Technical specs" value={listing.technicalSpecs} />
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-      <FAQSection faqs={product.faqs} />
+        {/* Sidebar summary */}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader className="border-b bg-muted/30">
+              <h2 className="text-lg font-semibold">Summary</h2>
+            </CardHeader>
+            <CardContent className="space-y-3 p-6 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Type</span>
+                <span className="font-medium">{typeLabel(listing.type)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Category</span>
+                <span className="font-medium">{categoryLabel(listing.category)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Status</span>
+                <span className="font-medium capitalize">{effectiveStatus(listing)}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Duration</span>
+                <span className="font-medium">{listing.durationDays} days</span>
+              </div>
+              <div className="border-t pt-3">
+                <p className="text-xs text-muted-foreground">Price / Budget</p>
+                <p className="text-xl font-bold text-foreground">
+                  {isWanted ? listing.budgetRange || "—" : listing.price || "—"}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="flex flex-col gap-3 p-6">
+              <button className="inline-flex h-11 w-full items-center justify-center rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
+                Contact {isWanted ? "buyer" : "supplier"}
+              </button>
+              <button className="inline-flex h-11 w-full items-center justify-center rounded-lg border text-sm font-semibold transition-colors hover:bg-muted">
+                Save listing
+              </button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Spec({ label, value }: { label: string; value: string | null }) {
+  if (!value) return null;
+  return (
+    <div>
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p className="whitespace-pre-line font-medium">{value}</p>
     </div>
   );
 }

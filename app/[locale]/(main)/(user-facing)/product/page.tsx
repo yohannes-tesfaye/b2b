@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { effectiveStatus } from "@/lib/listings";
-import { MarketplaceCard } from "@/components/marketplace/marketplace-card";
-import { MarketplaceFilters } from "@/components/marketplace/marketplace-filters";
+import { ProductListingCard } from "@/components/product/product-listing-card";
+import { ProductFilters } from "@/components/product/product-filters";
 
 type SearchParams = Promise<{
   type?: string;
@@ -10,7 +10,7 @@ type SearchParams = Promise<{
   sort?: string;
 }>;
 
-export default async function MarketplacePage({
+export default async function ProductPage({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -49,13 +49,13 @@ export default async function MarketplacePage({
   return (
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Products</h1>
         <p className="text-muted-foreground">
           Browse wanted and available listings from verified traders worldwide.
         </p>
       </div>
 
-      <MarketplaceFilters />
+      <ProductFilters />
 
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
@@ -66,7 +66,7 @@ export default async function MarketplacePage({
       {active.length ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {active.map((listing) => (
-            <MarketplaceCard key={listing.id} listing={listing} />
+            <ProductListingCard key={listing.id} listing={listing} />
           ))}
         </div>
       ) : (

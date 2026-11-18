@@ -24,7 +24,7 @@ const CATEGORIES = [
   "other",
 ];
 
-export function MarketplaceFilters() {
+export function ProductFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -41,7 +41,7 @@ export function MarketplaceFilters() {
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search listings, locations..."
+          placeholder="Search products, locations..."
           defaultValue={sp.get("q") ?? ""}
           className="pl-9"
           onKeyDown={(e) => {
