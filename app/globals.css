@@ -162,5 +162,20 @@
   }
   html {
     @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
   }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+footer ul a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
 }

@@ -45,7 +45,7 @@ export default function ThemeSwitcher() {
         if (value) setTheme(value);
       }}
     >
-      <SelectTrigger size="sm" className="text-xs" aria-label={t("theme")}>
+      <SelectTrigger size="sm" className="text-xs h-10" aria-label={t("theme")}>
         <SelectValue placeholder={t("theme")}>
           {(value: ThemeValue | null) => {
             const option = THEME_OPTIONS.find((o) => o.value === value);

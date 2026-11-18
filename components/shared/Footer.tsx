@@ -178,7 +178,7 @@ function Footer() {
               <li>
                 <Link
                   href="#"
-                  className="hover:text-white transition-colors"
+                  className="inline-flex min-h-10 min-w-10 items-center hover:text-white transition-colors"
                 >
                   FAQ
                 </Link>
