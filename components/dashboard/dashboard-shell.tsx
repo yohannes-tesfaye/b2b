@@ -22,18 +22,7 @@ import {
 import UserMenu from "@/components/Auth/UserMenu";
 import {
   LayoutDashboard,
-  Store,
   Users,
-  BarChart3,
-  FileText,
-  MessageSquare,
-  Bell,
-  Home,
-  Star,
-  CreditCard,
-  Shield,
-  HelpCircle,
-  Settings,
   Search,
   Plus,
   Building2,
