@@ -1,16 +1,17 @@
 "use client";
 import { useTranslations } from "next-intl";
-import { ProductListingCard } from "@/components/product/product-listing-card";
-import type { ListingRow } from "@/types/listing";
+import { ProductCard } from "./ProductCard";
+import { PRODUCT_CARD_IMAGES } from "@/lib/product-demo";
 
-export default function ProductSectionSupplier({
-  listings,
-}: {
-  listings: ListingRow[];
-}) {
+export default function ProductSectionSupplier() {
   const t = useTranslations("product");
 
-  if (!listings.length) return null;
+  const cards = [
+    { id: "9", flag: "https://flagcdn.com/w40/et.png" },
+    { id: "10", flag: "https://flagcdn.com/w40/et.png" },
+    { id: "11", flag: "https://flagcdn.com/w40/et.png" },
+    { id: "12", flag: "https://flagcdn.com/w40/et.png" },
+  ] as const;
 
   return (
     <div className="w-full px-4 mt-20">
@@ -20,10 +21,20 @@ export default function ProductSectionSupplier({
         })}
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-        {listings.map((listing) => (
-          <ProductListingCard key={listing.id} listing={listing} />
+        {cards.map((card) => (
+          <ProductCard
+            key={card.id}
+            id={card.id}
+            type="supplier"
+            title={t(`cards.${card.id}.title`)}
+            country={t(`cards.${card.id}.country`)}
+            countryFlag={card.flag}
+            imageUrl={PRODUCT_CARD_IMAGES[card.id]}
+            rating={4.5 + Number(card.id) * 0.05}
+          />
         ))}
       </div>
     </div>
   );
 }
+

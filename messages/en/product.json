@@ -42,9 +42,9 @@
     "message": "Message",
     "messagePlaceholder": "Tell us about your inquiry...",
     "sendMessage": "Send Message",
-    "supplierSectionTitle": "Available <highlight>Products</highlight> from Verified Suppliers",
+    "supplierSectionTitle": "Agriculture and Food Product <highlight>Supplier</highlight> (Available)",
     "supplierHighlight": "Supplier",
-    "wantedSectionTitle": "Wanted <highlight>Goods</highlight> — Active Buyer Requests",
+    "wantedSectionTitle": "Agriculture and Food Product <highlight>Buyer Request</highlight> (Wanted)",
     "wantedHighlight": "Buyer Request",
     "demo": {
       "title": "Premium Ethiopian Arabica Coffee Beans — Grade 1 Export",

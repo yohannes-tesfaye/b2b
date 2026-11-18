@@ -42,9 +42,9 @@
     "message": "መልእክት",
     "messagePlaceholder": "ስለ ጥያቄዎ ይንገሩን...",
     "sendMessage": "መልእክት ላክ",
-    "supplierSectionTitle": "ከተረጋገጡ <highlight>አቅራቢዎች</highlight> የሚገኙ ምርቶች",
+    "supplierSectionTitle": "የግብርናና የምግብ ምርት <highlight>አቅራቢ</highlight> (ይገኛል)",
     "supplierHighlight": "አቅራቢ",
-    "wantedSectionTitle": "የሚፈለጉ <highlight>ዕቃዎች</highlight> — ንቁ የገዥ ጥያቄዎች",
+    "wantedSectionTitle": "የግብርናና የምግብ ምርት <highlight>የገዥ ጥያቄ</highlight> (ፍላጎት)",
     "wantedHighlight": "የገዥ ጥያቄ",
     "demo": {
       "title": "ከፍተኛ ጥራት ያለው የኢትዮጵያ አረቢካ ቡና ፍሬ — ደረጃ 1 ኤክስፖርት",

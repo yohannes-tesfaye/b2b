@@ -8,6 +8,7 @@ import {
   typeLabel,
 } from "@/lib/listings";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ProductListingCard } from "@/components/product/product-listing-card";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductShareSave } from "@/components/product/product-share-save";
@@ -30,6 +31,7 @@ import {
   MessageSquare,
   Package,
   ShieldCheck,
+  Star,
   Truck,
 } from "lucide-react";
 
@@ -212,6 +214,14 @@ export default async function ProductDetailPage({
                   />
                 </div>
 
+                <div className="hidden lg:block">
+                  <ContactActions
+                    email={owner?.email}
+                    title={listing.title}
+                    isWanted={isWanted}
+                  />
+                </div>
+
                 <p className="hidden items-center justify-center gap-1.5 text-xs text-muted-foreground lg:flex">
                   <ShieldCheck className="h-4 w-4 text-emerald-600" />
                   Verified trader · Response within 24h
@@ -276,18 +286,25 @@ export default async function ProductDetailPage({
                     ) : null}
                   </div>
 
-                  {/* Contact + email actions live in the seller card on all breakpoints */}
-                  <div className="mt-4 border-t pt-4">
+                  {/* Mobile: contact actions live here (replaces the floating bar) */}
+                  <div className="mt-4 lg:hidden">
                     <ContactActions
                       email={owner?.email}
                       title={listing.title}
                       isWanted={isWanted}
                     />
-                    <p className="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-                      Reply within 24h · No account required
-                    </p>
                   </div>
+
+                  {/* Desktop: keep a compact profile link */}
+                  <Button
+                    variant="ghost"
+                    className="mt-3 hidden h-9 w-full rounded-xl text-xs font-medium text-muted-foreground lg:flex"
+                    render={<Link href={`/${owner.id}/dashboard`} />}
+                    nativeButton={false}
+                  >
+                    View full profile
+                    <Star className="h-3.5 w-3.5" />
+                  </Button>
                 </section>
               ) : null}
           </div>

@@ -39,6 +39,16 @@ export function ContactActions({
 
   const role = isWanted ? "buyer" : "supplier";
 
+  const directEmail = () => {
+    if (!email) {
+      toast.error("Contact email is not available");
+      return;
+    }
+    window.location.href = `mailto:${email}?subject=${encodeURIComponent(
+      `Inquiry about "${title}"`
+    )}`;
+  };
+
   const copyEmail = async () => {
     if (!email) return;
     try {
@@ -72,10 +82,19 @@ export function ContactActions({
 
   return (
     <>
-      {/* Single contact button — lives inside the seller card */}
-      <Button className="h-11 w-full" onClick={() => setOpen(true)}>
-        <MessageSquare className="h-4 w-4" /> Contact {role}
-      </Button>
+      {/* Inline actions (desktop + mobile seller card) */}
+      <div className="flex flex-col gap-2">
+        <Button className="h-11 w-full" onClick={() => setOpen(true)}>
+          <MessageSquare className="h-4 w-4" /> Contact {role}
+        </Button>
+        <Button
+          variant="outline"
+          className="h-11 w-full"
+          onClick={directEmail}
+        >
+          <Mail className="h-4 w-4" /> Email {role}
+        </Button>
+      </div>
 
       <Drawer open={open} onOpenChange={setOpen}>
         <DrawerContent>
