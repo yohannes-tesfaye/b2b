@@ -17,7 +17,7 @@ export function ProductListingCard({ listing }: { listing: ListingRow }) {
       : listing.budgetRange || "Budget on request";
 
   return (
-    <Link href={`/product/${listing.id}`} className="group block">
+    <Link href={`/products/${listing.id}`} className="group block">
       <Card className="flex h-full flex-col overflow-hidden border-border/60 bg-card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:border-primary/40">
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
           <Image

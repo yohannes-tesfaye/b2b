@@ -153,7 +153,7 @@ const Header = () => {
         </NavigationMenu>
 
         <div className="flex items-center gap-2 text-[14px]">
-          <Link href="/product" className="hover:underline">Products</Link>
+          <Link href="/products" className="hover:underline">Products</Link>
           <Link href={"/sign-up"}>{t("sellOnHub")}</Link>
           <ChevronRight size={20} />
         </div>
