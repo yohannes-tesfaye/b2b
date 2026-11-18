@@ -113,7 +113,7 @@ export function ProductFilters() {
             render={
               <Button
                 variant="outline"
-                className="relative h-11 shrink-0 rounded-xl px-3"
+                className="relative h-11 shrink-0 rounded-xl px-3 lg:hidden"
                 aria-label="Filters and sorting"
               />
             }

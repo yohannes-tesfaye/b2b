@@ -135,7 +135,7 @@ export default async function ProductDetailPage({
         <ProductShareSave listingId={listing.id} title={listing.title} />
       </div>
 
-      <div className="lg:grid lg:grid-cols-5 lg:items-start lg:gap-8">
+      <div className="lg:grid lg:grid-cols-5 lg:gap-8">
         <div className="lg:order-1 lg:col-span-3">
           <ProductGallery
             images={images}
@@ -146,7 +146,7 @@ export default async function ProductDetailPage({
         </div>
 
         <div className="relative z-10 -mt-5 rounded-t-3xl bg-background px-4 pt-5 lg:order-2 lg:col-span-2 lg:row-span-2 lg:mt-0 lg:rounded-none lg:bg-transparent lg:px-0 lg:pt-0">
-          <div className="space-y-5 lg:sticky lg:top-6">
+          <div className="space-y-5 lg:sticky lg:top-8">
               <section className="space-y-4 lg:rounded-2xl lg:border lg:bg-card lg:p-6">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <Badge variant="outline" className="rounded-full">
