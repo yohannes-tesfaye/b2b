@@ -91,14 +91,6 @@ export const deleteAccountSchema = z.object({
     .min(1, { message: "validation.deleteConfirmRequired" }),
 });
 
-export type SignUpValues = z.infer<typeof signUpSchema>;
-export type LogInValues = z.infer<typeof logInSchema>;
-export type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
-export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
-export type OnboardingValues = z.infer<typeof onboardingSchema>;
-export type BusinessFieldsValues = z.infer<typeof businessFieldsSchema>;
-export type ProfileValues = z.infer<typeof profileSchema>;
-export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
 
 /**
  * Normalised shape every auth Server Action returns to `useActionState`.

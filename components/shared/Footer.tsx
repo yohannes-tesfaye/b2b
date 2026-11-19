@@ -27,12 +27,12 @@ function Footer() {
           </div>
           <p className="text-xs mt-4 leading-relaxed text-white/80">
             We respect your privacy. View our{" "}
-            <Link href="/privacy-policy" className="underline hover:text-white">
+            <Link href="#" className="underline hover:text-white">
               Privacy Policy
             </Link>{" "}
             and{" "}
             <Link
-              href="/terms-and-conditions"
+              href="#"
               className="underline hover:text-white"
             >
               Terms & Conditions
@@ -60,7 +60,7 @@ function Footer() {
             <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
-                  href="/privacy-policy"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Privacy Policy
@@ -68,7 +68,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/terms-and-conditions"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Terms & Conditions
@@ -76,7 +76,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/cookie-settings"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Cookie Settings
@@ -84,7 +84,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/help-center"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Help Center
@@ -99,7 +99,7 @@ function Footer() {
             <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
-                  href="/sell"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Sell on GlobalTradeHUB
@@ -107,7 +107,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/sell-services"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Sell Your Services
@@ -115,7 +115,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/business"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Sell on Business
@@ -123,7 +123,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/affiliate"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Become an Affiliate
@@ -138,7 +138,7 @@ function Footer() {
             <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
-                  href="/careers"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Careers
@@ -146,7 +146,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/about"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   About GlobalTradeHUB
@@ -154,7 +154,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/investor-relations"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Investor Relations
@@ -162,7 +162,7 @@ function Footer() {
               </li>
               <li>
                 <Link
-                  href="/sustainability"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Sustainability
@@ -177,28 +177,28 @@ function Footer() {
             <ul className="space-y-3 text-sm text-white/90">
               <li>
                 <Link
-                  href="/faq"
-                  className="hover:text-white transition-colors"
+                  href="#"
+                  className="inline-flex min-h-10 min-w-10 items-center hover:text-white transition-colors"
                 >
                   FAQ
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/track-order"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Track Order
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors">
+                <Link href="#" className="hover:text-white transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/about-us"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   About Us

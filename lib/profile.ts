@@ -7,23 +7,6 @@ export const PROFILE_ROLE_VALUES = [
   "trade-service-provider",
 ] as const;
 
-export const INDUSTRY_VALUES = [
-  "agriculture",
-  "automotive",
-  "electronics",
-  "machinery",
-  "textiles",
-  "other",
-] as const;
-
-export const COMPANY_SIZE_VALUES = [
-  "1-10",
-  "11-50",
-  "51-200",
-  "201-500",
-  "500+",
-] as const;
-
 export type ProfileRole = (typeof PROFILE_ROLE_VALUES)[number];
 
 export type RoleMeta = {

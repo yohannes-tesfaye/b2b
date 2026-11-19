@@ -31,7 +31,7 @@ export function RecentActivity() {
         <CardTitle className="text-base font-semibold">
           Recent Activity
         </CardTitle>
-        <Link href="/activity">
+        <Link href="#">
           <Button
             variant="ghost"
             size="sm"

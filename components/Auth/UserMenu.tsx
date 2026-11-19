@@ -18,16 +18,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-function UserMenu() {
+function UserMenu({ compact = false }: { compact?: boolean }) {
   const t = useTranslations("header");
   const { data: session, isPending } = useSession();
   const router = useRouter();
 
   if (isPending) {
-    return <Skeleton className="h-9 w-20" />;
+    return <Skeleton className="h-9 w-9 rounded-full sm:h-9 sm:w-20" />;
   }
 
   if (!session) {
+    if (compact) {
+      return (
+        <Button
+          variant="ghost"
+          size="icon-lg"
+          className="h-10 w-10 rounded-xl"
+          aria-label={t("signIn")}
+          render={<Link href="/log-in" />}
+          nativeButton={false}
+        >
+          <UserRound className="h-5 w-5" />
+        </Button>
+      );
+    }
     return (
       <div className="flex items-center gap-2">
         <Button variant="ghost">

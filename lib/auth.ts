@@ -3,6 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins/admin";
 import { prisma } from "@/lib/prisma";
+import { sendEmail } from "@/lib/email";
 import { ac, adminRoles, roles } from "@/lib/permissions";
 import { getSiteOrigin, getSiteUrl } from "@/lib/site-url";
 
@@ -41,7 +42,7 @@ export const auth = betterAuth({
     // Keep localhost trusted during development (e.g. hitting the API
     // from a non-standard port).
     ...(process.env.NODE_ENV !== "production"
-      ? ["http://localhost:3000"]
+      ? ["http://localhost:3000", "http://localhost:3010"]
       : []),
   ],
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -49,8 +50,11 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     sendResetPassword: async ({ user, url }) => {
-      // TODO: send this through an email provider (e.g. Resend)
-      console.log(`Password reset for ${user.email}: ${url}`);
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your password",
+        html: `<p>Hi ${user.name ?? ""},</p><p>Reset your password: <a href="${url}">${url}</a></p>`,
+      });
     },
   },
   socialProviders,

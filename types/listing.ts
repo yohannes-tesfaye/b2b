@@ -63,6 +63,11 @@ export type ListingRow = {
   technicalDocument: string | null;
   images: string[];
   price: string | null;
+  currency: string | null;
+  moq: string | null;
+  certifications: string | null;
+  incoterms: string | null;
+  originCountry: string | null;
   deliveryOptions: string | null;
   technicalSpecs: string | null;
   createdAt: Date;

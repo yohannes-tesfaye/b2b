@@ -7,7 +7,9 @@ export default function UserFacingLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
-      <TopHeader />
+      <div className="hidden md:block">
+        <TopHeader />
+      </div>
       <Header />
       {children}
       <Footer />

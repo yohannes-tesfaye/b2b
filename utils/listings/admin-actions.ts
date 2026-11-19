@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { addDays } from "@/lib/listings";
+import { sendEmail } from "@/lib/email";
 import { adminRoles } from "@/lib/permissions";
 import { parseRoles } from "@/lib/profile";
 import {
@@ -59,12 +60,13 @@ export async function approveListing(id: string): Promise<void> {
   const reviewer = await requireAdminUser();
   const now = new Date();
 
+  const listing = await prisma.listing.findUnique({
+    where: { id },
+    select: { id: true, status: true, durationDays: true, title: true, user: { select: { email: true, name: true } } },
+  });
+  if (!listing) throw new Error("Listing not found");
+
   await prisma.$transaction(async (tx) => {
-    const listing = await tx.listing.findUnique({
-      where: { id },
-      select: { id: true, status: true, durationDays: true },
-    });
-    if (!listing) throw new Error("Listing not found");
     assertTransition(listing.status, "active");
 
     await tx.listing.update({
@@ -89,7 +91,13 @@ export async function approveListing(id: string): Promise<void> {
     });
   });
 
-  // TODO: notify the listing owner that their listing was approved.
+  if (listing.user?.email) {
+    await sendEmail({
+      to: listing.user.email,
+      subject: "Your listing was approved",
+      html: `<p>Hi ${listing.user.name ?? ""},</p><p>Your listing "${listing.title}" has been approved and is now live.</p>`,
+    });
+  }
   revalidateAllListings();
 }
 
@@ -101,14 +109,14 @@ export async function rejectListing(id: string, reason: string): Promise<void> {
   }
   const now = new Date();
 
-  await prisma.$transaction(async (tx) => {
-    const listing = await tx.listing.findUnique({
-      where: { id },
-      select: { id: true, status: true },
-    });
-    if (!listing) throw new Error("Listing not found");
-    assertTransition(listing.status, "rejected");
+  const listing = await prisma.listing.findUnique({
+    where: { id },
+    select: { id: true, status: true, title: true, user: { select: { email: true, name: true } } },
+  });
+  if (!listing) throw new Error("Listing not found");
+  assertTransition(listing.status, "rejected");
 
+  await prisma.$transaction(async (tx) => {
     await tx.listing.update({
       where: { id },
       data: {
@@ -129,7 +137,13 @@ export async function rejectListing(id: string, reason: string): Promise<void> {
     });
   });
 
-  // TODO: notify the listing owner that their listing was rejected.
+  if (listing.user?.email) {
+    await sendEmail({
+      to: listing.user.email,
+      subject: "Your listing was rejected",
+      html: `<p>Hi ${listing.user.name ?? ""},</p><p>Your listing "${listing.title}" was rejected. Reason: ${parsed.data.reason}</p>`,
+    });
+  }
   revalidateAllListings();
 }
 
@@ -180,11 +194,12 @@ export async function bulkApproveListings(
   const listingIds = normaliseIds(ids);
   const now = new Date();
   let updated = 0;
+  let approved: { title: string; user: { email: string; name: string | null } | null }[] = [];
 
   await prisma.$transaction(async (tx) => {
     const listings = await tx.listing.findMany({
       where: { id: { in: listingIds }, status: "pending" },
-      select: { id: true, status: true, durationDays: true },
+      select: { id: true, status: true, durationDays: true, title: true, user: { select: { email: true, name: true } } },
     });
 
     for (const listing of listings) {
@@ -209,9 +224,18 @@ export async function bulkApproveListings(
     }
 
     updated = listings.length;
+    approved = listings.map((l) => ({ title: l.title, user: l.user }));
   });
 
-  // TODO: notify each listing owner that their listing was approved.
+  for (const l of approved) {
+    if (l.user?.email) {
+      await sendEmail({
+        to: l.user.email,
+        subject: "Your listing was approved",
+        html: `<p>Hi ${l.user.name ?? ""},</p><p>Your listing "${l.title}" has been approved and is now live.</p>`,
+      });
+    }
+  }
   revalidateAllListings();
   return { updated };
 }
@@ -229,10 +253,12 @@ export async function bulkRejectListings(
   const now = new Date();
   let updated = 0;
 
+  let rejected: { title: string; user: { email: string; name: string | null } | null }[] = [];
+
   await prisma.$transaction(async (tx) => {
     const listings = await tx.listing.findMany({
       where: { id: { in: listingIds }, status: "pending" },
-      select: { id: true, status: true },
+      select: { id: true, status: true, title: true, user: { select: { email: true, name: true } } },
     });
 
     for (const listing of listings) {
@@ -257,9 +283,18 @@ export async function bulkRejectListings(
     }
 
     updated = listings.length;
+    rejected = listings.map((l) => ({ title: l.title, user: l.user }));
   });
 
-  // TODO: notify each listing owner that their listing was rejected.
+  for (const l of rejected) {
+    if (l.user?.email) {
+      await sendEmail({
+        to: l.user.email,
+        subject: "Your listing was rejected",
+        html: `<p>Hi ${l.user.name ?? ""},</p><p>Your listing "${l.title}" was rejected. Reason: ${parsed.data.reason}</p>`,
+      });
+    }
+  }
   revalidateAllListings();
   return { updated };
 }

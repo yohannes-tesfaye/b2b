@@ -119,6 +119,11 @@ model Listing {
   // Available listing fields
   images          String[] @default([])
   price           String?
+  currency        String?
+  moq             String?
+  certifications  String?
+  incoterms       String?
+  originCountry   String?
   deliveryOptions String?
   technicalSpecs  String?
 

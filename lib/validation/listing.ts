@@ -55,6 +55,11 @@ export const listingSchema = z
 
     images: z.string().max(4000, "Image URLs are too long.").default(""),
     price: optionalText(120),
+    currency: optionalText(20),
+    moq: optionalText(120),
+    certifications: optionalText(500),
+    incoterms: optionalText(120),
+    originCountry: optionalText(120),
     deliveryOptions: optionalText(500),
     technicalSpecs: optionalText(3000),
   })
