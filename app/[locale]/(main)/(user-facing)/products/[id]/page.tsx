@@ -219,6 +219,7 @@ export default async function ProductDetailPage({
                     email={owner?.email}
                     title={listing.title}
                     isWanted={isWanted}
+                    variant="dialog"
                   />
                 </div>
 
