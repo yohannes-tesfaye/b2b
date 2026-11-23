@@ -15,6 +15,7 @@ import { ProductShareSave } from "@/components/product/product-share-save";
 import { ProductDescription } from "@/components/product/product-description";
 import { ProductSpecifications } from "@/components/product/product-specs";
 import { ContactActions } from "@/components/product/product-contact";
+import { FavoriteButton } from "@/components/product/favorite-button";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import {
@@ -57,6 +58,7 @@ export default async function ProductDetailPage({
           createdAt: true,
         },
       },
+      _count: { select: { conversations: true } },
     },
   });
   if (!listing) notFound();
@@ -173,7 +175,7 @@ export default async function ProductDetailPage({
                   </span>
                   <span className="inline-flex items-center gap-1">
                     <MessageSquare className="h-3.5 w-3.5" />{" "}
-                    {listing.inquiries} inquiries
+                    {listing._count?.conversations ?? listing.inquiries} inquiries
                   </span>
                 </div>
 
@@ -218,9 +220,11 @@ export default async function ProductDetailPage({
                   <ContactActions
                     email={owner?.email}
                     title={listing.title}
+                    listingId={listing.id}
                     isWanted={isWanted}
                     variant="dialog"
                   />
+                  <FavoriteButton listingId={listing.id} size="md" showLabel />
                 </div>
 
                 <p className="hidden items-center justify-center gap-1.5 text-xs text-muted-foreground lg:flex">
@@ -292,8 +296,12 @@ export default async function ProductDetailPage({
                     <ContactActions
                       email={owner?.email}
                       title={listing.title}
+                      listingId={listing.id}
                       isWanted={isWanted}
                     />
+                    <div className="mt-2">
+                      <FavoriteButton listingId={listing.id} size="md" />
+                    </div>
                   </div>
 
                   {/* Desktop: keep a compact profile link */}

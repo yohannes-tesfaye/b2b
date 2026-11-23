@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { categoryLabel, daysLeftLabel, typeLabel } from "@/lib/listings";
 import type { ListingRow } from "@/types/listing";
 import { cn } from "cn";
+import { FavoriteButton } from "@/components/product/favorite-button";
 
 const PLACEHOLDER =
   "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=600&auto=format&fit=crop&q=80";
@@ -69,10 +70,14 @@ export function ProductListingCard({
             {typeLabel(listing.type)}
           </Badge>
 
+          <div className="absolute right-2 top-2 sm:right-3 sm:top-3">
+            <FavoriteButton listingId={listing.id} size="sm" />
+          </div>
+
           {listing.images && listing.images.length > 1 ? (
             <span
               className={cn(
-                "absolute right-2 top-2 items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur",
+                "absolute right-2 bottom-2 items-center gap-1 rounded-full bg-black/55 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur",
                 isTile ? "inline-flex" : "hidden sm:inline-flex"
               )}
             >

@@ -29,15 +29,20 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { useActionState } from "react";
+import { startConversation } from "@/utils/inquiries/actions";
+import { initialInquiryFormState } from "@/lib/validation/inquiry";
 
 export function ContactActions({
   email,
   title,
+  listingId,
   isWanted,
   variant = "drawer",
 }: {
   email?: string | null;
   title: string;
+  listingId: string;
   isWanted: boolean;
   variant?: "drawer" | "dialog";
 }) {
@@ -45,6 +50,11 @@ export function ContactActions({
   const [name, setName] = useState("");
   const [buyerEmail, setBuyerEmail] = useState("");
   const [message, setMessage] = useState("");
+
+  const [state, formAction, isPending] = useActionState(
+    startConversation,
+    initialInquiryFormState
+  );
 
   const role = isWanted ? "buyer" : "supplier";
 
@@ -68,26 +78,10 @@ export function ContactActions({
     }
   };
 
-  const sendInquiry = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) {
-      toast.error("Contact email is not available");
-      return;
-    }
-    const subject = `Inquiry about "${title}"`;
-    const body = [
-      `Name: ${name}`,
-      `Email: ${buyerEmail}`,
-      "",
-      message ||
-        `I'm interested in "${title}". Please share pricing, availability and delivery details.`,
-    ].join("\n");
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(body)}`;
-    toast.success("Opening your email app…");
+  // Close the dialog/drawer on success.
+  if (state.status === "success" && open) {
     setOpen(false);
-  };
+  }
 
   const fields = (
     <>
@@ -122,6 +116,7 @@ export function ContactActions({
         </label>
         <Input
           id="inquiry-name"
+          name="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Full name"
@@ -141,6 +136,7 @@ export function ContactActions({
         <Input
           id="inquiry-email"
           type="email"
+          name="buyerEmail"
           value={buyerEmail}
           onChange={(e) => setBuyerEmail(e.target.value)}
           placeholder="you@company.com"
@@ -159,17 +155,21 @@ export function ContactActions({
         </label>
         <Textarea
           id="inquiry-message"
+          name="message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder={`Hello, I'm interested in "${title}". Please share your best price and lead time.`}
           rows={4}
           className="min-h-24 rounded-xl"
+          required
         />
       </div>
 
+      <input type="hidden" name="listingId" value={listingId} />
+
       <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
         <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-        Your message opens in your email app. No account required.
+        Your message is sent securely. No account required.
       </p>
     </>
   );
@@ -179,7 +179,7 @@ export function ContactActions({
       {/* Inline actions (desktop + mobile seller card) */}
       <div className="flex flex-col gap-2">
         <Button className="h-11 w-full" onClick={() => setOpen(true)}>
-          <MessageSquare className="h-4 w-4" /> Contact {role}
+          <MessageSquare className="h-4 w-4" /> Message {role}
         </Button>
         <Button
           variant="outline"
@@ -194,18 +194,23 @@ export function ContactActions({
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Contact {role}</DialogTitle>
+              <DialogTitle>Message {role}</DialogTitle>
               <DialogDescription className="line-clamp-2">
                 Send an inquiry about “{title}”.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={sendInquiry} className="flex flex-col gap-4">
+            <form action={formAction} className="flex flex-col gap-4">
               {fields}
+              {state.status === "error" && state.message ? (
+                <p className="text-sm text-destructive">{state.message}</p>
+              ) : null}
               <Button
                 type="submit"
                 className="h-11 w-full rounded-xl text-sm font-semibold"
+                disabled={isPending}
               >
-                <Send className="h-4 w-4" /> Send inquiry
+                <Send className="h-4 w-4" />{" "}
+                {isPending ? "Sending…" : "Send message"}
               </Button>
             </form>
           </DialogContent>
@@ -215,7 +220,7 @@ export function ContactActions({
           <DrawerContent>
             <DrawerHeader className="flex flex-row items-start justify-between">
               <div>
-                <DrawerTitle>Contact {role}</DrawerTitle>
+                <DrawerTitle>Message {role}</DrawerTitle>
                 <DrawerDescription className="line-clamp-2">
                   Send an inquiry about “{title}”.
                 </DrawerDescription>
@@ -234,17 +239,22 @@ export function ContactActions({
               </DrawerClose>
             </DrawerHeader>
 
-            <form onSubmit={sendInquiry} className="flex min-h-0 flex-1 flex-col">
+            <form action={formAction} className="flex min-h-0 flex-1 flex-col">
               <div className="flex-1 space-y-4 overflow-y-auto px-5 pb-4">
                 {fields}
+                {state.status === "error" && state.message ? (
+                  <p className="text-sm text-destructive">{state.message}</p>
+                ) : null}
               </div>
 
               <DrawerFooter className="border-t pb-[max(1.25rem,env(safe-area-inset-bottom))]">
                 <Button
                   type="submit"
                   className="h-11 w-full rounded-xl text-sm font-semibold"
+                  disabled={isPending}
                 >
-                  <Send className="h-4 w-4" /> Send inquiry
+                  <Send className="h-4 w-4" />{" "}
+                  {isPending ? "Sending…" : "Send message"}
                 </Button>
               </DrawerFooter>
             </form>

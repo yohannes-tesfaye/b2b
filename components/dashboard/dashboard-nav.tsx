@@ -1,20 +1,29 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { LayoutDashboard, Package, Plus, User } from "lucide-react";
+import { Heart, Inbox, LayoutDashboard, Package, Plus, User } from "lucide-react";
 import { cn } from "cn";
 import { userDashboardPath } from "@/lib/dashboard-paths";
 
-export function DashboardNav({ userId }: { userId: string }) {
+export function DashboardNav({
+  userId,
+  unreadCount = 0,
+}: {
+  userId: string;
+  unreadCount?: number;
+}) {
   const pathname = usePathname() || "";
   const base = userDashboardPath(userId);
   const listings = `${base}/listings`;
   const newListing = `${listings}/new`;
+  const messages = `${base}/messages`;
 
   const items = [
     { title: "Overview", url: base, icon: LayoutDashboard },
+    { title: "Messages", url: messages, icon: Inbox },
     { title: "My Listings", url: listings, icon: Package },
     { title: "New Listing", url: newListing, icon: Plus },
+    { title: "Favorites", url: `${base}/favorite`, icon: Heart },
     { title: "Profile", url: `${base}/profile`, icon: User },
   ];
 
@@ -46,6 +55,11 @@ export function DashboardNav({ userId }: { userId: string }) {
           >
             <Icon className="size-4" aria-hidden="true" />
             {item.title}
+            {item.url === messages && unreadCount > 0 ? (
+              <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-bold text-primary-foreground">
+                {unreadCount}
+              </span>
+            ) : null}
           </Link>
         );
       })}

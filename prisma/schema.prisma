@@ -34,6 +34,7 @@ model User {
   listings             Listing[]
   reviewedListings     Listing[]              @relation("ListingReviews")
   listingStatusChanges ListingStatusHistory[]
+  favorites            Favorite[]
   buyerConversations   Conversation[]         @relation("BuyerConversations")
   sellerConversations  Conversation[]         @relation("SellerConversations")
   messagesSent         Message[]
@@ -143,6 +144,7 @@ model Listing {
   statusHistory ListingStatusHistory[]
   tags          ListingTag[]
   conversations Conversation[]
+  favoritedBy   Favorite[]
 
   @@index([userId])
   @@index([status])
@@ -151,6 +153,23 @@ model Listing {
   @@index([reviewedById])
   @@index([countryCode])
   @@map("listing")
+}
+
+// ---------------------------------------------------------------------------
+// Favorites: a user's saved listings.
+// ---------------------------------------------------------------------------
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@index([userId])
+  @@index([listingId])
+  @@map("favorite")
 }
 
 model ListingStatusHistory {

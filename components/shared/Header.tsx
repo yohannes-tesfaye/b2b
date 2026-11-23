@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import {
   ChevronRight,
   Globe,
+  Heart,
   Home,
   Mail,
   Menu,
@@ -215,6 +216,18 @@ const Header = () => {
           >
             <Search className="h-5 w-5" />
           </Button>
+          {session ? (
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              className="h-10 w-10 rounded-xl"
+              aria-label="Favorites"
+              render={<Link href={`/${session.user.id}/dashboard/favorite`} />}
+              nativeButton={false}
+            >
+              <Heart className="h-5 w-5" />
+            </Button>
+          ) : null}
           <UserMenu compact />
         </div>
       </div>
@@ -265,6 +278,18 @@ const Header = () => {
           </div>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
+            {session ? (
+              <Button
+                variant="ghost"
+                size="icon-lg"
+                className="h-10 w-10 rounded-xl"
+                aria-label="Favorites"
+                render={<Link href={`/${session.user.id}/dashboard/favorite`} />}
+                nativeButton={false}
+              >
+                <Heart className="h-5 w-5 text-red-500" />
+              </Button>
+            ) : null}
             <UserMenu />
             <Button
               render={
