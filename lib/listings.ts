@@ -39,6 +39,12 @@ export const LISTING_STATUS_VALUES: ListingStatus[] = [
   "closed",
 ];
 
+export type CategoryOption = {
+  value: string;
+  label: string;
+  sortOrder: number;
+};
+
 export const LISTING_CATEGORIES = [
   { value: "agriculture", label: "Agriculture" },
   { value: "automotive", label: "Automotive" },
@@ -51,6 +57,19 @@ export const LISTING_CATEGORIES = [
   { value: "other", label: "Other" },
 ] as const;
 
+/**
+ * Display names coming from the `category` table (see lib/taxonomy.ts).
+ *
+ * Server code primes this once per request so nested server components render
+ * the database names. Client bundles never receive it and keep using the static
+ * list above, which is also the fallback when the table is empty.
+ */
+let categoryNames: Record<string, string> | null = null;
+
+export function setCategoryNameMap(names: Record<string, string>) {
+  categoryNames = names;
+}
+
 export const ROLE_LABELS: Record<string, string> = {
   buyer: "Buyer",
   supplier: "Supplier",
@@ -62,6 +81,7 @@ export const ROLE_LABELS: Record<string, string> = {
 export function categoryLabel(value: string | null | undefined): string {
   if (!value) return "—";
   return (
+    categoryNames?.[value] ??
     LISTING_CATEGORIES.find((category) => category.value === value)?.label ??
     value
   );

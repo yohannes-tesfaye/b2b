@@ -1,6 +1,10 @@
 import { z } from "zod";
+import { normalizeCountryCode } from "@/lib/countries";
+import { parseTagSlugs } from "@/lib/slug";
 
 const optionalText = (max: number) => z.string().trim().max(max).default("");
+
+const MAX_TAGS = 8;
 
 const urlPattern = /^https?:\/\/[^\s]+$/i;
 
@@ -41,6 +45,23 @@ export const listingSchema = z
       .trim()
       .min(1, "Enter a location.")
       .max(120, "Location must be 120 characters or fewer."),
+    countryCode: z
+      .string()
+      .trim()
+      .max(60)
+      .default("")
+      .transform((value) => normalizeCountryCode(value) ?? "")
+      .refine((value) => value === "" || /^[A-Z]{2}$/.test(value), {
+        message: "Select a valid country.",
+      }),
+    tags: z
+      .string()
+      .trim()
+      .max(300, "Tags are too long.")
+      .default("")
+      .refine((value) => parseTagSlugs(value, MAX_TAGS + 1).length <= MAX_TAGS, {
+        message: `Add up to ${MAX_TAGS} tags.`,
+      }),
     durationDays: z.coerce
       .number()
       .int("Enter a whole number of days.")

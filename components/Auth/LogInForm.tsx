@@ -18,7 +18,7 @@ import {
   type Translate,
 } from "@/lib/validation/auth";
 
-function LogInForm() {
+function LogInForm({ next }: { next?: string }) {
   const t = useTranslations("auth");
   const translate = t as unknown as Translate;
   const [state, formAction] = useActionState(logIn, initialFormState);
@@ -54,6 +54,7 @@ function LogInForm() {
       className="flex flex-col gap-4"
     >
       <LocaleField />
+      {next ? <input type="hidden" name="next" value={next} /> : null}
       <h1 className="text-2xl font-semibold">{t("logIn")}</h1>
       <Field className="gap-2" data-invalid={Boolean(errors.email)}>
         <FieldLabel htmlFor="email">{t("email")}</FieldLabel>

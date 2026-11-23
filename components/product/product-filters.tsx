@@ -13,9 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LISTING_CATEGORIES as ALL_CATEGORIES } from "@/lib/listings";
-
-const CATEGORIES = ALL_CATEGORIES.map((c) => c.value);
+import type { CategoryOption } from "@/lib/listings";
 import {
   Select,
   SelectContent,
@@ -35,10 +33,23 @@ import {
 } from "@/components/ui/drawer";
 import { cn } from "cn";
 
-const label = (c: string) =>
-  c.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
+export type ProductFilterOption = { value: string; label: string };
 
-export function ProductFilters() {
+function formatLabel(value: string) {
+  return value.replace(/-/g, " ").replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+export function ProductFilters({
+  categories,
+  industries,
+  tags,
+  countries,
+}: {
+  categories: CategoryOption[];
+  industries: ProductFilterOption[];
+  tags: Array<{ slug: string; name: string; count: number }>;
+  countries: Array<ProductFilterOption & { count: number }>;
+}) {
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
@@ -84,10 +95,18 @@ export function ProductFilters() {
     pendingCategoryRef.current = null;
   }, [categoryParam]);
 
-  const categories = parseCategories(categoryParam);
+  const selectedCategories = parseCategories(categoryParam);
   const sort = sp.get("sort") ?? "newest";
+  const country = sp.get("country") ?? "all";
+  const industry = sp.get("industry") ?? "all";
+  const tag = sp.get("tag") ?? "";
   const activeCount =
-    (type === "all" ? 0 : 1) + (categories.length ? 1 : 0) + (sp.get("q") ? 1 : 0);
+    (type === "all" ? 0 : 1) +
+    (selectedCategories.length ? 1 : 0) +
+    (sp.get("q") ? 1 : 0) +
+    (country === "all" ? 0 : 1) +
+    (industry === "all" ? 0 : 1) +
+    (tag ? 1 : 0);
 
   const toggleCategory = (c: string) => {
     const current = parseCategories(pendingCategoryRef.current ?? categoryParam);
@@ -98,6 +117,44 @@ export function ProductFilters() {
     update("category", pendingCategoryRef.current);
   };
 
+  const categoryChips = (compact = false) => (
+    <div className="flex flex-wrap gap-2">
+      <button
+        type="button"
+        aria-pressed={selectedCategories.length === 0}
+        onClick={() => {
+          pendingCategoryRef.current = "";
+          update("category", "");
+        }}
+        className={cn(
+          "h-10 rounded-full border px-3 text-xs font-medium",
+          selectedCategories.length === 0
+            ? "border-primary bg-primary/10 text-primary"
+            : "active:bg-muted"
+        )}
+      >
+        All
+      </button>
+      {categories.map((c) => (
+        <button
+          key={c.value}
+          type="button"
+          aria-pressed={selectedCategories.includes(c.value)}
+          onClick={() => toggleCategory(c.value)}
+          className={cn(
+            "h-10 rounded-full border px-3 text-xs font-medium",
+            selectedCategories.includes(c.value)
+              ? "border-primary bg-primary/10 text-primary"
+              : "active:bg-muted",
+            compact && "h-8 px-2.5"
+          )}
+        >
+          {c.label || formatLabel(c.value)}
+        </button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="space-y-3">
       {/* Search + filter trigger */}
@@ -105,7 +162,7 @@ export function ProductFilters() {
         <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            placeholder="Search products, locations..."
+            placeholder="Search products, categories, tags, locations..."
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => {
@@ -201,39 +258,78 @@ export function ProductFilters() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Category
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    aria-pressed={categories.length === 0}
-                    onClick={() => {
-                      pendingCategoryRef.current = "";
-                      update("category", "");
-                    }}
-                    className={cn(
-                      "h-10 rounded-full border px-3 text-xs font-medium",
-                      categories.length === 0
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "active:bg-muted"
-                    )}
+                {categoryChips()}
+              </div>
+
+              {tags.length ? (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Tags
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {tags.map((t) => (
+                      <button
+                        key={t.slug}
+                        type="button"
+                        aria-pressed={tag === t.slug}
+                        onClick={() => update("tag", tag === t.slug ? "" : t.slug)}
+                        className={cn(
+                          "h-10 rounded-full border px-3 text-xs font-medium",
+                          tag === t.slug
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "active:bg-muted"
+                        )}
+                      >
+                        {t.name}
+                        <span className="ml-1 text-muted-foreground">{t.count}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Country
+                  </p>
+                  <Select
+                    value={country}
+                    onValueChange={(v) => v && update("country", v)}
                   >
-                    All
-                  </button>
-                  {CATEGORIES.map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      aria-pressed={categories.includes(c)}
-                      onClick={() => toggleCategory(c)}
-                      className={cn(
-                        "h-10 rounded-full border px-3 text-xs font-medium",
-                        categories.includes(c)
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "active:bg-muted"
-                      )}
-                    >
-                      {label(c)}
-                    </button>
-                  ))}
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All countries</SelectItem>
+                      {countries.map((c) => (
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    Industry
+                  </p>
+                  <Select
+                    value={industry}
+                    onValueChange={(v) => v && update("industry", v)}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Industry" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All industries</SelectItem>
+                      {industries.map((i) => (
+                        <SelectItem key={i.value} value={i.value}>
+                          {i.label || formatLabel(i.value)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -241,11 +337,12 @@ export function ProductFilters() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                   Sort by
                 </p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {[
                     { value: "newest", label: "Newest" },
                     { value: "oldest", label: "Oldest" },
                     { value: "expiring", label: "Expiring" },
+                    { value: "views", label: "Most viewed" },
                   ].map((s) => (
                     <button
                       key={s.value}
@@ -287,7 +384,7 @@ export function ProductFilters() {
       {/* Quick category chips (mobile) */}
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-0.5 scrollbar-none lg:hidden">
         <QuickChip
-          active={categories.length === 0 && type === "all"}
+          active={selectedCategories.length === 0 && type === "all"}
           onClick={() => {
             pendingCategoryRef.current = "";
             updateMany({ type: "all", category: "" });
@@ -305,13 +402,13 @@ export function ProductFilters() {
           Available
         </QuickChip>
         <span className="mx-0.5 w-px shrink-0 bg-border" />
-        {CATEGORIES.map((c) => (
+        {categories.map((c) => (
           <QuickChip
-            key={c}
-            active={categories.includes(c)}
-            onClick={() => toggleCategory(c)}
+            key={c.value}
+            active={selectedCategories.includes(c.value)}
+            onClick={() => toggleCategory(c.value)}
           >
-            {label(c)}
+            {c.label || formatLabel(c.value)}
           </QuickChip>
         ))}
       </div>
@@ -339,8 +436,8 @@ export function ProductFilters() {
               />
             }
           >
-            {categories.length
-              ? `${categories.length} categor${categories.length === 1 ? "y" : "ies"}`
+            {selectedCategories.length
+              ? `${selectedCategories.length} categor${selectedCategories.length === 1 ? "y" : "ies"}`
               : "All categories"}
             <ChevronDown className="h-4 w-4 opacity-60" />
           </DropdownMenuTrigger>
@@ -348,22 +445,68 @@ export function ProductFilters() {
             <DropdownMenuLabel>Categories</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuCheckboxItem
-              checked={categories.length === 0}
+              checked={selectedCategories.length === 0}
               onCheckedChange={() => update("category", "")}
             >
               All categories
             </DropdownMenuCheckboxItem>
-            {CATEGORIES.map((c) => (
+            {categories.map((c) => (
               <DropdownMenuCheckboxItem
-                key={c}
-                checked={categories.includes(c)}
-                onCheckedChange={() => toggleCategory(c)}
+                key={c.value}
+                checked={selectedCategories.includes(c.value)}
+                onCheckedChange={() => toggleCategory(c.value)}
               >
-                {label(c)}
+                {c.label || formatLabel(c.value)}
               </DropdownMenuCheckboxItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {countries.length ? (
+          <Select value={country} onValueChange={(v) => v && update("country", v)}>
+            <SelectTrigger className="w-full lg:w-44" aria-label="Country">
+              <SelectValue placeholder="Country" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All countries</SelectItem>
+              {countries.map((c) => (
+                <SelectItem key={c.value} value={c.value}>
+                  {c.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
+
+        <Select value={industry} onValueChange={(v) => v && update("industry", v)}>
+          <SelectTrigger className="w-full lg:w-44" aria-label="Industry">
+            <SelectValue placeholder="Industry" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All industries</SelectItem>
+            {industries.map((i) => (
+              <SelectItem key={i.value} value={i.value}>
+                {i.label || formatLabel(i.value)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {tags.length ? (
+          <Select value={tag || "all"} onValueChange={(v) => v && update("tag", v)}>
+            <SelectTrigger className="w-full lg:w-40" aria-label="Tag">
+              <SelectValue placeholder="Tag" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All tags</SelectItem>
+              {tags.map((t) => (
+                <SelectItem key={t.slug} value={t.slug}>
+                  {t.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
 
         <Select value={sort} onValueChange={(v) => v && update("sort", v)}>
           <SelectTrigger className="w-full lg:w-40">
@@ -373,10 +516,17 @@ export function ProductFilters() {
             <SelectItem value="newest">Newest first</SelectItem>
             <SelectItem value="oldest">Oldest first</SelectItem>
             <SelectItem value="expiring">Expiring soon</SelectItem>
+            <SelectItem value="views">Most viewed</SelectItem>
           </SelectContent>
         </Select>
 
-        <Button variant="outline" size="icon" onClick={clear} aria-label="Clear filters">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={clear}
+          aria-label="Clear filters"
+          className="lg:ml-auto"
+        >
           <X className="h-4 w-4" />
         </Button>
       </div>

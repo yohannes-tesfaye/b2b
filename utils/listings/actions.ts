@@ -4,12 +4,11 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { effectiveStatus } from "@/lib/listings";
-import {
-  listingIssuesToFieldErrors,
-  listingSchema,
-  type ListingFormState,
-  type ListingFormValues,
-} from "@/lib/validation/listing";
+import { buildListingSearchText } from "@/lib/search";
+import { parseTagSlugs, tagSlugToLabel } from "@/lib/slug";
+import { countryName } from "@/lib/countries";
+import { listingIssuesToFieldErrors } from "@/lib/validation/listing";
+import { listingSchema, type ListingFormValues, type ListingFormState } from "@/lib/validation/listing";
 
 function parseListingForm(formData: FormData) {
   return listingSchema.safeParse({
@@ -19,21 +18,9 @@ function parseListingForm(formData: FormData) {
     category: String(formData.get("category") ?? ""),
     quantity: String(formData.get("quantity") ?? ""),
     location: String(formData.get("location") ?? ""),
+    countryCode: String(formData.get("countryCode") ?? ""),
+    tags: String(formData.get("tags") ?? ""),
     durationDays: String(formData.get("durationDays") ?? ""),
-    qualityStandard: String(formData.get("qualityStandard") ?? ""),
-    deliveryTimeline: String(formData.get("deliveryTimeline") ?? ""),
-    preferredRegion: String(formData.get("preferredRegion") ?? ""),
-    budgetRange: String(formData.get("budgetRange") ?? ""),
-    technicalDocument: String(formData.get("technicalDocument") ?? ""),
-    images: String(formData.get("images") ?? ""),
-    price: String(formData.get("price") ?? ""),
-    deliveryOptions: String(formData.get("deliveryOptions") ?? ""),
-    technicalSpecs: String(formData.get("technicalSpecs") ?? ""),
-    currency: String(formData.get("currency") ?? ""),
-    moq: String(formData.get("moq") ?? ""),
-    certifications: String(formData.get("certifications") ?? ""),
-    incoterms: String(formData.get("incoterms") ?? ""),
-    originCountry: String(formData.get("originCountry") ?? ""),
   });
 }
 
@@ -53,6 +40,7 @@ function listingPayload(values: ListingFormValues) {
     category: values.category,
     quantity: values.quantity,
     location: values.location,
+    countryCode: values.countryCode || null,
     durationDays: values.durationDays,
     qualityStandard: wanted ? values.qualityStandard : null,
     deliveryTimeline: wanted ? values.deliveryTimeline : null,
@@ -69,6 +57,66 @@ function listingPayload(values: ListingFormValues) {
     incoterms: wanted ? null : values.incoterms || null,
     originCountry: wanted ? null : values.originCountry || null,
   };
+}
+
+async function syncListingExtras(
+  listingId: string,
+  values: ListingFormValues,
+  user: { companyName?: string | null }
+) {
+  const tagSlugs = parseTagSlugs(values.tags);
+
+  if (tagSlugs.length) {
+    await prisma.tag.createMany({
+      data: tagSlugs.map((slug) => ({ slug, name: tagSlugToLabel(slug) })),
+      skipDuplicates: true,
+    });
+  }
+
+  const tags = tagSlugs.length
+    ? await prisma.tag.findMany({
+        where: { slug: { in: tagSlugs } },
+        select: { id: true, slug: true, name: true },
+      })
+    : [];
+
+  await prisma.listingTag.deleteMany({ where: { listingId } });
+  if (tags.length) {
+    await prisma.listingTag.createMany({
+      data: tags.map((tag) => ({ listingId, tagId: tag.id })),
+      skipDuplicates: true,
+    });
+  }
+
+  const category = await prisma.category.findUnique({
+    where: { slug: values.category },
+    select: { name: true },
+  });
+
+  const countryCode = values.countryCode || null;
+
+  const searchText = buildListingSearchText({
+    title: values.title,
+    description: values.description,
+    category: values.category,
+    categoryLabel: category?.name ?? null,
+    location: values.location,
+    countryCode,
+    countryName: countryCode ? countryName(countryCode) : null,
+    quantity: values.quantity,
+    moq: values.moq || null,
+    certifications: values.certifications || null,
+    incoterms: values.incoterms || null,
+    originCountry: values.originCountry || null,
+    technicalSpecs: values.technicalSpecs || null,
+    tags: tags.flatMap((tag) => [tag.slug, tag.name]),
+    companyName: user.companyName ?? null,
+  });
+
+  await prisma.listing.update({
+    where: { id: listingId },
+    data: { countryCode, searchText },
+  });
 }
 
 function revalidateListings(userId: string, listingId?: string) {
@@ -108,7 +156,7 @@ export async function createListing(
   }
 
   try {
-    await prisma.listing.create({
+    const listing = await prisma.listing.create({
       data: {
         ...listingPayload(parsed.data),
         userId: user.id,
@@ -117,20 +165,22 @@ export async function createListing(
         status: "pending",
       },
     });
+
+    await syncListingExtras(listing.id, parsed.data, { companyName: user.companyName });
+
+    revalidateListings(user.id);
+
+    return {
+      status: "success",
+      message: "Listing submitted for approval.",
+      redirectTo: dashboardPath(user.id, "/listings"),
+    };
   } catch {
     return {
       status: "error",
       message: "Could not save this listing. Please try again.",
     };
   }
-
-  revalidateListings(user.id);
-
-  return {
-    status: "success",
-    message: "Listing submitted for approval.",
-    redirectTo: dashboardPath(user.id, "/listings"),
-  };
 }
 
 export async function updateListing(
@@ -178,20 +228,21 @@ export async function updateListing(
     if (!result.count) {
       return { status: "error", message: "Listing not found." };
     }
+
+    await syncListingExtras(id, parsed.data, { companyName: user.companyName });
+    revalidateListings(user.id, id);
+
+    return {
+      status: "success",
+      message: "Listing updated and submitted for approval.",
+      redirectTo: dashboardPath(user.id, `/listings/${id}`),
+    };
   } catch {
     return {
       status: "error",
       message: "Could not save this listing. Please try again.",
     };
   }
-
-  revalidateListings(user.id, id);
-
-  return {
-    status: "success",
-    message: "Listing updated and submitted for approval.",
-    redirectTo: dashboardPath(user.id, `/listings/${id}`),
-  };
 }
 
 export async function deleteListing(id: string): Promise<void> {
@@ -232,7 +283,7 @@ export async function renewListing(id: string): Promise<void> {
     throw new Error("Only expired listings can be renewed");
   }
 
-  const result = await prisma.listing.updateMany({
+  await prisma.listing.updateMany({
     where: { id, userId: user.id },
     data: {
       // Renewals go back through approval as well, and the expiry clock
@@ -242,7 +293,6 @@ export async function renewListing(id: string): Promise<void> {
       expiresAt: null,
     },
   });
-  if (!result.count) throw new Error("Listing not found");
 
   revalidateListings(user.id, id);
 }

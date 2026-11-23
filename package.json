@@ -7,7 +7,9 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts",
+    "taxonomy:seed": "tsx scripts/seed-taxonomy.ts",
+    "db:backup": "node scripts/db-backup.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

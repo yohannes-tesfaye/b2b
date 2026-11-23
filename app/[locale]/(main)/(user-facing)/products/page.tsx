@@ -1,6 +1,8 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { LISTING_CATEGORIES } from "@/lib/listings";
+import { getCategories, getIndustries, getPopularTags } from "@/lib/taxonomy";
+import { normalizeSearchQuery } from "@/lib/search";
+import { countryName, normalizeCountryCode } from "@/lib/countries";
 import { ProductListingCard } from "@/components/product/product-listing-card";
 import { ProductFilters } from "@/components/product/product-filters";
 import { ProductPagination } from "@/components/product/product-pagination";
@@ -14,8 +16,14 @@ type SearchParams = Promise<{
   category?: string;
   q?: string;
   sort?: string;
+  country?: string;
+  industry?: string;
+  tag?: string;
   page?: string;
 }>;
+
+const SORTS = ["newest", "oldest", "expiring", "views"] as const;
+type Sort = (typeof SORTS)[number];
 
 export default async function ProductPage({
   searchParams,
@@ -23,13 +31,31 @@ export default async function ProductPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
+
+  const [categories, industries, tags] = await Promise.all([
+    getCategories(),
+    getIndustries(),
+    getPopularTags(),
+  ]);
+
   const type = sp.type === "wanted" || sp.type === "available" ? sp.type : undefined;
-  const allowed = new Set<string>(LISTING_CATEGORIES.map((c) => c.value));
-  const categories = sp.category
-    ? Array.from(new Set(sp.category.split(",").filter((c) => allowed.has(c))))
+
+  const allowedCategories = new Set(categories.map((category) => category.value));
+  const selectedCategories = sp.category
+    ? Array.from(new Set(sp.category.split(",").filter((c) => allowedCategories.has(c))))
     : [];
-  const q = sp.q?.trim();
-  const sort = sp.sort ?? "newest";
+
+  const q = normalizeSearchQuery(sp.q);
+  const sort: Sort = SORTS.includes(sp.sort as Sort) ? (sp.sort as Sort) : "newest";
+
+  const allowedIndustries = new Set(industries.map((industry) => industry.value));
+  const industry = sp.industry && allowedIndustries.has(sp.industry) ? sp.industry : undefined;
+
+  const allowedTags = new Set(tags.map((tag) => tag.slug));
+  const tag = sp.tag && allowedTags.has(sp.tag) ? sp.tag : undefined;
+
+  const country = normalizeCountryCode(sp.country) ?? undefined;
+
   const requestedPage = Number.parseInt(sp.page ?? "1", 10);
   const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
@@ -38,13 +64,20 @@ export default async function ProductPage({
   ];
 
   if (type) and.push({ type });
-  if (categories.length) and.push({ category: { in: categories } });
+  if (selectedCategories.length) and.push({ category: { in: selectedCategories } });
+  if (country) and.push({ countryCode: country });
+  if (industry) and.push({ user: { industry } });
+  if (tag) and.push({ tags: { some: { tag: { slug: tag } } } });
   if (q) {
+    // searchText already contains title, description, category and tag names,
+    // company name and location (see lib/search.ts). ILIKE is served by the GIN
+    // trigram index when pg_trgm is installed, and still correct without it.
     and.push({
       OR: [
+        { searchText: { contains: q, mode: "insensitive" } },
+        // Keep free-text columns searchable for rows written before the
+        // searchText backfill ran (or if the backfill ever fails).
         { title: { contains: q, mode: "insensitive" } },
-        { location: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
       ],
     });
   }
@@ -56,18 +89,36 @@ export default async function ProductPage({
       ? { createdAt: "asc" as const }
       : sort === "expiring"
       ? { expiresAt: "asc" as const }
+      : sort === "views"
+      ? { views: "desc" as const }
       : { createdAt: "desc" as const };
 
   const total = await prisma.listing.count({ where });
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
 
-  const listings = await prisma.listing.findMany({
-    where,
-    orderBy,
-    skip: (currentPage - 1) * PAGE_SIZE,
-    take: PAGE_SIZE,
-  });
+  const [listings, countryRows] = await Promise.all([
+    prisma.listing.findMany({
+      where,
+      orderBy,
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.listing.groupBy({
+      by: ["countryCode"],
+      where: { status: "active", countryCode: { not: null } },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const countries = countryRows
+    .filter((row): row is typeof row & { countryCode: string } => Boolean(row.countryCode))
+    .map((row) => ({
+      value: row.countryCode,
+      label: countryName(row.countryCode),
+      count: row._count._all,
+    }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
   const from = total ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
   const to = Math.min(currentPage * PAGE_SIZE, total);
@@ -88,7 +139,12 @@ export default async function ProductPage({
         </p>
       </div>
 
-      <ProductFilters />
+      <ProductFilters
+        categories={categories}
+        industries={industries}
+        tags={tags}
+        countries={countries}
+      />
 
       <div className="flex items-center justify-between text-xs text-muted-foreground lg:text-sm">
         <span>
@@ -115,9 +171,12 @@ export default async function ProductPage({
             totalPages={totalPages}
             query={{
               type,
-              category: categories.join(",") || undefined,
-              q,
+              category: selectedCategories.join(",") || undefined,
+              q: q || undefined,
               sort: sort !== "newest" ? sort : undefined,
+              country,
+              industry,
+              tag,
             }}
           />
         </>
