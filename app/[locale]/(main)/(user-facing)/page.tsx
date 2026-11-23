@@ -25,10 +25,10 @@ const Home = async () => {
   return (
     <div>
       <HeroSection />
-      <div className="space-y-10">
+      <div className="space-y-12">
         <ProductSectionSupplier />
         {listings.length ? (
-          <section className="container-wide mt-12">
+          <section className="container-wide">
             <header className="mb-8 text-center">
               <p className="type-caption text-brand">{t("eyebrow")}</p>
               <h2 className="type-section mt-2">{t("title")}</h2>

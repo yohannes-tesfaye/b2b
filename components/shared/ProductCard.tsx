@@ -139,7 +139,7 @@ export function ProductCard({
   const moqText = moq != null ? t("moq", { count: format.number(moq) }) : null;
 
   return (
-    <Link href={`/product/${id}`} className="block w-full max-w-sm">
+    <Link href={`/product/${id}`} className="mx-auto block h-full w-full max-w-sm">
       <Card className="group flex w-full flex-col overflow-hidden transition-all duration-200 hover:shadow-md border-border bg-card">
         <CardHeader className="flex flex-row items-center justify-between p-3.5 pb-2 space-y-0">
           <Badge

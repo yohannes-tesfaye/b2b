@@ -14,7 +14,7 @@ export default function ProductSectionSupplier() {
   ] as const;
 
   return (
-    <div className="container-wide mt-12">
+    <div className="container-wide">
       <header className="mb-8 text-center">
         <p className="type-caption text-brand">Available goods</p>
         <h2 className="type-section mt-2">
