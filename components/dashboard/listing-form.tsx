@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useActionState } from "react";
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useMemo,
+  useState,
+  useActionState,
+} from "react";
 import { Link } from "@/i18n/navigation";
 import { Package, ShoppingCart, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { cn } from "cn";
@@ -48,18 +56,41 @@ function FormField({
   optional?: boolean;
   children: React.ReactNode;
 }) {
+  const hintId = hint ? `${id}-hint` : undefined;
+  const errorId = error ? `${id}-error` : undefined;
+  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+
+  const content = describedBy
+    ? Children.map(children, (child) => {
+        if (!isValidElement(child) || child.type === Select) return child;
+        return cloneElement(
+          child as React.ReactElement<{ "aria-describedby"?: string }>,
+          { "aria-describedby": describedBy }
+        );
+      })
+    : children;
+
   return (
     <Field className="gap-2" data-invalid={Boolean(error)}>
       <div className="flex items-center justify-between gap-2">
         <FieldLabel htmlFor={id}>{label}</FieldLabel>
         {optional ? (
           <span className="text-xs text-muted-foreground">Optional</span>
-        ) : null}
+        ) : (
+          <span className="text-xs text-muted-foreground">Required</span>
+        )}
       </div>
       <FieldContent>
-        {children}
-        {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
-        <FieldError errors={error ? [{ message: error }] : undefined} />
+        {content}
+        {hint ? (
+          <p id={hintId} className="text-xs text-muted-foreground">
+            {hint}
+          </p>
+        ) : null}
+        <FieldError
+          id={errorId}
+          errors={error ? [{ message: error }] : undefined}
+        />
       </FieldContent>
     </Field>
   );
@@ -69,6 +100,89 @@ const textareaClass =
   "min-h-20 w-full rounded-lg border border-input bg-transparent px-2.5 py-2 text-sm outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:bg-input/30";
 
 const STEPS = ["Type", "Basics", "Details", "Review"];
+
+type FormValues = {
+  type: ListingType;
+  title: string;
+  description: string;
+  category: string;
+  quantity: string;
+  location: string;
+  durationDays: string;
+  qualityStandard: string;
+  deliveryTimeline: string;
+  preferredRegion: string;
+  budgetRange: string;
+  technicalDocument: string;
+  images: string;
+  price: string;
+  currency: string;
+  moq: string;
+  certifications: string;
+  incoterms: string;
+  originCountry: string;
+  deliveryOptions: string;
+  technicalSpecs: string;
+};
+
+/** Which fields belong to each wizard step, used for validation and error jumps. */
+const STEP_FIELDS: string[][] = [
+  ["type"],
+  ["title", "description", "category", "quantity", "location", "durationDays"],
+  [
+    "qualityStandard",
+    "deliveryTimeline",
+    "preferredRegion",
+    "budgetRange",
+    "technicalDocument",
+    "price",
+    "currency",
+    "moq",
+    "incoterms",
+    "originCountry",
+    "deliveryOptions",
+    "certifications",
+    "technicalSpecs",
+    "images",
+  ],
+  [],
+];
+
+const FIELD_LABELS: Record<string, string> = {
+  type: "listing type",
+  title: "title",
+  description: "description",
+  category: "category",
+  quantity: "quantity",
+  location: "location",
+  durationDays: "listing duration",
+  qualityStandard: "quality standard",
+  deliveryTimeline: "delivery timeline",
+  preferredRegion: "preferred region",
+  budgetRange: "budget range",
+  technicalDocument: "technical document",
+  price: "price",
+  currency: "currency",
+  moq: "minimum order quantity",
+  incoterms: "incoterms",
+  originCountry: "country of origin",
+  deliveryOptions: "delivery options",
+  certifications: "certifications",
+  technicalSpecs: "technical specifications",
+  images: "image URLs",
+};
+
+function firstErrorStep(errors: Record<string, string>) {
+  for (let index = 0; index < STEP_FIELDS.length; index += 1) {
+    if (STEP_FIELDS[index].some((name) => errors[name])) return index;
+  }
+  return 0;
+}
+
+function fieldHasValue(values: FormValues, name: string) {
+  const value = values[name as keyof FormValues];
+  return typeof value === "string" && value.trim().length > 0;
+}
 
 export function ListingForm({
   mode,
@@ -86,7 +200,7 @@ export function ListingForm({
       ? listing.type
       : defaultType;
 
-  const [v, setV] = useState({
+  const [v, setV] = useState<FormValues>({
     type: initialType,
     title: listing?.title ?? "",
     description: listing?.description ?? "",
@@ -109,8 +223,9 @@ export function ListingForm({
     deliveryOptions: listing?.deliveryOptions ?? "",
     technicalSpecs: listing?.technicalSpecs ?? "",
   });
-  const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState(0);
+  const [focusField, setFocusField] = useState<string | null>(null);
+  const [restored, setRestored] = useState(false);
   const [state, formAction, isPending] = useActionState(
     mode === "create" ? createListing : updateListing,
     initialListingFormState
@@ -118,59 +233,112 @@ export function ListingForm({
 
   useActionFeedback(state);
 
-  const errors = { ...state.fieldErrors, ...clientErrors };
+  const storageKey = `listing-form:${mode}:${listing?.id ?? "new"}`;
+
+  // Restore an in-progress draft after a refresh (session-only, cleared on save).
+  useEffect(() => {
+    try {
+      const raw = window.sessionStorage.getItem(storageKey);
+      if (raw) {
+        const saved = JSON.parse(raw) as Record<string, unknown>;
+        setV((prev) => {
+          const next: FormValues = { ...prev };
+          for (const key of Object.keys(prev) as Array<keyof FormValues>) {
+            const value = saved[key];
+            if (key === "type") {
+              if (value === "wanted" || value === "available") next.type = value;
+            } else if (typeof value === "string") {
+              next[key] = value as never;
+            }
+          }
+          return next;
+        });
+      }
+    } catch {
+      // Ignore unreadable or blocked drafts.
+    }
+    setRestored(true);
+  }, [storageKey]);
+
+  useEffect(() => {
+    if (!restored) return;
+    try {
+      window.sessionStorage.setItem(storageKey, JSON.stringify(v));
+    } catch {
+      // Ignore quota or privacy-mode errors.
+    }
+  }, [restored, storageKey, v]);
+
+  useEffect(() => {
+    if (state.status !== "success") return;
+    try {
+      window.sessionStorage.removeItem(storageKey);
+    } catch {
+      // Ignore storage errors.
+    }
+  }, [state.status, storageKey]);
+
+  // Surface server-side field errors on the step that owns the first problem.
+  useEffect(() => {
+    if (!state.fieldErrors) return;
+    const target = firstErrorStep(state.fieldErrors);
+    setStep(target);
+    const field = STEP_FIELDS[target].find((name) => state.fieldErrors?.[name]);
+    if (field) setFocusField(field);
+  }, [state]);
+
+  useEffect(() => {
+    if (!focusField) return;
+    const element = document.getElementById(focusField);
+    if (element) {
+      element.focus({ preventScroll: true });
+      element.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    setFocusField(null);
+  }, [focusField]);
+
+  const liveIssues = useMemo(() => {
+    const parsed = listingSchema.safeParse(v);
+    return parsed.success ? {} : listingIssuesToFieldErrors(parsed.error);
+  }, [v]);
+
+  // Show a message for fields that already have content (or after a failed
+  // submit). Untouched empty fields are covered by the "to continue" summary.
+  const errors: Record<string, string> = {};
+  for (const [name, message] of Object.entries(liveIssues)) {
+    if (fieldHasValue(v, name) || state.fieldErrors?.[name]) {
+      errors[name] = message;
+    }
+  }
+
   const fieldError = (name: string) =>
     errors[name] ? [{ message: errors[name] }] : undefined;
 
   const update =
-    (key: Exclude<keyof typeof v, "type">) =>
+    (key: Exclude<keyof FormValues, "type">) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setV((prev) => ({ ...prev, [key]: event.target.value }));
 
   const wanted = v.type === "wanted";
 
-  const setField = (key: keyof typeof v, value: string) =>
+  const setField = (key: keyof FormValues, value: string) =>
     setV((prev) => ({ ...prev, [key]: value }));
 
+  const missing = STEP_FIELDS[step].filter((name) => liveIssues[name]);
+  const canAdvance = missing.length === 0;
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    const parsed = listingSchema.safeParse(v);
-    if (!parsed.success) {
-      event.preventDefault();
-      setClientErrors(listingIssuesToFieldErrors(parsed.error));
-      toast.error("Please fix the highlighted fields.");
-      return;
-    }
-    setClientErrors({});
+    if (!Object.keys(liveIssues).length) return;
+    event.preventDefault();
+    const target = firstErrorStep(liveIssues);
+    setStep(target);
+    const field = STEP_FIELDS[target].find((name) => liveIssues[name]);
+    if (field) setFocusField(field);
+    toast.error("Please fix the highlighted fields.");
   };
 
   const goNext = () => {
-    // light per-step validation
-    const errs: Record<string, string> = {};
-    if (step === 0) {
-      // type always valid
-    } else if (step === 1) {
-      if (v.title.trim().length < 3) errs.title = "Title must be at least 3 characters.";
-      if (v.description.trim().length < 20) errs.description = "Description must be at least 20 characters.";
-      if (!v.category) errs.category = "Select a category.";
-      if (!v.quantity.trim()) errs.quantity = "Enter a quantity.";
-      if (!v.location.trim()) errs.location = "Enter a location.";
-    } else if (step === 2) {
-      if (wanted) {
-        if (!v.qualityStandard.trim()) errs.qualityStandard = "Describe the quality standard you require.";
-        if (!v.deliveryTimeline.trim()) errs.deliveryTimeline = "Enter your required delivery timeline.";
-        if (!v.preferredRegion.trim()) errs.preferredRegion = "Enter your preferred region.";
-        if (!v.budgetRange.trim()) errs.budgetRange = "Enter your budget range.";
-      } else {
-        if (!v.price.trim()) errs.price = "Enter a price or price range.";
-        if (!v.deliveryOptions.trim()) errs.deliveryOptions = "Describe your delivery options.";
-      }
-    }
-    if (Object.keys(errs).length) {
-      setClientErrors(errs);
-      toast.error("Please fix the highlighted fields.");
-      return;
-    }
-    setClientErrors({});
+    if (!canAdvance) return;
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   };
 
@@ -220,8 +388,7 @@ export function ListingForm({
       </div>
 
       {/* Step 0: Type */}
-      {step === 0 ? (
-        <section className="flex flex-col gap-3">
+      <section className={cn("flex flex-col gap-3", step !== 0 && "hidden")}>
           <div>
             <h2 className="text-base font-semibold">What are you listing?</h2>
             <p className="text-xs text-muted-foreground">
@@ -267,14 +434,17 @@ export function ListingForm({
           </div>
           <FieldError errors={fieldError("type")} />
         </section>
-      ) : null}
 
       {/* Step 1: Basics */}
-      {step === 1 ? (
-        <section className="flex flex-col gap-4">
+      <section className={cn("flex flex-col gap-4", step !== 1 && "hidden")}>
           <h2 className="text-base font-semibold">Listing basics</h2>
 
-          <FormField id="title" label="Title" error={errors.title}>
+          <FormField
+            id="title"
+            label="Title"
+            error={errors.title}
+            hint="A clear product name, at least 3 characters."
+          >
             <Input
               id="title"
               name="title"
@@ -289,7 +459,7 @@ export function ListingForm({
             id="description"
             label="Description"
             error={errors.description}
-            hint="Describe the goods, requirements, and any important terms."
+            hint="At least 20 characters. Describe the goods, requirements, and key terms."
           >
             <textarea
               id="description"
@@ -304,14 +474,28 @@ export function ListingForm({
           </FormField>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <FormField id="category" label="Category" error={errors.category}>
+            <FormField
+              id="category"
+              label="Category"
+              error={errors.category}
+              hint="Pick the closest match; buyers filter by category."
+            >
               <Select
                 value={v.category}
                 onValueChange={(value) =>
                   setField("category", String(value ?? ""))
                 }
               >
-                <SelectTrigger id="category" className="w-full">
+                <SelectTrigger
+                  id="category"
+                  className="w-full"
+                  aria-invalid={Boolean(errors.category)}
+                  aria-describedby={
+                    errors.category
+                      ? "category-hint category-error"
+                      : "category-hint"
+                  }
+                >
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -341,7 +525,12 @@ export function ListingForm({
               />
             </FormField>
 
-            <FormField id="location" label="Location" error={errors.location}>
+            <FormField
+              id="location"
+              label="Location"
+              error={errors.location}
+              hint="City and country, e.g. Addis Ababa, Ethiopia."
+            >
               <Input
                 id="location"
                 name="location"
@@ -356,7 +545,7 @@ export function ListingForm({
               id="durationDays"
               label="Listing duration (days)"
               error={errors.durationDays}
-              hint="How long the listing stays live once approved."
+              hint="How long the listing stays live once approved (1–365 days)."
             >
               <Input
                 id="durationDays"
@@ -371,11 +560,9 @@ export function ListingForm({
             </FormField>
           </div>
         </section>
-      ) : null}
 
       {/* Step 2: Details */}
-      {step === 2 ? (
-        <section className="flex flex-col gap-4">
+      <section className={cn("flex flex-col gap-4", step !== 2 && "hidden")}>
           {wanted ? (
             <>
               <div>
@@ -389,6 +576,7 @@ export function ListingForm({
                   id="qualityStandard"
                   label="Quality standard"
                   error={errors.qualityStandard}
+                  hint="Grade, certifications, or the spec you need."
                 >
                   <Input
                     id="qualityStandard"
@@ -404,6 +592,7 @@ export function ListingForm({
                   id="deliveryTimeline"
                   label="Delivery timeline"
                   error={errors.deliveryTimeline}
+                  hint="When you need it delivered, e.g. within 30 days."
                 >
                   <Input
                     id="deliveryTimeline"
@@ -419,6 +608,7 @@ export function ListingForm({
                   id="preferredRegion"
                   label="Preferred region"
                   error={errors.preferredRegion}
+                  hint="Where suppliers should ship from or to."
                 >
                   <Input
                     id="preferredRegion"
@@ -434,6 +624,7 @@ export function ListingForm({
                   id="budgetRange"
                   label="Budget range"
                   error={errors.budgetRange}
+                  hint="Include the currency, e.g. USD 10,000 – 25,000."
                 >
                   <Input
                     id="budgetRange"
@@ -600,11 +791,9 @@ export function ListingForm({
             </>
           )}
         </section>
-      ) : null}
 
       {/* Step 3: Review */}
-      {step === 3 ? (
-        <section className="flex flex-col gap-4">
+      <section className={cn("flex flex-col gap-4", step !== 3 && "hidden")}>
           <h2 className="text-base font-semibold">Review & submit</h2>
           <div className="rounded-xl border bg-muted/20 p-4 text-sm">
             <p className="font-medium">{v.title || "Untitled listing"}</p>
@@ -617,6 +806,12 @@ export function ListingForm({
             New and edited listings are reviewed by an admin before going live.
           </p>
         </section>
+
+      {step > 0 && step < STEPS.length - 1 && missing.length ? (
+        <p role="status" className="text-xs text-muted-foreground">
+          To continue, add:{" "}
+          {missing.map((name) => FIELD_LABELS[name] ?? name).join(", ")}.
+        </p>
       ) : null}
 
       {/* Navigation */}
@@ -639,7 +834,16 @@ export function ListingForm({
             Cancel
           </Button>
           {step < STEPS.length - 1 ? (
-            <Button type="button" onClick={goNext} disabled={isPending}>
+            <Button
+              type="button"
+              onClick={goNext}
+              disabled={isPending || !canAdvance}
+              title={
+                canAdvance
+                  ? undefined
+                  : "Complete the required fields in this step to continue."
+              }
+            >
               Next <ChevronRight className="size-4" />
             </Button>
           ) : (
