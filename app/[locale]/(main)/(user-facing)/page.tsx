@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getTranslations } from "next-intl/server";
 import HeroSection from "@/components/Landing/Hero";
 import ProductSectionSupplier from "@/components/shared/ProductSectionSupplier";
 import ProductSectionWanted from "@/components/shared/ProductSectionWanted";
@@ -19,19 +20,28 @@ const Home = async () => {
     take: 4,
   });
 
+  const t = await getTranslations("home.latest");
+
   return (
     <div>
       <HeroSection />
       <div className="space-y-10">
         <ProductSectionSupplier />
         {listings.length ? (
-          <div className="w-full px-4">
-            <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <section className="container-wide mt-12">
+            <header className="mb-8 text-center">
+              <p className="type-caption text-brand">{t("eyebrow")}</p>
+              <h2 className="type-section mt-2">{t("title")}</h2>
+              <p className="type-body mt-3 text-muted-foreground">
+                {t("description")}
+              </p>
+            </header>
+            <div className="grid grid-cols-1 gap-4 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
               {listings.map((listing) => (
                 <ProductListingCard key={listing.id} listing={listing} />
               ))}
             </div>
-          </div>
+          </section>
         ) : null}
         <SuppliersByRegion />
         <ProductSectionWanted />

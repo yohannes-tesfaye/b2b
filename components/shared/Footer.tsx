@@ -1,227 +1,73 @@
-import { Link } from "@/i18n/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Mail, MapPin, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { SITE } from "@/lib/config/site";
+import { BrandMark } from "./header/BrandMark";
+import { FooterColumns } from "./footer/FooterColumns";
+import { NewsletterForm } from "./footer/NewsletterForm";
 
-function Footer() {
+/**
+ * Creamy light footer: newsletter band, brand/contact block, config-driven
+ * link columns and a hairline legal bar.
+ */
+export default function Footer() {
+  const t = useTranslations("footer");
+
   return (
-    <footer className="w-full bg-blue-600 text-white" id="footer">
-      {/* Newsletter Section */}
-      <div className="py-16 px-6 md:px-12 lg:px-24 bg-blue-600/90">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4">Join our newsletter</h2>
-          <p className="mb-8 text-base leading-relaxed text-white/90">
-            Subscribe to get special offers, free giveaways, and
-            once-in-a-lifetime deals.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-lg">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              className="bg-card text-foreground placeholder-muted-foreground h-12"
-            />
-            <Button
-              className="text-accent-foreground font-semibold h-12 px-8 transition-all hover:opacity-90 bg-accent"
-            >
-              SEND
-            </Button>
+    <footer id="footer" className="border-t border-border bg-card">
+      <div className="container-wide">
+        {/* Newsletter */}
+        <section className="grid gap-8 border-b border-border py-14 lg:grid-cols-[1.1fr_1fr] lg:items-end lg:gap-16 lg:py-16">
+          <div>
+            <p className="type-caption text-brand">{t("newsletter.eyebrow")}</p>
+            <h2 className="type-section mt-3 max-w-xl">
+              {t("newsletter.title")}
+            </h2>
+            <p className="type-body mt-3 max-w-lg text-muted-foreground">
+              {t("newsletter.description")}
+            </p>
           </div>
-          <p className="text-xs mt-4 leading-relaxed text-white/80">
-            We respect your privacy. View our{" "}
-            <Link href="#" className="underline hover:text-white">
-              Privacy Policy
-            </Link>{" "}
-            and{" "}
-            <Link
-              href="#"
-              className="underline hover:text-white"
-            >
-              Terms & Conditions
-            </Link>
+          <div className="w-full lg:max-w-md lg:justify-self-end">
+            <NewsletterForm />
+          </div>
+        </section>
+
+        {/* Brand + links */}
+        <div className="grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-[1.15fr_2fr] lg:gap-16 lg:py-14">
+          <div>
+            <BrandMark />
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              {t("brandDescription")}
+            </p>
+            <div className="mt-5 flex flex-col gap-2 text-sm">
+              <a
+                href={SITE.phoneHref}
+                className="inline-flex items-center gap-2 text-foreground/80 transition-colors hover:text-foreground"
+              >
+                <Phone className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                {SITE.phone}
+              </a>
+              <a
+                href={SITE.emailHref}
+                className="inline-flex items-center gap-2 text-foreground/80 transition-colors hover:text-foreground"
+              >
+                <Mail className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                {SITE.email}
+              </a>
+            </div>
+          </div>
+
+          <FooterColumns />
+        </div>
+
+        {/* Legal bar */}
+        <div className="flex flex-col gap-3 border-t border-border py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p>{t("rights", { year: new Date().getFullYear() })}</p>
+          <p className="inline-flex items-center gap-1.5">
+            <MapPin className="size-3.5" strokeWidth={1.75} />
+            {t("location")}
           </p>
         </div>
       </div>
-
-      {/* Link Sections */}
-      <div className=" mx-auto px-6 md:px-12 lg:px-24 py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-12">
-          {/* Do You Need Help */}
-          <div>
-            <h3 className="font-bold text-lg mb-6">Do You Need Help?</h3>
-            <ul className="space-y-3 text-sm text-white/90">
-              <li>+251 911 681 100</li>
-              <li>support@globaltradehub.com</li>
-              <li>Call Center: Mon-Fri 9am-6pm</li>
-            </ul>
-          </div>
-
-          {/* Let Us Help You */}
-          <div>
-            <h3 className="font-bold text-lg mb-6">Let Us Help You</h3>
-            <ul className="space-y-3 text-sm text-white/90">
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Cookie Settings
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Help Center
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Make Money with Us */}
-          <div>
-            <h3 className="font-bold text-lg mb-6">Make Money with Us</h3>
-            <ul className="space-y-3 text-sm text-white/90">
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Sell on GlobalTradeHUB
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Sell Your Services
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Sell on Business
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Become an Affiliate
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Get to Know Us */}
-          <div>
-            <h3 className="font-bold text-lg mb-6">Get to Know Us</h3>
-            <ul className="space-y-3 text-sm text-white/90">
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  About GlobalTradeHUB
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Investor Relations
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Sustainability
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* For Buyers */}
-          <div>
-            <h3 className="font-bold text-lg mb-6">For Buyers</h3>
-            <ul className="space-y-3 text-sm text-white/90">
-              <li>
-                <Link
-                  href="#"
-                  className="inline-flex min-h-10 min-w-10 items-center hover:text-white transition-colors"
-                >
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  Track Order
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="hover:text-white transition-colors">
-                  Contact
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#"
-                  className="hover:text-white transition-colors"
-                >
-                  About Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <BottomFooter />
     </footer>
   );
 }
-
-function BottomFooter() {
-  return (
-    <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 py-8 border-t border-primary text-white/80">
-      <p className="text-sm">© 2026 GlobalTradeHUB. All Rights Reserved.</p>
-    </div>
-  );
-}
-
-export default Footer;
-
-

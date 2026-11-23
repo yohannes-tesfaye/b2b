@@ -1,68 +1,62 @@
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { REVIEW_KEYS, REVIEW_RATINGS } from "@/lib/config/reviews";
 
-const reviews = [
-  {
-    name: "John Smith",
-    company: "Tech Corp",
-    rating: 5,
-    text: "Excellent platform for finding reliable suppliers. The verification system gives us confidence in our partnerships.",
-  },
-  {
-    name: "Sarah Johnson",
-    company: "Global Imports",
-    rating: 4,
-    text: "Great selection of products and responsive suppliers. Has streamlined our procurement process significantly.",
-  },
-  {
-    name: "Michael Chen",
-    company: "Asia Trade",
-    rating: 5,
-    text: "The regional search feature is fantastic. Found exactly what we needed in China with verified suppliers.",
-  },
-];
+/**
+ * Customer reviews, restyled to the shared type scale and palette.
+ */
+export default function Reviews() {
+  const t = useTranslations("home.reviews");
 
-function Reviews() {
   return (
-    <div className="w-full px-6 md:px-12 lg:px-24 py-16">
-      <h2 className="text-2xl font-bold text-center text-foreground mb-12">
-        What Our Customers Say
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-        {reviews.map((review, index) => (
-          <div
-            key={index}
-            className="p-6 bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow"
-          >
-            <div className="flex items-center gap-1 mb-4">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`h-4 w-4 ${
-                    i < review.rating
-                      ? "fill-amber-400 text-amber-400"
-                      : "text-muted-foreground/50"
-                  }`}
-                />
-              ))}
-            </div>
-
-            <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
-              {review.text}
-            </p>
-
-            <div className="border-t border-border pt-4">
-              <p className="font-semibold text-foreground text-sm">
-                {review.name}
-              </p>
-              <p className="text-muted-foreground text-xs">{review.company}</p>
-            </div>
-          </div>
-        ))}
+    <section className="container-wide py-16">
+      <div className="mx-auto max-w-3xl text-center">
+        <p className="type-caption text-brand">{t("eyebrow")}</p>
+        <h2 className="type-section mt-2">{t("title")}</h2>
+        <p className="type-body mt-3 text-muted-foreground">{t("subtitle")}</p>
       </div>
-    </div>
+
+      <div className="mt-10 grid gap-6 md:grid-cols-3">
+        {REVIEW_KEYS.map((key) => {
+          const rating = REVIEW_RATINGS[key];
+          return (
+            <article
+              key={key}
+              className="flex flex-col rounded-2xl border border-border bg-card p-6 transition-colors hover:border-foreground/10"
+            >
+              <div
+                className="flex items-center gap-1"
+                aria-label={`${rating} out of 5`}
+              >
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`size-4 ${
+                      i < rating
+                        ? "fill-warm text-warm"
+                        : "text-muted-foreground/40"
+                    }`}
+                    strokeWidth={1.75}
+                  />
+                ))}
+              </div>
+
+              <p className="mt-4 flex-1 text-base leading-relaxed text-muted-foreground">
+                &ldquo;{t(`items.${key}.text`)}&rdquo;
+              </p>
+
+              <div className="mt-6 border-t border-border pt-4">
+                <p className="text-sm font-semibold text-foreground">
+                  {t(`items.${key}.name`)}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {t(`items.${key}.company`)}
+                </p>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
   );
 }
-
-export default Reviews;
-

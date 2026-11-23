@@ -1,7 +1,8 @@
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { Mail, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
+import { SITE } from "@/lib/config/site";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeSwitcher from "./ThemeSwitcher";
 
@@ -9,55 +10,73 @@ interface TopHeaderProps {
   variant?: "default" | "auth";
 }
 
+/**
+ * Hairline utility bar above the main header. The parent layout hides it on
+ * mobile for the public site.
+ */
 function TopHeader({ variant = "default" }: TopHeaderProps) {
   const t = useTranslations("topHeader");
 
   return (
-    <div className="px-[3%] flex text-nowrap justify-between items-center outline-1 outline-border py-3 text-[11px] lg:text-[12px] border-b">
-      <div className="flex md:gap-5 gap-2">
-        <div className="flex items-center gap-1">
-          <Phone size={16} />
-          <p className="text-foreground">+251901964187</p>
+    <div className="border-b border-border bg-background/60">
+      <div className="container-wide flex h-10 items-center justify-between gap-4 text-xs text-muted-foreground">
+        <div className="flex min-w-0 items-center gap-4">
+          <a
+            href={SITE.phoneHref}
+            className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+          >
+            <Phone className="size-3.5" strokeWidth={1.75} />
+            {SITE.phone}
+          </a>
+          <span className="h-3 w-px bg-border" aria-hidden />
+          <a
+            href={SITE.emailHref}
+            className="hidden items-center gap-1.5 transition-colors hover:text-foreground lg:inline-flex"
+          >
+            <Mail className="size-3.5" strokeWidth={1.75} />
+            {SITE.email}
+          </a>
         </div>
-        <div className="text-foreground">|</div>
-        <div className="flex flex-row items-center gap-3">
-          <Mail size={14} />
-          <div className="pt-px text-muted-foreground">Hello@abc.com</div>
+
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="hidden items-center gap-2 sm:flex">
+            <ThemeSwitcher />
+            <span className="h-3 w-px bg-border" aria-hidden />
+            <LanguageSwitcher
+              size="sm"
+              className="h-7 rounded-full border-transparent bg-transparent px-2 text-xs"
+            />
+            <span className="h-3 w-px bg-border" aria-hidden />
+          </div>
+
+          {variant === "auth" ? (
+            <Button
+              size="sm"
+              className="h-7 rounded-full px-3 text-xs"
+              render={<Link href="/contact" />}
+              nativeButton={false}
+            >
+              {t("contactUs")}
+            </Button>
+          ) : (
+            <>
+              <Link
+                href="/sign-up"
+                className="font-medium text-foreground/80 transition-colors hover:text-foreground"
+              >
+                {t("joinFree")}
+              </Link>
+              <span className="h-3 w-px bg-border" aria-hidden />
+              <Link
+                href="/contact"
+                className="font-medium text-foreground/80 transition-colors hover:text-foreground"
+              >
+                {t("contactUs")}
+              </Link>
+            </>
+          )}
         </div>
       </div>
-
-      {variant === "auth" ? (
-        <div className="flex items-center gap-3">
-          <ThemeSwitcher />
-          <div className="text-muted-foreground">|</div>
-          <LanguageSwitcher size="sm" />
-          <Button
-            render={<Link href="/contact" />}
-            nativeButton={false}
-            size="sm"
-          >
-            {t("contactUs")}
-          </Button>
-        </div>
-      ) : (
-        <div className="flex items-center gap-3">
-          <ThemeSwitcher />
-
-          <div className="text-muted-foreground">|</div>
-          <ul className="flex gap-3 items-center">
-            <li>
-              <Link href={"/sign-up"}>{t("signin")}</Link>
-            </li>
-            <li className="text-muted-foreground">|</li>
-
-            <li className="text-muted-foreground hidden lg:block">|</li>
-
-            <li>
-              <Link href={"/contact"}>{t("contactUs")}</Link>
-            </li>
-          </ul>
-        </div>
-      )}
     </div>
   );
 }

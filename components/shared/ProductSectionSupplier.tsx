@@ -14,13 +14,16 @@ export default function ProductSectionSupplier() {
   ] as const;
 
   return (
-    <div className="w-full px-4 mt-20">
-      <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center">
-        {t.rich("supplierSectionTitle", {
-          highlight: (chunks) => <span className="text-red-600">{chunks}</span>,
-        })}
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+    <div className="container-wide mt-12">
+      <header className="mb-8 text-center">
+        <p className="type-caption text-brand">Available goods</p>
+        <h2 className="type-section mt-2">
+          {t.rich("supplierSectionTitle", {
+            highlight: (chunks) => <span className="text-brand">{chunks}</span>,
+          })}
+        </h2>
+      </header>
+      <div className="grid grid-cols-1 gap-4 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {cards.map((card) => (
           <ProductCard
             key={card.id}

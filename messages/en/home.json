@@ -1,0 +1,36 @@
+{
+  "home": {
+    "latest": {
+      "eyebrow": "Marketplace",
+      "title": "Latest listings",
+      "description": "Fresh available goods and buyer requests from verified trade partners."
+    },
+    "trusted": {
+      "eyebrow": "Trust",
+      "title": "Trusted by leading companies",
+      "description": "1,200+ businesses trade with verified Ethiopian suppliers."
+    },
+    "reviews": {
+      "eyebrow": "Reviews",
+      "title": "What our customers say",
+      "subtitle": "Verified buyers and suppliers on Ethio Trade.",
+      "items": {
+        "0": {
+          "name": "John Smith",
+          "company": "Tech Corp",
+          "text": "Excellent platform for finding reliable suppliers. The verification system gives us confidence in our partnerships."
+        },
+        "1": {
+          "name": "Sarah Johnson",
+          "company": "Global Imports",
+          "text": "Great selection of products and responsive suppliers. Has streamlined our procurement process significantly."
+        },
+        "2": {
+          "name": "Michael Chen",
+          "company": "Asia Trade",
+          "text": "The regional search feature is fantastic. Found exactly what we needed with verified suppliers."
+        }
+      }
+    }
+  }
+}

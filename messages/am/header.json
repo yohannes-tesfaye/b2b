@@ -1,26 +1,46 @@
 {
   "header": {
-    "brand": "GlobalTradeHUB",
+    "brand": "ኢትዮ ትሬድ",
+    "brandTagline": "አስመጪ · ላኪ",
     "theme": "ገጽታ",
     "themeLight": "ብርሃን",
     "themeDark": "ጨለማ",
     "themeSystem": "ስርዓት",
-    "searchPlaceholder": "ጽሑፍ ያስገቡ",
+    "searchPlaceholder": "ሸቀጦችን፣ አቅራቢዎችን፣ ክልሎችን ይፈልጉ…",
     "search": "ፍለጋ",
     "favourites": "ተወዳጆች",
     "postListing": "ማስታወቂያ ይለጥፉ",
-    "sellOnHub": "በግሎባልትሬድ ይሽጡ",
+    "sellOnHub": "በኢትዮ ትሬድ ይሽጡ",
     "signIn": "ይግቡ",
-    "signUp": "ይመዝገቡ",
+    "signUp": "በነጻ ይቀላቀሉ",
     "myAccount": "መለያዬ",
     "myDashboard": "ዳሽቦርዴ",
     "profileLink": "መገለጫ ይመልከቱ",
     "signOut": "ይውጡ",
-    "loading": "በመጫን ላይ..."
+    "loading": "በመጫን ላይ...",
+    "verifiedSuppliers": "የተረጋገጡ አቅራቢዎች",
+    "openMenu": "ማውጫ ክፈት",
+    "closeMenu": "ማውጫ ዝጋ",
+    "support": "ድጋፍ",
+    "language": "ቋንቋ",
+    "nav": {
+      "home": "መነሻ",
+      "products": "ምርቶች",
+      "allProducts": "ሁሉም ምርቶች",
+      "availableGoods": "ያሉ ሸቀጦች",
+      "wantedGoods": "የሚፈለጉ ሸቀጦች",
+      "suppliers": "አቅራቢዎች",
+      "howItWorks": "እንዴት ይሰራል",
+      "browseAll": "ሁሉንም ምርቶች ይመልከቱ",
+      "availableGoodsDescription": "ከተረጋገጡ አቅራቢዎች ለውጭ ገበያ ዝግጁ የሆነ ክምችት።",
+      "wantedGoodsDescription": "ለጅምላ መጠን እና ተደጋጋሚ አቅርቦት ያሉ የገዢዎች ጥያቄዎች።",
+      "suppliersDescription": "አምራቾችን እና የጥሬ ዕቃ አቅራቢዎችን በክልል ይመልከቱ።",
+      "howItWorksDescription": "በሦስት ግልጽ ደረጃዎች ይፈልጉ፣ ዋጋ ይጠይቁ እና ይላኩ።"
+    }
   },
   "topHeader": {
     "signin": "ይግቡ",
-    "joinFree": "በነጻ ይቀላቀሉ",
+    "joinFree": "በነጻ ይቀላለቁ",
     "contactUs": "ያግኙን"
   }
 }

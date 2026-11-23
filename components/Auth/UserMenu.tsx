@@ -8,6 +8,7 @@ import { useSession, authClient } from "@/lib/auth-client";
 import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { initialsFrom } from "@/lib/profile";
+import { shortenText } from "@/lib/formatter";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,18 +44,32 @@ function UserMenu({ compact = false }: { compact?: boolean }) {
       );
     }
     return (
-      <div className="flex items-center gap-2">
-        <Button variant="ghost">
-          <Link href="/log-in">{t("signIn")}</Link>
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          className="h-10 rounded-full px-3.5 text-sm font-medium"
+          render={<Link href="/log-in" />}
+          nativeButton={false}
+        >
+          {t("signIn")}
         </Button>
-        <Button>
-          <Link href="/sign-up">{t("signUp")}</Link>
+        <Button
+          variant="outline"
+          className="h-10 rounded-full border-border bg-transparent px-3.5 text-sm font-medium hover:bg-muted/70"
+          render={<Link href="/sign-up" />}
+          nativeButton={false}
+        >
+          {t("signUp")}
         </Button>
       </div>
     );
   }
 
   const user = session.user;
+  const displayName =
+    shortenText(user.name || user.email, 18) ?? t("myAccount");
+  const fullDisplayName =
+    shortenText(user.name || t("myAccount"), 28) ?? t("myAccount");
 
   const handleSignOut = async () => {
     await authClient.signOut({
@@ -72,7 +87,7 @@ function UserMenu({ compact = false }: { compact?: boolean }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="flex items-center gap-2"
+          className="flex h-10 items-center gap-2 rounded-full pr-3"
           aria-label={t("myAccount")}
         >
           <Avatar size="sm">
@@ -81,13 +96,15 @@ function UserMenu({ compact = false }: { compact?: boolean }) {
               {initialsFrom(user.name || user.email)}
             </AvatarFallback>
           </Avatar>
-          <span className="hidden sm:inline">{user.name || user.email}</span>
+          <span className="hidden max-w-36 truncate sm:inline">
+            {displayName}
+          </span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-60 rounded-xl">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="truncate">
-            <div className="text-sm font-medium">{user.name || t("myAccount")}</div>
+            <div className="truncate text-sm font-medium">{fullDisplayName}</div>
             {user.email ? (
               <div className="truncate text-xs text-muted-foreground">
                 {user.email}
