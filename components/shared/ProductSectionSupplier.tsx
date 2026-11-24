@@ -7,10 +7,34 @@ export default function ProductSectionSupplier() {
   const t = useTranslations("product");
 
   const cards = [
-    { id: "9", flag: "https://flagcdn.com/w40/et.png" },
-    { id: "10", flag: "https://flagcdn.com/w40/et.png" },
-    { id: "11", flag: "https://flagcdn.com/w40/et.png" },
-    { id: "12", flag: "https://flagcdn.com/w40/et.png" },
+    {
+      id: "9",
+      flag: "https://flagcdn.com/w40/et.png",
+      category: "Agriculture",
+      quantity: "50 bags",
+      timeLeft: "20 days left",
+    },
+    {
+      id: "10",
+      flag: "https://flagcdn.com/w40/et.png",
+      category: "Oilseeds",
+      quantity: "40 MT",
+      timeLeft: "18 days left",
+    },
+    {
+      id: "11",
+      flag: "https://flagcdn.com/w40/et.png",
+      category: "Food & beverage",
+      quantity: "2,000 jars",
+      timeLeft: "12 days left",
+    },
+    {
+      id: "12",
+      flag: "https://flagcdn.com/w40/et.png",
+      category: "Grains",
+      quantity: "25 MT",
+      timeLeft: "30 days left",
+    },
   ] as const;
 
   return (
@@ -34,10 +58,12 @@ export default function ProductSectionSupplier() {
             countryFlag={card.flag}
             imageUrl={PRODUCT_CARD_IMAGES[card.id]}
             rating={4.5 + Number(card.id) * 0.05}
+            category={card.category}
+            quantity={card.quantity}
+            timeLeft={card.timeLeft}
           />
         ))}
       </div>
     </div>
   );
 }
-

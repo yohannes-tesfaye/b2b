@@ -6,7 +6,7 @@ import ProductSectionWanted from "@/components/shared/ProductSectionWanted";
 import Reviews from "@/components/shared/Reviews";
 import SuppliersByRegion from "@/components/shared/SuppliersByRegion";
 import TrustedBy from "@/components/shared/TrustedBy";
-import { ProductListingCard } from "@/components/product/product-listing-card";
+import { ProductCard } from "@/components/shared/ProductCard";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ const Home = async () => {
             </header>
             <div className="grid grid-cols-1 gap-4 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
               {listings.map((listing) => (
-                <ProductListingCard key={listing.id} listing={listing} />
+                <ProductCard key={listing.id} listing={listing} />
               ))}
             </div>
           </section>

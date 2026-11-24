@@ -1,7 +1,7 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { LISTING_CATEGORIES } from "@/lib/listings";
-import { ProductListingCard } from "@/components/product/product-listing-card";
+import { ProductCard } from "@/components/shared/ProductCard";
 import { ProductFilters } from "@/components/product/product-filters";
 import { ProductPagination } from "@/components/product/product-pagination";
 import { Link } from "@/i18n/navigation";
@@ -106,7 +106,7 @@ export default async function ProductPage({
         <>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {listings.map((listing) => (
-              <ProductListingCard key={listing.id} listing={listing} />
+              <ProductCard key={listing.id} listing={listing} />
             ))}
           </div>
 

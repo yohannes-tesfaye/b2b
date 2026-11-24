@@ -9,7 +9,7 @@ import {
 } from "@/lib/listings";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ProductListingCard } from "@/components/product/product-listing-card";
+import { ProductCard } from "@/components/shared/ProductCard";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductShareSave } from "@/components/product/product-share-save";
 import { ProductDescription } from "@/components/product/product-description";
@@ -80,10 +80,6 @@ export default async function ProductDetailPage({
     take: 4,
   });
 
-  const priceValue = isWanted
-    ? listing.budgetRange || "Budget on request"
-    : listing.price || "Price on request";
-
   const specs = [
     { label: "Category", value: categoryLabel(listing.category) },
     { label: "Quantity", value: listing.quantity },
@@ -94,11 +90,8 @@ export default async function ProductDetailPage({
           { label: "Quality standard", value: listing.qualityStandard },
           { label: "Delivery timeline", value: listing.deliveryTimeline },
           { label: "Preferred region", value: listing.preferredRegion },
-          { label: "Budget range", value: listing.budgetRange },
         ]
       : [
-          { label: "Price", value: listing.price },
-          { label: "Currency", value: listing.currency },
           { label: "Minimum order", value: listing.moq },
           { label: "Incoterms", value: listing.incoterms },
           { label: "Country of origin", value: listing.originCountry },
@@ -175,20 +168,6 @@ export default async function ProductDetailPage({
                     <MessageSquare className="h-3.5 w-3.5" />{" "}
                     {listing.inquiries} inquiries
                   </span>
-                </div>
-
-                <div className="rounded-2xl bg-muted/60 p-4 lg:bg-muted/50">
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                    {isWanted ? "Budget" : "Price"}
-                  </p>
-                  <p className="mt-1 text-3xl font-bold leading-none tracking-tight">
-                    {priceValue}
-                  </p>
-                  {!isWanted && listing.moq ? (
-                    <p className="mt-1.5 text-xs text-muted-foreground">
-                      Minimum order: {listing.moq}
-                    </p>
-                  ) : null}
                 </div>
 
                 <div className="grid grid-cols-2 gap-2">
@@ -383,7 +362,7 @@ export default async function ProductDetailPage({
                 key={item.id}
                 className="w-[78%] max-w-[300px] shrink-0 snap-start sm:w-auto sm:max-w-none"
               >
-                <ProductListingCard listing={item} orientation="tile" />
+                <ProductCard listing={item} />
               </div>
             ))}
           </div>
