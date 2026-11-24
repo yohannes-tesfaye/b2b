@@ -83,7 +83,7 @@ function UserMenu({ compact = false }: { compact?: boolean }) {
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"

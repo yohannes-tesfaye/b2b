@@ -40,6 +40,7 @@ export default function ThemeSwitcher() {
 
   return (
     <Select
+      modal={false}
       value={mounted ? (theme as ThemeValue) : null}
       onValueChange={(value: ThemeValue | null) => {
         if (value) setTheme(value);
