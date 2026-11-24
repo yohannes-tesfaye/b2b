@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -53,6 +54,7 @@ function ProfileForm({
     industry: user.industry ?? "",
     companySize: user.companySize ?? "",
     roles: parseRoles(user.role),
+    bio: user.bio ?? "",
   });
   const [state, formAction] = useActionState(updateProfile, initialFormState);
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({});
@@ -295,6 +297,27 @@ function ProfileForm({
             </Select>
           </FieldContent>
         </Field>
+        <Field className="gap-2">
+          <div className="flex items-center justify-between gap-2">
+            <FieldLabel htmlFor="bio">Bio</FieldLabel>
+            <span className="text-xs text-muted-foreground">
+              {t("optional")}
+            </span>
+          </div>
+          <FieldContent>
+            <Textarea
+              id="bio"
+              value={v.bio}
+              onChange={(e) =>
+                setV((prev) => ({ ...prev, bio: e.target.value }))
+              }
+              placeholder="Tell traders about yourself and your business..."
+              rows={3}
+              className="min-h-20 rounded-xl"
+            />
+            <FieldError errors={fieldError("bio")} />
+          </FieldContent>
+        </Field>
       </section>
 
       <div className="flex justify-end">
@@ -311,6 +334,7 @@ function ProfileForm({
       <input type="hidden" name="country" value={v.country} />
       <input type="hidden" name="industry" value={v.industry} />
       <input type="hidden" name="companySize" value={v.companySize} />
+      <input type="hidden" name="bio" value={v.bio} />
     </form>
   );
 }

@@ -1,44 +1,39 @@
 "use client";
 
-import { useActionState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
+import { useTransition } from "react";
 import { sendMessage } from "@/utils/inquiries/actions";
-import { initialInquiryFormState } from "@/lib/validation/inquiry";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { ChatInput } from "./ChatInput";
 
 export function ReplyForm({ conversationId }: { conversationId: string }) {
-  const [state, formAction, isPending] = useActionState(
-    sendMessage,
-    initialInquiryFormState
-  );
+  const [isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    if (state.status === "success" && state.message) {
-      toast.success(state.message);
-    } else if (state.status === "error" && state.message) {
-      toast.error(state.message);
-    }
-  }, [state]);
+  const handleSend = (body: string) => {
+    startTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.set("conversationId", conversationId);
+        formData.set("body", body);
+        const result = await sendMessage(
+          { status: "idle" },
+          formData
+        );
+        if (result.status === "success") {
+          toast.success(result.message ?? "Message sent");
+        } else if (result.status === "error" && result.message) {
+          toast.error(result.message);
+        }
+      } catch {
+        toast.error("Failed to send message");
+      }
+    });
+  };
 
   return (
-    <form action={formAction} className="flex flex-col gap-2">
-      <input type="hidden" name="conversationId" value={conversationId} />
-      <Textarea
-        name="body"
-        placeholder="Type your reply..."
-        rows={3}
-        className="min-h-20 rounded-xl"
-        required
-      />
-      <div className="flex justify-end">
-        <Button type="submit" className="h-10 rounded-xl" disabled={isPending}>
-          <Send className="h-4 w-4" />
-          {isPending ? "Sending…" : "Send reply"}
-        </Button>
-      </div>
-    </form>
+    <ChatInput
+      conversationId={conversationId}
+      onSend={handleSend}
+      isPending={isPending}
+    />
   );
 }

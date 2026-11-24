@@ -29,6 +29,8 @@ model User {
   country              String?
   industry             String?
   companySize          String?
+  bio                  String?
+  verified             Boolean                @default(false)
   sessions             Session[]
   accounts             Account[]
   listings             Listing[]
@@ -283,6 +285,7 @@ model Message {
   senderId       String
   sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
   body           String
+  attachment     String?
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])

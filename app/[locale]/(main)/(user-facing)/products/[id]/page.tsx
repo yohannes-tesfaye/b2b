@@ -237,7 +237,7 @@ export default async function ProductDetailPage({
                 <section className="rounded-2xl border bg-card p-4 lg:p-6">
                   <div className="flex items-center gap-3">
                     <Link
-                      href={`/${owner.id}/dashboard`}
+                      href={`/${owner.id}`}
                       className="shrink-0 rounded-full ring-offset-background transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       aria-label={`View ${owner.name ?? "trader"}'s profile`}
                     >
@@ -308,7 +308,7 @@ export default async function ProductDetailPage({
                   <Button
                     variant="ghost"
                     className="mt-3 hidden h-9 w-full rounded-xl text-xs font-medium text-muted-foreground lg:flex"
-                    render={<Link href={`/${owner.id}/dashboard`} />}
+                    render={<Link href={`/${owner.id}`} />}
                     nativeButton={false}
                   >
                     View full profile

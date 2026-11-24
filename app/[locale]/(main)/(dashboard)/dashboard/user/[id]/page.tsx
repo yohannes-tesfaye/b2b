@@ -32,6 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import { ListingStatusBadge } from "@/components/dashboard/listing-status-badge";
 import { RoleBadges } from "@/components/dashboard/role-badges";
 import { AdminUserActions } from "@/components/dashboard/admin-user-actions";
+import { toggleVerified } from "../actions";
 
 function DetailRow({
   label,
@@ -118,6 +119,16 @@ export default async function AdminUserDetailPage({
               </p>
               <div className="flex flex-wrap items-center gap-1.5">
                 <AccountStatusBadge user={user} />
+                {user.verified ? (
+                  <Badge variant="secondary" className="gap-1 bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                    <ShieldCheck className="h-3 w-3" />
+                    Verified
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-muted-foreground">
+                    Not verified
+                  </Badge>
+                )}
                 <RoleBadges role={user.role} />
               </div>
             </div>
@@ -131,6 +142,12 @@ export default async function AdminUserDetailPage({
             }}
             isSelf={isSelf}
           />
+          <form action={toggleVerified.bind(null, user.id)}>
+            <Button size="sm" variant="outline">
+              <ShieldCheck className="h-4 w-4" />
+              {user.verified ? "Unverify" : "Verify"}
+            </Button>
+          </form>
         </div>
       </div>
 

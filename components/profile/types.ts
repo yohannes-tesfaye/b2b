@@ -10,5 +10,6 @@ export type ProfileUser = {
   country?: string | null;
   industry?: string | null;
   companySize?: string | null;
+  bio?: string | null;
   createdAt?: string | Date | null;
 };

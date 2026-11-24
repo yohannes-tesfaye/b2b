@@ -53,6 +53,11 @@ function ProfileView({ user }: { user: ProfileUser }) {
       <div className="flex flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
         <AvatarUpload name={user.name} email={user.email} image={user.image} />
         <div className="flex flex-col items-start gap-2 sm:items-end">
+          {user.bio ? (
+            <p className="max-w-md text-sm text-muted-foreground sm:text-right">
+              {user.bio}
+            </p>
+          ) : null}
           <div className="flex flex-wrap gap-1.5 sm:justify-end">
             {roles.length ? (
               roles.map((label) => (

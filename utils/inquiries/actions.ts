@@ -190,6 +190,7 @@ export async function sendMessage(
   const parsed = messageSchema.safeParse({
     conversationId: String(formData.get("conversationId") ?? ""),
     body: String(formData.get("body") ?? ""),
+    attachment: String(formData.get("attachment") ?? "") || undefined,
   });
 
   if (!parsed.success) {
@@ -241,6 +242,7 @@ export async function sendMessage(
       conversationId: conversation.id,
       senderId: user.id,
       body: parsed.data.body,
+      attachment: parsed.data.attachment || null,
     },
   });
 

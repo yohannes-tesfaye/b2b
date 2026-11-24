@@ -46,3 +46,18 @@ export async function deleteUser(userId: string) {
   await prisma.user.delete({ where: { id: userId } });
   revalidatePath("/[locale]/dashboard/user", "page");
 }
+
+export async function toggleVerified(userId: string) {
+  const session = await requireAdmin();
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { verified: true },
+  });
+  if (!user) throw new Error("User not found");
+  await prisma.user.update({
+    where: { id: userId },
+    data: { verified: !user.verified },
+  });
+  revalidatePath("/[locale]/dashboard/user", "page");
+  revalidatePath("/[locale]/dashboard/user/[id]", "page");
+}

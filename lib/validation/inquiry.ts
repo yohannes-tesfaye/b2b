@@ -26,6 +26,7 @@ export const messageSchema = z.object({
     .trim()
     .min(1, "Message cannot be empty.")
     .max(4000, "Message must be 4,000 characters or fewer."),
+  attachment: z.string().optional(),
 });
 
 export type ConversationStartValues = z.infer<typeof conversationStartSchema>;
