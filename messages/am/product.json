@@ -2,6 +2,7 @@
   "product": {
     "supplier": "አቅራቢ",
     "wanted": "ፈላጊ",
+    "availableGoodsEyebrow": "ያሉ ሸቀጦች",
     "verified": "የተረጋገጠ",
     "contact": "አግኙ",
     "quantity": "ብዛት",
@@ -42,6 +43,8 @@
     "message": "መልእክት",
     "messagePlaceholder": "ስለ ጥያቄዎ ይንገሩን...",
     "sendMessage": "መልእክት ላክ",
+    "wantedGoodsEyebrow": "የሚፈለጉ ሸቀጦች",
+    "wantedGoodsDescription": "ለጅምላ መጠን እና ተደጋጋሚ አቅርቦት ያሉ የገዢዎች ጥያቄዎች።",
     "supplierSectionTitle": "የግብርናና የምግብ ምርት <highlight>አቅራቢ</highlight> (ይገኛል)",
     "supplierHighlight": "አቅራቢ",
     "wantedSectionTitle": "የግብርናና የምግብ ምርት <highlight>የገዥ ጥያቄ</highlight> (ፍላጎት)",

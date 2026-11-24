@@ -8,7 +8,7 @@ import { SUPPLIER_REGIONS } from "@/lib/config/suppliers";
  */
 export default function SuppliersByRegion() {
   return (
-    <section className="container-wide py-12">
+    <section className="container-wide py-(--section-space)">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="type-caption text-brand">Suppliers</p>
@@ -23,7 +23,7 @@ export default function SuppliersByRegion() {
         </Link>
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2 lg:auto-rows-[132px] lg:grid-cols-4">
+      <div className="mt-(--spacing-12) grid gap-4 md:grid-cols-2 lg:auto-rows-[132px] lg:grid-cols-4">
         {SUPPLIER_REGIONS.map((region, index) => (
           <Link
             key={region.slug}

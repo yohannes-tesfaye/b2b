@@ -2,62 +2,36 @@
 import { useTranslations } from "next-intl";
 import { ProductCard } from "./ProductCard";
 import { PRODUCT_CARD_IMAGES } from "@/lib/product-demo";
+import { WANTED_LISTINGS } from "@/lib/config/wanted-listings";
 
+/** Homepage "Wanted goods" preview grid. Card facts live in lib/config. */
 export default function ProductSectionWanted() {
   const t = useTranslations("product");
 
-  const cards = [
-    {
-      id: "13",
-      flag: "https://flagcdn.com/w40/ke.png",
-      category: "Pulses",
-      quantity: "500 drums",
-      timeLeft: "14 days left",
-    },
-    {
-      id: "14",
-      flag: "https://flagcdn.com/w40/dj.png",
-      category: "Food & beverage",
-      quantity: "1,200 cases",
-      timeLeft: "9 days left",
-    },
-    {
-      id: "15",
-      flag: "https://flagcdn.com/w40/ug.png",
-      category: "Fresh produce",
-      quantity: "800 crates",
-      timeLeft: "7 days left",
-    },
-    {
-      id: "16",
-      flag: "https://flagcdn.com/w40/et.png",
-      category: "Spices",
-      quantity: "300 kg",
-      timeLeft: "21 days left",
-    },
-  ] as const;
-
   return (
-    <div className="container-wide">
-      <header className="mb-8 text-center">
-        <p className="type-caption text-warm">Wanted goods</p>
+    <div className="container-wide py-(--section-space)">
+      <header className="mb-(--spacing-12) text-center">
+        <p className="type-caption text-warm">{t("wantedGoodsEyebrow")}</p>
         <h2 className="type-section mt-2">
           {t.rich("wantedSectionTitle", {
             highlight: (chunks) => <span className="text-warm">{chunks}</span>,
           })}
         </h2>
+        <p className="type-body mt-3 text-muted-foreground">
+          {t("wantedGoodsDescription")}
+        </p>
       </header>
-      <div className="grid grid-cols-1 gap-4 [&>*]:min-w-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-        {cards.map((card) => (
+      <div className="grid grid-cols-1 gap-(--spacing-4) [&>*]:min-w-0 max-sm:[&>a]:max-w-none sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {WANTED_LISTINGS.map((card) => (
           <ProductCard
             key={card.id}
             id={card.id}
             type="wanted"
             title={t(`cards.${card.id}.title`)}
             country={t(`cards.${card.id}.country`)}
-            countryFlag={card.flag}
+            countryCode={card.countryCode}
             imageUrl={PRODUCT_CARD_IMAGES[card.id]}
-            rating={4.0 + Number(card.id) * 0.03}
+            rating={card.rating}
             category={card.category}
             quantity={card.quantity}
             timeLeft={card.timeLeft}

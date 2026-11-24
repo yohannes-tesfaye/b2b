@@ -2,6 +2,7 @@
   "product": {
     "supplier": "Supplier",
     "wanted": "Wanted",
+    "availableGoodsEyebrow": "Available goods",
     "verified": "Verified",
     "contact": "Contact",
     "quantity": "Quantity",
@@ -42,6 +43,8 @@
     "message": "Message",
     "messagePlaceholder": "Tell us about your inquiry...",
     "sendMessage": "Send Message",
+    "wantedGoodsEyebrow": "Wanted goods",
+    "wantedGoodsDescription": "Buyer requests for bulk quantities and repeat supply.",
     "supplierSectionTitle": "Agriculture and Food Product <highlight>Supplier</highlight> (Available)",
     "supplierHighlight": "Supplier",
     "wantedSectionTitle": "Agriculture and Food Product <highlight>Buyer Request</highlight> (Wanted)",

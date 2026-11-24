@@ -9,14 +9,14 @@ export default function Reviews() {
   const t = useTranslations("home.reviews");
 
   return (
-    <section className="container-wide py-16">
+    <section className="container-wide py-(--section-space)">
       <div className="mx-auto max-w-3xl text-center">
         <p className="type-caption text-brand">{t("eyebrow")}</p>
         <h2 className="type-section mt-2">{t("title")}</h2>
         <p className="type-body mt-3 text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <div className="mt-10 grid gap-6 md:grid-cols-3">
+      <div className="mt-(--spacing-12) grid gap-6 md:grid-cols-3">
         {REVIEW_KEYS.map((key) => {
           const rating = REVIEW_RATINGS[key];
           return (

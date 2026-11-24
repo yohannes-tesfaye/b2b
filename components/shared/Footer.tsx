@@ -16,7 +16,7 @@ export default function Footer() {
     <footer id="footer" className="border-t border-border bg-card">
       <div className="container-wide">
         {/* Newsletter */}
-        <section className="grid gap-8 border-b border-border py-14 lg:grid-cols-[1.1fr_1fr] lg:items-end lg:gap-16 lg:py-16">
+        <section className="grid gap-8 border-b border-border py-(--section-space) lg:grid-cols-[1.1fr_1fr] lg:items-end lg:gap-16">
           <div>
             <p className="type-caption text-brand">{t("newsletter.eyebrow")}</p>
             <h2 className="type-section mt-3 max-w-xl">

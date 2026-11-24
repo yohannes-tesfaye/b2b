@@ -31,7 +31,10 @@ export function HowItWorks() {
   const t = useTranslations("hero");
 
   return (
-    <section id="how-it-works" className="mt-10 scroll-mt-36 lg:mt-14">
+    <section
+      id="how-it-works"
+      className="scroll-mt-36 py-(--section-space)"
+    >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch lg:gap-12">
         <div className="lg:w-56 lg:shrink-0 lg:pt-1">
           <p className="type-caption text-brand">{t("howEyebrow")}</p>

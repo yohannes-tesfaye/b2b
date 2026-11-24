@@ -83,7 +83,8 @@
   --spacing-48: 12rem;
   --spacing-56: 14rem;
   --spacing-64: 16rem;
-  --spacing-section: clamp(4.5rem, 8vw, 7.5rem);
+  --section-space: clamp(4rem, 6vw, 6rem);
+  --mobile-card-fill: 95vw;
 
   /* Motion */
   --animate-marquee: marquee 48s linear infinite;
@@ -243,6 +244,14 @@
     max-width: min(94vw, 110rem);
     margin-inline: auto;
     padding-inline: clamp(1rem, 2vw, 2.5rem);
+  }
+
+  @media (width < 40rem) {
+    .container-wide {
+      max-width: 100vw;
+      /* Keep the content at 95vw even when a scrollbar reduces the layout width */
+      padding-inline: calc((100% - var(--mobile-card-fill)) / 2);
+    }
   }
 }
 

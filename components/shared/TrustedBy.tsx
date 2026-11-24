@@ -9,7 +9,7 @@ export default function TrustedBy() {
   const loop = [...TRUSTED_COMPANIES, ...TRUSTED_COMPANIES];
 
   return (
-    <div className="w-full bg-muted py-16">
+    <div className="w-full bg-muted py-(--section-space)">
       <div className="container-wide">
         <p className="type-caption text-brand">{t("eyebrow")}</p>
         <h2 className="type-section mt-2 text-center">{t("title")}</h2>
@@ -17,7 +17,7 @@ export default function TrustedBy() {
           {t("description")}
         </p>
 
-        <div className="relative mt-10 overflow-hidden">
+        <div className="relative mt-(--spacing-12) overflow-hidden">
           <div className="flex w-max gap-4 animate-marquee">
             {loop.map((company, index) => {
               const Icon = company.icon;
