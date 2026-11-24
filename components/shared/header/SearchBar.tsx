@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState, useEffect } from "react";
 import { CornerDownLeft, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "cn";
@@ -19,7 +19,39 @@ export function SearchBar({
   const t = useTranslations("header");
   const router = useRouter();
   const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.key !== "Enter" ||
+        event.isComposing ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.altKey ||
+        event.shiftKey
+      ) {
+        return;
+      }
+
+      const active = document.activeElement;
+      if (
+        active instanceof HTMLInputElement ||
+        active instanceof HTMLTextAreaElement ||
+        active instanceof HTMLSelectElement ||
+        (active instanceof HTMLElement && active.isContentEditable)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      inputRef.current?.focus();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const submit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -34,7 +66,7 @@ export function SearchBar({
       role="search"
       onSubmit={submit}
       className={cn(
-        "group flex w-full items-center gap-2 rounded-full border border-border bg-card pl-4 pr-1.5 transition-colors focus-within:border-foreground/25 focus-within:ring-2 focus-within:ring-ring/15",
+        "group relative z-10 flex w-full items-center gap-2 rounded-full border border-border bg-card pl-4 pr-1.5 transition-[transform,border-color,box-shadow] duration-200 ease-out motion-reduce:transition-none focus-within:scale-x-[1.06] focus-within:scale-y-[1.03] focus-within:border-ring/30 focus-within:shadow-[0_4px_16px_-4px_var(--ring)] focus-within:ring-2 focus-within:ring-ring/15",
         size === "lg" ? "h-11" : "h-10",
         className
       )}
@@ -48,6 +80,7 @@ export function SearchBar({
         {t("search")}
       </label>
       <input
+        ref={inputRef}
         id={inputId}
         name="q"
         type="search"
