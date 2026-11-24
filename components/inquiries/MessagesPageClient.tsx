@@ -168,19 +168,25 @@ export function MessagesPageClient({
                 }`}
               >
                 <div className="relative shrink-0">
-                  {counterpart.image ? (
-                    <img
-                      src={counterpart.image}
-                      alt={counterpart.name ?? ""}
-                      className="h-11 w-11 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary">
-                      {(counterpart.companyName || counterpart.name || "?")
-                        .charAt(0)
-                        .toUpperCase()}
-                    </div>
-                  )}
+                  <a
+                    href={`/${counterpart.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="block"
+                  >
+                    {counterpart.image ? (
+                      <img
+                        src={counterpart.image}
+                        alt={counterpart.name ?? ""}
+                        className="h-11 w-11 rounded-full object-cover transition-opacity hover:opacity-80"
+                      />
+                    ) : (
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-sm font-bold text-primary transition-opacity hover:opacity-80">
+                        {(counterpart.companyName || counterpart.name || "?")
+                          .charAt(0)
+                          .toUpperCase()}
+                      </div>
+                    )}
+                  </a>
                   {unread > 0 ? (
                     <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
                       {unread}
@@ -190,9 +196,9 @@ export function MessagesPageClient({
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <p className="truncate text-sm font-semibold">
+                    <Link href={`/${counterpart.id}`} className="truncate text-sm font-semibold hover:underline">
                       {counterpart.companyName || counterpart.name || "Unknown"}
-                    </p>
+                    </Link>
                     <span className="shrink-0 text-[10px] text-muted-foreground">
                       {relativeTime(conv.lastMessageAt)}
                     </span>

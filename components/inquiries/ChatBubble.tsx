@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, CheckCheck } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { cn } from "cn";
 
 interface ChatBubbleProps {
@@ -12,6 +13,7 @@ interface ChatBubbleProps {
   avatarFallback?: string;
   isGrouped?: boolean;
   attachment?: string | null;
+  senderId?: string;
 }
 
 export function ChatBubble({
@@ -23,6 +25,7 @@ export function ChatBubble({
   avatarFallback = "?",
   isGrouped = false,
   attachment,
+  senderId,
 }: ChatBubbleProps) {
   const time = new Date(timestamp).toLocaleTimeString(undefined, {
     hour: "2-digit",
@@ -38,9 +41,17 @@ export function ChatBubble({
       )}
     >
       {!isOwn && showAvatar ? (
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-          {avatarFallback}
-        </div>
+        senderId ? (
+          <Link href={`/${senderId}`} className="shrink-0">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary transition-opacity hover:opacity-80">
+              {avatarFallback}
+            </div>
+          </Link>
+        ) : (
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+            {avatarFallback}
+          </div>
+        )
       ) : !isOwn ? (
         <div className="w-7 shrink-0" />
       ) : null}

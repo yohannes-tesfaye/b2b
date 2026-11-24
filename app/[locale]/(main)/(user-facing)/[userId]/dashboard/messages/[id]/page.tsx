@@ -91,18 +91,22 @@ export default async function ThreadPage({
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <Avatar className="h-9 w-9 shrink-0">
-          {counterpart.image ? (
-            <AvatarImage src={counterpart.image} alt={counterpart.name ?? ""} />
-          ) : null}
-          <AvatarFallback className="text-xs font-bold">
-            {initialsFrom(counterpart.name || counterpart.companyName || "?")}
-          </AvatarFallback>
-        </Avatar>
+        <Link href={`/${counterpart.id}`} className="shrink-0">
+          <Avatar className="h-9 w-9">
+            {counterpart.image ? (
+              <AvatarImage src={counterpart.image} alt={counterpart.name ?? ""} />
+            ) : null}
+            <AvatarFallback className="text-xs font-bold">
+              {initialsFrom(counterpart.name || counterpart.companyName || "?")}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold">
-            {counterpart.companyName || counterpart.name || "Unknown"}
-          </p>
+          <Link href={`/${counterpart.id}`} className="block">
+            <p className="truncate text-sm font-semibold hover:underline">
+              {counterpart.companyName || counterpart.name || "Unknown"}
+            </p>
+          </Link>
           <p className="truncate text-xs text-muted-foreground">
             {conversation.listing.title}
           </p>
@@ -154,6 +158,7 @@ export default async function ThreadPage({
                 avatarFallback={initialsFrom(msg.sender.name || msg.sender.companyName || "?")}
                 isGrouped={grouped}
                 attachment={msg.attachment}
+                senderId={msg.senderId}
               />
             );
           })
