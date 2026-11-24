@@ -169,7 +169,7 @@ export function MessagesPageClient({
               >
                 <div className="relative shrink-0">
                   <a
-                    href={`/${counterpart.id}`}
+                    href={`/profile/${counterpart.id}`}
                     onClick={(e) => e.stopPropagation()}
                     className="block"
                   >
@@ -196,7 +196,7 @@ export function MessagesPageClient({
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <Link href={`/${counterpart.id}`} className="truncate text-sm font-semibold hover:underline">
+                    <Link href={`/profile/${counterpart.id}`} className="truncate text-sm font-semibold hover:underline">
                       {counterpart.companyName || counterpart.name || "Unknown"}
                     </Link>
                     <span className="shrink-0 text-[10px] text-muted-foreground">

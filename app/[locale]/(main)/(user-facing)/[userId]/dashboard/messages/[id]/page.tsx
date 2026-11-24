@@ -91,7 +91,7 @@ export default async function ThreadPage({
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <Link href={`/${counterpart.id}`} className="shrink-0">
+        <Link href={`/profile/${counterpart.id}`} className="shrink-0">
           <Avatar className="h-9 w-9">
             {counterpart.image ? (
               <AvatarImage src={counterpart.image} alt={counterpart.name ?? ""} />
@@ -102,7 +102,7 @@ export default async function ThreadPage({
           </Avatar>
         </Link>
         <div className="min-w-0 flex-1">
-          <Link href={`/${counterpart.id}`} className="block">
+          <Link href={`/profile/${counterpart.id}`} className="block">
             <p className="truncate text-sm font-semibold hover:underline">
               {counterpart.companyName || counterpart.name || "Unknown"}
             </p>
