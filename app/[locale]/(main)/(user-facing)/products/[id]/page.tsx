@@ -215,7 +215,7 @@ export default async function ProductDetailPage({
               <section className="rounded-2xl border bg-card p-4 lg:p-6">
                 <div className="flex items-center gap-3">
                   <Link
-                    href={`/${owner.id}/dashboard`}
+                    href={`/profile/${owner.id}`}
                     className="shrink-0 rounded-full ring-offset-background transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     aria-label={`View ${owner.name ?? "trader"}'s profile`}
                   >
@@ -236,7 +236,7 @@ export default async function ProductDetailPage({
                   </Link>
                   <div className="min-w-0 flex-1">
                     <Link
-                      href={`/${owner.id}/dashboard`}
+                      href={`/profile/${owner.id}`}
                       className="flex min-h-10 items-center gap-1 py-1 hover:underline"
                     >
                       <p className="truncate font-semibold">
