@@ -179,7 +179,7 @@ export default async function ThreadPage({
                 isGrouped={grouped}
                 attachment={msg.attachment}
                 senderId={msg.senderId}
-                listing={listingRef}
+                listing={msg.viaListing ? listingRef : null}
               />
             );
           })

@@ -286,6 +286,8 @@ model Message {
   sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
   body           String
   attachment     String?
+  /** True only for the initial inquiry created from a listing's contact form. */
+  viaListing     Boolean      @default(false)
   createdAt      DateTime     @default(now())
 
   @@index([conversationId, createdAt])

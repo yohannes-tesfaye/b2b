@@ -143,6 +143,9 @@ export async function startConversation(
       conversationId: conversation.id,
       senderId: user.id,
       body: parsed.data.message,
+      // Mark the inquiry as originating from the listing contact form so the
+      // chat can show the listing preview on this message only.
+      viaListing: true,
     },
   });
 
