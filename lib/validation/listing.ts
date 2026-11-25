@@ -15,8 +15,7 @@ function addUrlIssue(
   }
 }
 
-export const listingSchema = z
-  .object({
+export const listingBaseSchema = z.object({
     type: z.enum(["wanted", "available"], {
       message: "Select a listing type.",
     }),
@@ -62,70 +61,139 @@ export const listingSchema = z
     originCountry: optionalText(120),
     deliveryOptions: optionalText(500),
     technicalSpecs: optionalText(3000),
+});
+
+type WantedRequirementValues = Pick<
+  z.infer<typeof listingBaseSchema>,
+  | "type"
+  | "qualityStandard"
+  | "deliveryTimeline"
+  | "preferredRegion"
+  | "budgetRange"
+  | "technicalDocument"
+>;
+
+type AvailableOfferValues = Pick<
+  z.infer<typeof listingBaseSchema>,
+  "type" | "price" | "deliveryOptions"
+>;
+
+type ImageValues = Pick<z.infer<typeof listingBaseSchema>, "images">;
+
+function refineWanted(values: WantedRequirementValues, ctx: z.RefinementCtx) {
+  if (!values.qualityStandard) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["qualityStandard"],
+      message: "Describe the quality standard you require.",
+    });
+  }
+  if (!values.deliveryTimeline) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["deliveryTimeline"],
+      message: "Enter your required delivery timeline.",
+    });
+  }
+  if (!values.preferredRegion) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["preferredRegion"],
+      message: "Enter your preferred region.",
+    });
+  }
+  if (!values.budgetRange) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["budgetRange"],
+      message: "Enter your budget range.",
+    });
+  }
+  addUrlIssue(values.technicalDocument, "technicalDocument", ctx);
+}
+
+function refineAvailable(values: AvailableOfferValues, ctx: z.RefinementCtx) {
+  if (!values.price) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["price"],
+      message: "Enter a price or price range.",
+    });
+  }
+  if (!values.deliveryOptions) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["deliveryOptions"],
+      message: "Describe your delivery options.",
+    });
+  }
+}
+
+function refineImages(values: ImageValues, ctx: z.RefinementCtx) {
+  const images = values.images
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (images.length > 6) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["images"],
+      message: "Add up to 6 image URLs.",
+    });
+  }
+  images.forEach((image) => addUrlIssue(image, "images", ctx));
+}
+
+export const listingSchema = listingBaseSchema.superRefine((values, ctx) => {
+  if (values.type === "wanted") {
+    refineWanted(values, ctx);
+    return;
+  }
+  refineAvailable(values, ctx);
+  refineImages(values, ctx);
+});
+
+export const listingTypeStepSchema = listingBaseSchema.pick({ type: true });
+
+export const listingBasicsStepSchema = listingBaseSchema.pick({
+  type: true,
+  title: true,
+  description: true,
+  category: true,
+  quantity: true,
+  location: true,
+  durationDays: true,
+});
+
+export const listingDetailsStepSchema = listingBaseSchema
+  .pick({
+    type: true,
+    qualityStandard: true,
+    deliveryTimeline: true,
+    preferredRegion: true,
+    budgetRange: true,
+    technicalDocument: true,
+    price: true,
+    deliveryOptions: true,
+    images: true,
   })
   .superRefine((values, ctx) => {
     if (values.type === "wanted") {
-      if (!values.qualityStandard) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["qualityStandard"],
-          message: "Describe the quality standard you require.",
-        });
-      }
-      if (!values.deliveryTimeline) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["deliveryTimeline"],
-          message: "Enter your required delivery timeline.",
-        });
-      }
-      if (!values.preferredRegion) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["preferredRegion"],
-          message: "Enter your preferred region.",
-        });
-      }
-      if (!values.budgetRange) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["budgetRange"],
-          message: "Enter your budget range.",
-        });
-      }
-      addUrlIssue(values.technicalDocument, "technicalDocument", ctx);
+      refineWanted(values, ctx);
       return;
     }
-
-    if (!values.price) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["price"],
-        message: "Enter a price or price range.",
-      });
-    }
-    if (!values.deliveryOptions) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["deliveryOptions"],
-        message: "Describe your delivery options.",
-      });
-    }
-
-    const images = values.images
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .filter(Boolean);
-
-    if (images.length > 6) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["images"],
-        message: "Add up to 6 image URLs.",
-      });
-    }
-    images.forEach((image) => addUrlIssue(image, "images", ctx));
+    refineAvailable(values, ctx);
+    refineImages(values, ctx);
   });
+
+/** One schema per wizard step, in order. Index 3 validates the whole listing. */
+export const LISTING_STEP_SCHEMAS = [
+  listingTypeStepSchema,
+  listingBasicsStepSchema,
+  listingDetailsStepSchema,
+  listingSchema,
+] as const;
 
 export const listingModerationNoteSchema = z.object({
   notes: z
