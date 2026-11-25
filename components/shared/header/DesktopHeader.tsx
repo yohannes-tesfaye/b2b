@@ -1,3 +1,5 @@
+"use client";
+
 import { ArrowRight, Heart, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
