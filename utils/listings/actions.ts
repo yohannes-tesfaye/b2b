@@ -51,7 +51,9 @@ function listingPayload(values: ListingFormValues) {
     price: wanted ? null : values.price,
     deliveryOptions: wanted ? null : values.deliveryOptions,
     technicalSpecs: wanted ? null : values.technicalSpecs || null,
-    currency: wanted ? null : values.currency || null,
+    // `currency` is NOT NULL with an ETB default in the deployed table, so an
+    // empty value must be omitted rather than sent as null.
+    currency: wanted ? undefined : values.currency || undefined,
     moq: wanted ? null : values.moq || null,
     certifications: wanted ? null : values.certifications || null,
     incoterms: wanted ? null : values.incoterms || null,
@@ -175,7 +177,8 @@ export async function createListing(
       message: "Listing submitted for approval.",
       redirectTo: dashboardPath(user.id, "/listings"),
     };
-  } catch {
+  } catch (error) {
+    console.error("createListing failed", error);
     return {
       status: "error",
       message: "Could not save this listing. Please try again.",
@@ -228,7 +231,6 @@ export async function updateListing(
     if (!result.count) {
       return { status: "error", message: "Listing not found." };
     }
-
     await syncListingExtras(id, parsed.data, { companyName: user.companyName });
     revalidateListings(user.id, id);
 
@@ -237,7 +239,8 @@ export async function updateListing(
       message: "Listing updated and submitted for approval.",
       redirectTo: dashboardPath(user.id, `/listings/${id}`),
     };
-  } catch {
+  } catch (error) {
+    console.error("updateListing failed", error);
     return {
       status: "error",
       message: "Could not save this listing. Please try again.",

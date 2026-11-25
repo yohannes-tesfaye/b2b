@@ -1,0 +1,33 @@
+{
+  "footer": {
+    "brandDescription": "Ethio Trade connects Ethiopian manufacturers, raw-material suppliers and buyers with verified wholesale partners at home and abroad.",
+    "linksLabel": "Footer links",
+    "columns": {
+      "marketplace": "Marketplace",
+      "company": "Company",
+      "support": "Support"
+    },
+    "links": {
+      "availableGoods": "Available goods",
+      "wantedGoods": "Wanted goods",
+      "suppliers": "Suppliers by region",
+      "howItWorks": "How it works",
+      "sell": "Sell on Ethio Trade",
+      "contact": "Contact",
+      "help": "Help centre",
+      "terms": "Terms & conditions",
+      "privacy": "Privacy policy"
+    },
+    "newsletter": {
+      "eyebrow": "Newsletter",
+      "title": "Trade intelligence, once a month.",
+      "description": "New suppliers, bulk-price movements and export-ready lots — curated for Ethiopian buyers and sellers.",
+      "placeholder": "Your work email",
+      "button": "Subscribe",
+      "note": "No spam. Unsubscribe anytime.",
+      "success": "Thanks — you're on the list."
+    },
+    "rights": "© {year} Ethio Trade. All rights reserved.",
+    "location": "Addis Ababa, Ethiopia"
+  }
+}

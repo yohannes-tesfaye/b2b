@@ -45,7 +45,6 @@ function isValidCode(code: string): boolean {
   return /^[A-Z]{2}$/.test(code) && ALL_CODES.includes(code);
 }
 
-/** Resolve free text ("uk", "USA", "Germany") or a code to an ISO alpha-2 code. */
 export function normalizeCountryCode(value: string | null | undefined): string | null {
   if (!value) return null;
   const raw = value.trim().toUpperCase();
@@ -91,4 +90,12 @@ export function getCountryOptions(): CountryOption[] {
     label: countryName(code),
   })).sort((a, b) => a.label.localeCompare(b.label));
   return cachedOptions;
+}
+
+/** Alias for normalizeCountryCode, used by ProductCard and LatestListings. */
+export function countryCodeFromName(
+  name: string | null | undefined
+): string | undefined {
+  const code = normalizeCountryCode(name);
+  return code ?? undefined;
 }

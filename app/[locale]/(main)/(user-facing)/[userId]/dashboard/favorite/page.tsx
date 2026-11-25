@@ -2,7 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { Heart } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { requireOwnDashboard } from "@/lib/dashboard-access";
-import { ProductListingCard } from "@/components/product/product-listing-card";
+import { ProductCard } from "@/components/shared/ProductCard";
 
 export default async function FavoritesPage({
   params,
@@ -50,10 +50,7 @@ export default async function FavoritesPage({
       {favorites.length ? (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
           {favorites.map((favorite) => (
-            <ProductListingCard
-              key={favorite.id}
-              listing={favorite.listing}
-            />
+            <ProductCard key={favorite.id} listing={favorite.listing} />
           ))}
         </div>
       ) : (

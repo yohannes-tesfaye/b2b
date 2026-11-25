@@ -3,9 +3,10 @@
 import type { ComponentType, SVGProps } from "react";
 import Image from "next/image";
 import { CheckCircle2, Globe, Star } from "lucide-react";
-import { useFormatter, useLocale, useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import * as FlagComponents from "country-flag-icons/react/3x2";
 import { hasFlag } from "country-flag-icons";
+import { cn } from "cn";
 import { Link } from "@/i18n/navigation";
 import {
   Card,
@@ -14,48 +15,37 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { categoryLabel, daysLeftLabel } from "@/lib/listings";
+import { countryCodeFromName } from "@/lib/countries";
+import type { ListingRow } from "@/types/listing";
 import { ProductImage } from "./ProductImage";
 
 const DEFAULT_IMAGE =
   "https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=500&auto=format&fit=crop&q=80";
 const DEFAULT_RATING = 4.5;
 
-const CURRENCY_BY_LOCALE: Record<string, string> = {
-  en: "USD",
-  am: "ETB",
-};
-
 const flagComponents = FlagComponents as unknown as Record<
   string,
   ComponentType<SVGProps<SVGSVGElement>>
 >;
 
-export interface ProductCardProduct {
+export interface ProductCardProps {
+  id?: string;
+  href?: string;
+  type?: "supplier" | "available" | "wanted";
   title?: string;
-  image?: string;
   rating?: number;
   reviewCount?: number;
   country?: string;
   countryCode?: string;
-  supplierName?: string;
-  supplierLogo?: string;
-  priceMin?: number;
-  priceMax?: number;
-  moq?: number;
-  currency?: string;
-  verified?: boolean;
-}
-
-export interface ProductCardProps {
-  id?: string;
-  type?: "supplier" | "wanted";
-  product?: ProductCardProduct;
-  title?: string;
-  rating?: number;
-  country?: string;
   countryFlag?: string;
   imageUrl?: string;
   verified?: boolean;
+  category?: string;
+  quantity?: string;
+  timeLeft?: string;
+  /** Marketplace listing data; maps into the same shared card. */
+  listing?: ListingRow;
 }
 
 function CountryFlag({ code }: { code: string }) {
@@ -77,35 +67,54 @@ function CountryFlag({ code }: { code: string }) {
 }
 
 export function ProductCard({
-  id = "9",
-  type = "wanted",
-  product,
+  id,
+  href,
+  type = "supplier",
   title,
   rating,
+  reviewCount,
   country,
+  countryCode,
   countryFlag,
   imageUrl,
   verified = true,
+  category,
+  quantity,
+  timeLeft,
+  listing,
 }: ProductCardProps) {
   const t = useTranslations("product");
   const format = useFormatter();
-  const locale = useLocale();
 
-  const resolvedTitle = product?.title ?? title ?? t("demo.title");
-  const resolvedImage = product?.image ?? imageUrl ?? DEFAULT_IMAGE;
-  const resolvedRating = product?.rating ?? rating ?? DEFAULT_RATING;
-  const resolvedCountry = product?.country ?? country;
-  const resolvedVerified = product?.verified ?? verified;
+  const listingCountry = listing
+    ? listing.originCountry?.trim() ||
+      listing.location.split(",").pop()?.trim() ||
+      listing.location
+    : undefined;
 
-  const resolvedCountryCode = product?.countryCode;
-  const resolvedSupplierName = product?.supplierName;
-  const resolvedSupplierLogo = product?.supplierLogo;
-  const resolvedReviewCount = product?.reviewCount;
-  const priceMin = product?.priceMin;
-  const priceMax = product?.priceMax;
-  const moq = product?.moq;
-
-  const currency = product?.currency ?? CURRENCY_BY_LOCALE[locale] ?? "USD";
+  const resolvedId = listing?.id ?? id ?? "9";
+  const resolvedHref = href ?? `/products/${resolvedId}`;
+  const resolvedType = listing
+    ? listing.type === "wanted"
+      ? "wanted"
+      : "supplier"
+    : type === "wanted"
+      ? "wanted"
+      : "supplier";
+  const resolvedTitle = listing?.title ?? title ?? t("demo.title");
+  const resolvedImage = listing?.images?.[0] ?? imageUrl ?? DEFAULT_IMAGE;
+  const resolvedRating = rating ?? DEFAULT_RATING;
+  const resolvedCountry = listingCountry ?? country;
+  const resolvedCountryCode =
+    countryCode ?? countryCodeFromName(resolvedCountry);
+  const resolvedCategory = listing
+    ? listing.category
+      ? categoryLabel(listing.category)
+      : undefined
+    : category;
+  const resolvedQuantity = listing?.quantity || quantity;
+  const timeLeftLabel = listing ? daysLeftLabel(listing.expiresAt) : timeLeft;
+  const resolvedTimeLeft = timeLeftLabel === "—" ? undefined : timeLeftLabel;
 
   const formattedRating = format.number(resolvedRating, {
     minimumFractionDigits: 1,
@@ -113,7 +122,7 @@ export function ProductCard({
   });
 
   const formattedReviewCount =
-    resolvedReviewCount != null ? format.number(resolvedReviewCount) : null;
+    reviewCount != null ? format.number(reviewCount) : null;
 
   const ratingAria = formattedReviewCount
     ? t("ratingLabelWithCount", {
@@ -122,149 +131,126 @@ export function ProductCard({
       })
     : t("ratingLabel", { rating: formattedRating });
 
-  const formattedPriceMin =
-    priceMin != null
-      ? format.number(priceMin, { style: "currency", currency })
-      : null;
-  const formattedPriceMax =
-    priceMax != null
-      ? format.number(priceMax, { style: "currency", currency })
-      : null;
-
-  const priceText =
-    formattedPriceMin && formattedPriceMax
-      ? t("priceRange", { min: formattedPriceMin, max: formattedPriceMax })
-      : (formattedPriceMin ?? formattedPriceMax);
-
-  const moqText = moq != null ? t("moq", { count: format.number(moq) }) : null;
-
   return (
-    <Link href={`/product/${id}`} className="flex flex-1 min-w-[260px] max-w-sm">
-      <Card className="group flex w-full flex-col overflow-hidden transition-all duration-200 hover:shadow-md border-border bg-card">
-        <CardHeader className="flex flex-row items-center justify-between p-3.5 pb-2 space-y-0">
+    <Link href={resolvedHref} className="mx-auto block h-full w-full max-w-sm">
+      <Card className="group flex h-full w-full flex-row gap-0 overflow-hidden rounded-xl bg-card p-0 ring-1 ring-border transition-all duration-200 hover:shadow-md sm:flex-col sm:duration-300 sm:hover:-translate-y-1 sm:hover:shadow-lg sm:hover:ring-brand/40">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 px-4 pb-0 pt-4">
           <Badge
-            variant={type === "wanted" ? "default" : "outline"}
-            className={`capitalize font-semibold text-xs ${
-              type === "wanted"
-                ? "bg-blue-600 hover:bg-blue-700 text-white border-transparent"
-                : "bg-red-600/60 hover:bg-red-600/50 text-white border-transparent"
-            }`}
+            className={cn(
+              "rounded-full border-transparent px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide",
+              resolvedType === "wanted"
+                ? "bg-warm text-warm-foreground hover:bg-warm"
+                : "bg-brand text-brand-foreground hover:bg-brand"
+            )}
           >
-            {t(type)}
+            {resolvedType === "wanted" ? t("wanted") : t("supplier")}
           </Badge>
         </CardHeader>
 
-        <CardContent className="p-3.5 pt-0 flex-1 flex flex-col justify-between">
-          <div>
-            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-muted mb-3">
-              <ProductImage
-                src={resolvedImage}
-                alt={resolvedTitle}
-                fallbackLabel={t("imageFallback")}
-              />
-              {resolvedVerified && (
-                <Badge className="absolute bottom-2 left-2 bg-emerald-600/95 hover:bg-emerald-600 text-white backdrop-blur-sm text-[10px] px-2 py-0.5 gap-1 font-semibold border-none">
-                  <CheckCircle2 className="w-3 h-3" /> {t("verified")}
-                </Badge>
-              )}
-            </div>
+        <CardContent className="flex flex-1 flex-col px-4 pb-3 pt-3">
+          <div className="relative h-28 w-28 shrink-0 overflow-hidden bg-muted sm:aspect-[4/3] sm:h-auto sm:w-full">
+            <ProductImage
+              src={resolvedImage}
+              alt={resolvedTitle}
+              fallbackLabel={t("imageFallback")}
+            />
+            {verified && (
+              <Badge className="absolute bottom-1.5 left-1.5 gap-1 rounded-full border-0 bg-brand/95 px-1.5 py-0.5 text-[9px] font-semibold text-brand-foreground backdrop-blur-sm hover:bg-brand/95 sm:bottom-2 sm:left-2 sm:px-2 sm:text-[10px]">
+                <CheckCircle2 className="h-2.5 w-2.5 sm:h-3 sm:w-3" /> {t("verified")}
+              </Badge>
+            )}
+          </div>
 
-            <div className="flex items-center gap-1.5 mb-1.5">
-              <span className="sr-only">{ratingAria}</span>
-              <div className="flex items-center" aria-hidden="true">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-3.5 w-3.5 ${
-                      i < Math.floor(resolvedRating)
-                        ? "fill-amber-400 text-amber-400"
-                        : i < resolvedRating
-                          ? "fill-amber-400/50 text-amber-400"
-                          : "text-muted-foreground/30"
-                    }`}
-                  />
-                ))}
-              </div>
+          <div className="mb-1.5 flex items-center gap-1.5">
+            <span className="sr-only">{ratingAria}</span>
+            <div className="flex items-center" aria-hidden="true">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={cn(
+                    "h-3.5 w-3.5",
+                    i < Math.floor(resolvedRating)
+                      ? "fill-warm text-warm"
+                      : i < resolvedRating
+                        ? "fill-warm/60 text-warm"
+                        : "text-muted-foreground/30"
+                  )}
+                />
+              ))}
+            </div>
+            <span
+              className="text-xs font-semibold text-muted-foreground"
+              aria-hidden="true"
+            >
+              {formattedRating}
+            </span>
+            {formattedReviewCount && (
               <span
-                className="text-xs font-semibold text-muted-foreground"
+                className="text-xs text-muted-foreground"
                 aria-hidden="true"
               >
-                {formattedRating}
+                {t("reviewCount", { count: formattedReviewCount })}
               </span>
-              {formattedReviewCount && (
-                <span
-                  className="text-xs text-muted-foreground"
+            )}
+          </div>
+
+          {resolvedCategory && (
+            <p className="type-caption mb-1 text-[10px] text-brand">
+              {resolvedCategory}
+            </p>
+          )}
+
+          <h3
+            className="mb-2 line-clamp-2 min-h-10 text-sm font-semibold leading-snug text-card-foreground group-hover:underline"
+            title={resolvedTitle}
+          >
+            {resolvedTitle}
+          </h3>
+
+          {resolvedCountry && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              {resolvedCountryCode ? (
+                <CountryFlag code={resolvedCountryCode} />
+              ) : countryFlag ? (
+                <Image
+                  src={countryFlag}
+                  alt=""
+                  width={20}
+                  height={14}
+                  unoptimized
                   aria-hidden="true"
-                >
-                  {t("reviewCount", { count: formattedReviewCount })}
-                </span>
+                  className="h-3.5 w-5 shrink-0 rounded-[2px] border border-border object-cover"
+                />
+              ) : (
+                <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+              )}
+              <span className="truncate font-medium">{resolvedCountry}</span>
+            </div>
+          )}
+
+          {(resolvedQuantity || resolvedTimeLeft) && (
+            <div className="mt-3 flex items-end justify-between gap-3">
+              {resolvedQuantity && (
+                <div className="min-w-0">
+                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                    {t("quantity")}
+                  </p>
+                  <p className="truncate text-xs font-semibold text-foreground">
+                    {resolvedQuantity}
+                  </p>
+                </div>
+              )}
+              {resolvedTimeLeft && (
+                <p className="shrink-0 whitespace-nowrap text-[11px] text-muted-foreground">
+                  {resolvedTimeLeft}
+                </p>
               )}
             </div>
-
-            <h3
-              className="text-sm font-semibold text-card-foreground line-clamp-2 leading-snug hover:underline cursor-pointer mb-2 min-h-10"
-              title={resolvedTitle}
-            >
-              {resolvedTitle}
-            </h3>
-
-            {(priceText || moqText) && (
-              <div className="mb-2 space-y-1">
-                {priceText && (
-                  <p className="text-sm font-semibold text-card-foreground">
-                    {priceText}
-                  </p>
-                )}
-                {moqText && (
-                  <p className="text-xs text-muted-foreground">{moqText}</p>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-1 text-xs text-muted-foreground">
-            {resolvedCountry && (
-              <div className="flex items-center gap-1.5">
-                {resolvedCountryCode ? (
-                  <CountryFlag code={resolvedCountryCode} />
-                ) : countryFlag ? (
-                  <Image
-                    src={countryFlag}
-                    alt=""
-                    width={20}
-                    height={14}
-                    unoptimized
-                    aria-hidden="true"
-                    className="h-3.5 w-5 shrink-0 rounded-[2px] border border-border object-cover"
-                  />
-                ) : (
-                  <Globe className="h-3.5 w-3.5" aria-hidden="true" />
-                )}
-                <span className="font-medium">{resolvedCountry}</span>
-              </div>
-            )}
-            {resolvedSupplierName && (
-              <div className="flex min-w-0 items-center gap-1.5">
-                {resolvedSupplierLogo && (
-                  <Image
-                    src={resolvedSupplierLogo}
-                    alt={t("supplierLogoAlt", { name: resolvedSupplierName })}
-                    width={16}
-                    height={16}
-                    unoptimized
-                    className="h-4 w-4 shrink-0 rounded-full object-cover"
-                  />
-                )}
-                <span className="truncate font-medium">
-                  {resolvedSupplierName}
-                </span>
-              </div>
-            )}
-          </div>
+          )}
         </CardContent>
 
-        <CardFooter className="p-3.5 pt-3">
-          <span className="inline-flex w-full h-9 items-center justify-center rounded-lg bg-blue-600 text-white font-medium text-sm">
+        <CardFooter className="border-0 bg-transparent p-4 pt-0">
+          <span className="inline-flex h-9 w-full items-center justify-center rounded-lg bg-brand text-sm font-medium text-brand-foreground transition-colors group-hover:bg-brand/90">
             {t("contact")}
           </span>
         </CardFooter>
@@ -272,4 +258,3 @@ export function ProductCard({
     </Link>
   );
 }
-

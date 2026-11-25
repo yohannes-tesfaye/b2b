@@ -1,0 +1,49 @@
+{
+  "listingForm": {
+    "progressLabel": "የዝርዝር ሂደት",
+    "steps": {
+      "type": "አይነት",
+      "basics": "መሰረታዊ",
+      "details": "ዝርዝሮች",
+      "review": "ግምገማ"
+    },
+    "stepCaption": "ደረጃ {current} ከ{total}፡ {label}",
+    "optional": "አማራጭ",
+    "next": "ቀጣይ",
+    "back": "ተመለስ",
+    "cancel": "ሰርዝ",
+    "submitCreate": "ዝርዝሩን አስገባ",
+    "submitEdit": "ለውጦችን አስቀምጥ",
+    "saving": "በማስቀመጥ ላይ...",
+    "disabledHint": "ለመቀጠል የተለዩትን መስኮች ይሙሉ።",
+    "typeTitle": "ምን እየዘረዘሩ ነው?",
+    "typeHint": "ይህ ከመገለጫዎ ሚና ተቀድቷል። መቀየር ይችላሉ።",
+    "basicsTitle": "የዝርዝር መሰረታዊ መረጃ",
+    "wantedTitle": "የገዢ መስፈርቶች",
+    "wantedHint": "እነዚህ አቅራቢዎች ጥያቄዎን ማሟላት እንደሚችሉ ለመወሰን ይረዳሉ።",
+    "availableTitle": "የሻጭ ዝርዝሮች",
+    "availableHint": "ገዢዎች እነዚህን ዝርዝሮች ተጠቅመው ቅናሽዎን ያወዳድራሉ።",
+    "cancelConfirm": "ይህን ረቂቅ ይሰርዙ? የተቀመጠው ረቂቅ ይወገዳል።",
+    "invalidToast": "የተለዩትን መስኮች ያስተካክሉ።",
+    "reviewTitle": "ግምገማ እና ማስገባት",
+    "reviewNotice": "አዲስ እና የተሻሻሉ ዝርዝሮች ከመታየታቸው በፊት በአስተዳዳሪ ይገመገማሉ።",
+    "untitled": "ያልተሰየመ ዝርዝር",
+    "fix": {
+      "generic": "ይህን መስክ አስተካክለው እንደገና ይሞክሩ።",
+      "title": "አጭር የምርት ስም ይጨምሩ፣ ከ5 እስከ 12 ቃላት።",
+      "description": "ሸቀጡን እና ውሉን በአንድ ወይም ሁለት ዓረፍተ ነገር ይግለጹ።",
+      "category": "ከዝርዝሩ የቅርቡን ምድብ ይምረጡ።",
+      "quantity": "መለኪያ ያካትቱ፣ ለምሳሌ 500 ኪግ ወይም 1,000 ክፍሎች።",
+      "location": "ከተማውን እና ሀገሩን ይጨምሩ፣ ለምሳሌ አዲስ አበባ፣ ኢትዮጵያ።",
+      "durationDays": "ከ1 እስከ 365 ቀናት ይምረጡ።",
+      "qualityStandard": "የሚፈልጉትን ደረጃ ወይም ምስክር ይግለጹ።",
+      "deliveryTimeline": "የሚፈልጉበትን ጊዜ ይንገሩ፣ ለምሳሌ በ30 ቀናት ውስጥ።",
+      "preferredRegion": "የሚመርጡትን ክልል ወይም ሀገር ይጨምሩ።",
+      "budgetRange": "ክልል ይስጡ፣ ለምሳሌ ከ10,000 እስከ 25,000 ዶላር።",
+      "technicalDocument": "በhttp:// ወይም https:// የሚጀምር አገናኝ ይለጥፉ።",
+      "price": "ዋጋ ወይም የዋጋ ክልል ይጨምሩ፣ ለምሳሌ 4.50 ዶላር በኪግ።",
+      "deliveryOptions": "የማጓጓዣ ውል እና ጊዜን ይግለጹ።",
+      "images": "እስከ 6 አገናኞች ይጨምሩ፣ ሁሉም በhttp:// ወይም https:// የሚጀምሩ።"
+    }
+  }
+}

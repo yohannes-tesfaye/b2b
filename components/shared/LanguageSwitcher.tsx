@@ -31,6 +31,7 @@ function LanguageSwitcher({
 
   return (
     <Select
+      modal={false}
       value={locale}
       onValueChange={(value) => {
         if (hasLocale(routing.locales, value)) {

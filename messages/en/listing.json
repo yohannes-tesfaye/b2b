@@ -1,0 +1,49 @@
+{
+  "listingForm": {
+    "progressLabel": "Listing progress",
+    "steps": {
+      "type": "Type",
+      "basics": "Basics",
+      "details": "Details",
+      "review": "Review"
+    },
+    "stepCaption": "Step {current} of {total}: {label}",
+    "optional": "Optional",
+    "next": "Next",
+    "back": "Back",
+    "cancel": "Cancel",
+    "submitCreate": "Submit listing",
+    "submitEdit": "Save changes",
+    "saving": "Saving...",
+    "disabledHint": "Complete the highlighted fields to continue.",
+    "typeTitle": "What are you listing?",
+    "typeHint": "We defaulted this from your profile role. You can change it.",
+    "basicsTitle": "Listing basics",
+    "wantedTitle": "Buyer requirements",
+    "wantedHint": "These help suppliers decide whether they can fulfil your request.",
+    "availableTitle": "Seller details",
+    "availableHint": "Buyers use these details to compare your offer.",
+    "cancelConfirm": "Discard this draft? Your saved draft will be removed.",
+    "invalidToast": "Check the highlighted fields and try again.",
+    "reviewTitle": "Review & submit",
+    "reviewNotice": "New and edited listings are reviewed by an admin before going live.",
+    "untitled": "Untitled listing",
+    "fix": {
+      "generic": "Check this field and try again.",
+      "title": "Add a short product name, around 5 to 12 words.",
+      "description": "Describe the goods and terms in a sentence or two.",
+      "category": "Pick the closest category from the list.",
+      "quantity": "Include units, for example 500 kg or 1,000 units.",
+      "location": "Add the city and country, for example Addis Ababa, Ethiopia.",
+      "durationDays": "Choose between 1 and 365 days.",
+      "qualityStandard": "Name the grade or certification you need.",
+      "deliveryTimeline": "Say when you need it, for example within 30 days.",
+      "preferredRegion": "Add a region or country you prefer.",
+      "budgetRange": "Give a range, for example USD 10,000 to 25,000.",
+      "technicalDocument": "Paste a link that starts with http:// or https://.",
+      "price": "Add a price or range, for example USD 4.50 per kg.",
+      "deliveryOptions": "Describe shipping terms and timing.",
+      "images": "Add up to 6 links, each starting with http:// or https://."
+    }
+  }
+}

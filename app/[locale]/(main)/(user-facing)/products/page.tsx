@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCategories, getIndustries, getPopularTags } from "@/lib/taxonomy";
 import { normalizeSearchQuery } from "@/lib/search";
 import { countryName, normalizeCountryCode } from "@/lib/countries";
-import { ProductListingCard } from "@/components/product/product-listing-card";
+import { ProductCard } from "@/components/shared/ProductCard";
 import { ProductFilters } from "@/components/product/product-filters";
 import { ProductPagination } from "@/components/product/product-pagination";
 import { Link } from "@/i18n/navigation";
@@ -31,7 +31,6 @@ export default async function ProductPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-
   const [categories, industries, tags] = await Promise.all([
     getCategories(),
     getIndustries(),
@@ -57,7 +56,8 @@ export default async function ProductPage({
   const country = normalizeCountryCode(sp.country) ?? undefined;
 
   const requestedPage = Number.parseInt(sp.page ?? "1", 10);
-  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const page =
+    Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
   const and: Prisma.ListingWhereInput[] = [
     { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
@@ -124,7 +124,7 @@ export default async function ProductPage({
   const to = Math.min(currentPage * PAGE_SIZE, total);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-7xl space-y-4 px-4 py-5 lg:space-y-6 lg:py-8">
+    <div className=" mx-auto w-full min-w-0 max-w-7xl space-y-4 px-4 py-5 lg:space-y-6 lg:py-8">
       <div className="space-y-1.5">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
@@ -162,7 +162,7 @@ export default async function ProductPage({
         <>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
             {listings.map((listing) => (
-              <ProductListingCard key={listing.id} listing={listing} />
+              <ProductCard key={listing.id} listing={listing} />
             ))}
           </div>
 
