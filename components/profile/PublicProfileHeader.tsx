@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { useState, useTransition } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   MessageCircle,
   Share2,
@@ -10,14 +10,14 @@ import {
   Building2,
   Globe2,
   CalendarDays,
-  Lock,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { initialsFrom } from "@/lib/profile";
 import { countryName } from "@/lib/countries";
+import { startChatWithSeller } from "@/utils/inquiries/actions";
 
 interface PublicProfileHeaderProps {
   user: {
@@ -48,6 +48,25 @@ export function PublicProfileHeader({
   totalCount,
 }: PublicProfileHeaderProps) {
   const [shareOpen, setShareOpen] = useState(false);
+  const [isStartingChat, startChatTransition] = useTransition();
+  const router = useRouter();
+
+  const handleMessage = () => {
+    startChatTransition(async () => {
+      try {
+        const result = await startChatWithSeller(user.id);
+        if (result.error) {
+          toast.error(result.error);
+          return;
+        }
+        if (result.redirectTo) {
+          router.replace(result.redirectTo);
+        }
+      } catch {
+        toast.error("Could not open the chat. Please try again.");
+      }
+    });
+  };
 
   const memberSince = user.createdAt
     ? new Intl.DateTimeFormat(undefined, { year: "numeric", month: "long" }).format(
@@ -190,33 +209,14 @@ export function PublicProfileHeader({
             Edit profile
           </Button>
         ) : (
-          <Drawer>
-            <DrawerTrigger
-              render={
-                <Button className="flex-1">
-                  <MessageCircle className="h-4 w-4" />
-                  Message
-                </Button>
-              }
-            />
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>Message {user.name || "trader"}</DrawerTitle>
-              </DrawerHeader>
-              <div className="px-4 pb-4">
-                <p className="text-sm text-muted-foreground">
-                  Contact this trader about their listings.
-                </p>
-                <Button
-                  className="mt-4 w-full"
-                  render={<Link href="/products" />}
-                  nativeButton={false}
-                >
-                  Browse their listings
-                </Button>
-              </div>
-            </DrawerContent>
-          </Drawer>
+          <Button
+            className="flex-1"
+            onClick={handleMessage}
+            disabled={isStartingChat}
+          >
+            <MessageCircle className="h-4 w-4" />
+            {isStartingChat ? "Opening chat…" : "Message"}
+          </Button>
         )}
         <Button variant="outline" size="icon" onClick={handleShare}>
           <Share2 className="h-4 w-4" />

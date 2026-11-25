@@ -180,6 +180,84 @@ ${parsed.data.message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
 }
 
 /**
+ * Open (or start) a chat with a trader directly from their public profile.
+ * Reuses the buyer's most recent thread with that seller, otherwise attaches a
+ * new thread to the seller's latest active listing. Returns a redirect target
+ * for the client to follow; `redirectTo` points at the locale-less
+ * `/messages/[id]` resolver.
+ */
+export async function startChatWithSeller(
+  sellerId: string
+): Promise<{ redirectTo?: string; error?: string }> {
+  const user = await getCurrentUser();
+  if (!user) {
+    return {
+      redirectTo: `/log-in?next=${encodeURIComponent(`/profile/${sellerId}`)}`,
+    };
+  }
+
+  if (user.id === sellerId) {
+    return { error: "This is your own profile." };
+  }
+
+  const seller = await prisma.user.findUnique({
+    where: { id: sellerId },
+    select: { id: true, banned: true },
+  });
+
+  if (!seller || seller.banned) {
+    return { error: "This trader is not available." };
+  }
+
+  // Reuse an existing conversation with this seller when there is one.
+  const existing = await prisma.conversation.findFirst({
+    where: { buyerId: user.id, sellerId: seller.id },
+    orderBy: { lastMessageAt: "desc" },
+    select: { id: true },
+  });
+  if (existing) {
+    return { redirectTo: `/messages/${existing.id}` };
+  }
+
+  // Otherwise anchor the new thread to their most recent active listing.
+  const listing = await prisma.listing.findFirst({
+    where: {
+      userId: seller.id,
+      status: "active",
+      OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+    },
+    orderBy: { createdAt: "desc" },
+    select: { id: true, title: true },
+  });
+
+  if (!listing) {
+    return {
+      error: "This trader has no active listings to message about yet.",
+    };
+  }
+
+  const conversation = await prisma.conversation.upsert({
+    where: {
+      listingId_buyerId: { listingId: listing.id, buyerId: user.id },
+    },
+    update: {},
+    create: {
+      listingId: listing.id,
+      buyerId: user.id,
+      sellerId: seller.id,
+      subject: `Inquiry about "${listing.title}"`,
+      lastMessageAt: new Date(),
+      lastMessagePreview: "New conversation",
+    },
+  });
+
+  revalidatePath("/[locale]/[userId]/dashboard", "page");
+  revalidatePath("/[locale]/[userId]/dashboard/messages", "page");
+
+  return { redirectTo: `/messages/${conversation.id}` };
+}
+
+/**
  * Append a message to an existing conversation. Only the two participants may
  * post; the unread counter for the *other* participant is incremented.
  */
