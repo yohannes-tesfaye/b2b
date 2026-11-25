@@ -1,7 +1,57 @@
+import type { ComponentType, SVGProps } from "react";
 import { ArrowRight, Briefcase } from "lucide-react";
+import * as FlagComponents from "country-flag-icons/react/3x2";
+import { hasFlag } from "country-flag-icons";
 import { Link } from "@/i18n/navigation";
 import { cn } from "cn";
 import { SUPPLIER_REGIONS } from "@/lib/config/suppliers";
+
+const flagComponents = FlagComponents as unknown as Record<
+  string,
+  ComponentType<SVGProps<SVGSVGElement>>
+>;
+
+function RegionFlag({ code, className }: { code: string; className?: string }) {
+  const normalized = code.trim().toUpperCase();
+  const sizeClass = className ?? "h-5 w-7";
+
+  if (!hasFlag(normalized)) {
+    return (
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center justify-center rounded-sm border border-border bg-muted text-[10px] font-semibold text-muted-foreground",
+          sizeClass
+        )}
+        aria-label={normalized}
+      >
+        {normalized}
+      </span>
+    );
+  }
+
+  const Flag = flagComponents[normalized];
+  if (!Flag) {
+    return (
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center justify-center rounded-sm border border-border bg-muted text-[10px] font-semibold text-muted-foreground",
+          sizeClass
+        )}
+        aria-label={normalized}
+      >
+        {normalized}
+      </span>
+    );
+  }
+
+  return (
+    <Flag
+      className={cn("shrink-0 rounded-sm border border-border object-cover", sizeClass)}
+      aria-hidden
+      focusable="false"
+    />
+  );
+}
 
 /**
  * Bento of supplier regions. Region data lives in lib/config/suppliers.ts.
@@ -34,21 +84,16 @@ export default function SuppliersByRegion() {
             )}
           >
             <div className="flex items-start justify-between gap-3">
-              <span
-                className={cn(
-                  "leading-none",
-                  index === 0 ? "text-6xl" : "text-3xl"
-                )}
-                aria-hidden
-              >
-                {region.flag}
-              </span>
               {index === 0 ? (
                 <span className="type-caption text-brand">Home market</span>
               ) : null}
             </div>
 
-            <div>
+            <div className="flex items-center gap-3">
+              <RegionFlag
+                code={region.countryCode}
+                className={index === 0 ? "h-8 w-12" : "h-5 w-7"}
+              />
               <h3
                 className={cn(
                   "font-heading font-semibold tracking-[-0.02em]",
@@ -57,11 +102,11 @@ export default function SuppliersByRegion() {
               >
                 {region.name}
               </h3>
+            </div>
               <p className="mt-1 text-sm text-muted-foreground">
                 {region.suppliers.toLocaleString()} verified suppliers ·{" "}
                 {region.lots.toLocaleString()} live lots
               </p>
-            </div>
           </Link>
         ))}
 

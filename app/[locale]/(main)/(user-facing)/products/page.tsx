@@ -23,7 +23,8 @@ export default async function ProductPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const type = sp.type === "wanted" || sp.type === "available" ? sp.type : undefined;
+  const type =
+    sp.type === "wanted" || sp.type === "available" ? sp.type : undefined;
   const allowed = new Set<string>(LISTING_CATEGORIES.map((c) => c.value));
   const categories = sp.category
     ? Array.from(new Set(sp.category.split(",").filter((c) => allowed.has(c))))
@@ -31,7 +32,8 @@ export default async function ProductPage({
   const q = sp.q?.trim();
   const sort = sp.sort ?? "newest";
   const requestedPage = Number.parseInt(sp.page ?? "1", 10);
-  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const page =
+    Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
   const and: Prisma.ListingWhereInput[] = [
     { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
@@ -55,8 +57,8 @@ export default async function ProductPage({
     sort === "oldest"
       ? { createdAt: "asc" as const }
       : sort === "expiring"
-      ? { expiresAt: "asc" as const }
-      : { createdAt: "desc" as const };
+        ? { expiresAt: "asc" as const }
+        : { createdAt: "desc" as const };
 
   const total = await prisma.listing.count({ where });
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
@@ -73,7 +75,7 @@ export default async function ProductPage({
   const to = Math.min(currentPage * PAGE_SIZE, total);
 
   return (
-    <div className="mx-auto w-full min-w-0 max-w-7xl space-y-4 px-4 py-5 lg:space-y-6 lg:py-8">
+    <div className=" mx-auto w-full min-w-0 max-w-7xl space-y-4 px-4 py-5 lg:space-y-6 lg:py-8">
       <div className="space-y-1.5">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
