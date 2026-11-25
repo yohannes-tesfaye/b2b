@@ -3,6 +3,7 @@
 import { Check, CheckCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { cn } from "cn";
+import { ListingRefCard } from "./ListingRefCard";
 
 interface ChatBubbleProps {
   body: string;
@@ -14,6 +15,12 @@ interface ChatBubbleProps {
   isGrouped?: boolean;
   attachment?: string | null;
   senderId?: string;
+  listing?: {
+    id: string;
+    title: string;
+    image?: string | null;
+    meta?: string | null;
+  } | null;
 }
 
 export function ChatBubble({
@@ -26,6 +33,7 @@ export function ChatBubble({
   isGrouped = false,
   attachment,
   senderId,
+  listing,
 }: ChatBubbleProps) {
   const time = new Date(timestamp).toLocaleTimeString(undefined, {
     hour: "2-digit",
@@ -64,6 +72,17 @@ export function ChatBubble({
             : "rounded-bl-md bg-muted text-foreground"
         )}
       >
+        {listing ? (
+          <div className="mb-1.5">
+            <ListingRefCard
+              id={listing.id}
+              title={listing.title}
+              image={listing.image}
+              meta={listing.meta}
+              isOwn={isOwn}
+            />
+          </div>
+        ) : null}
         {attachment ? (
           <div className="mb-1.5">
             {attachment.startsWith("data:image/") ? (

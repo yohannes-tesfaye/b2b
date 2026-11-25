@@ -24,7 +24,16 @@ export default async function ThreadPage({
   const conversation = await prisma.conversation.findUnique({
     where: { id },
     include: {
-      listing: { select: { id: true, title: true, category: true, type: true } },
+      listing: {
+        select: {
+          id: true,
+          title: true,
+          category: true,
+          type: true,
+          quantity: true,
+          images: true,
+        },
+      },
       buyer: { select: { id: true, name: true, companyName: true, image: true } },
       seller: { select: { id: true, name: true, companyName: true, image: true } },
       messages: {
@@ -59,6 +68,17 @@ export default async function ThreadPage({
 
   const counterpart = isBuyer ? conversation.seller : conversation.buyer;
   const counterpartUnread = isBuyer ? conversation.sellerUnread : conversation.buyerUnread;
+
+  // The listing this whole thread is about; shown as a reply preview on messages.
+  const listingRef = {
+    id: conversation.listing.id,
+    title: conversation.listing.title,
+    image: conversation.listing.images?.[0] ?? null,
+    meta:
+      [categoryLabel(conversation.listing.category), conversation.listing.quantity]
+        .filter(Boolean)
+        .join(" · ") || null,
+  };
 
   // Group messages by date for separators
   const messagesWithDates: Array<{ type: "date"; date: Date } | { type: "msg"; msg: (typeof conversation.messages)[0] }> = [];
@@ -159,6 +179,7 @@ export default async function ThreadPage({
                 isGrouped={grouped}
                 attachment={msg.attachment}
                 senderId={msg.senderId}
+                listing={listingRef}
               />
             );
           })
