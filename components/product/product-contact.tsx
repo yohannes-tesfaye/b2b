@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 import {
   Copy,
   Mail,
@@ -55,6 +56,17 @@ export function ContactActions({
     startConversation,
     initialInquiryFormState
   );
+  const router = useRouter();
+
+  // On success (or when sign-in is required) leave the form and continue.
+  useEffect(() => {
+    if (!state.redirectTo) return;
+    if (state.status === "success") {
+      toast.success("Message sent");
+    }
+    setOpen(false);
+    router.replace(state.redirectTo);
+  }, [state.redirectTo, state.status, router]);
 
   const role = isWanted ? "buyer" : "supplier";
 
@@ -77,11 +89,6 @@ export function ContactActions({
       toast.error("Could not copy email");
     }
   };
-
-  // Close the dialog/drawer on success.
-  if (state.status === "success" && open) {
-    setOpen(false);
-  }
 
   const fields = (
     <>
