@@ -1,13 +1,17 @@
-import type { Prisma } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
 import { LISTING_CATEGORIES } from "@/lib/listings";
+import {
+  DEFAULT_PAGE_SIZE,
+  getPublishedListings,
+  normalizeSearchQuery,
+} from "@/features/listings/queries";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { ProductFilters } from "@/components/product/product-filters";
 import { ProductPagination } from "@/components/product/product-pagination";
 import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 import { Search } from "lucide-react";
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 type SearchParams = Promise<{
   type?: string;
@@ -23,52 +27,27 @@ export default async function ProductPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
+  const t = await getTranslations("product");
   const type =
     sp.type === "wanted" || sp.type === "available" ? sp.type : undefined;
   const allowed = new Set<string>(LISTING_CATEGORIES.map((c) => c.value));
   const categories = sp.category
     ? Array.from(new Set(sp.category.split(",").filter((c) => allowed.has(c))))
     : [];
-  const q = sp.q?.trim();
-  const sort = sp.sort ?? "newest";
+  const q = normalizeSearchQuery(sp.q);
+  const sort =
+    sp.sort === "oldest" || sp.sort === "expiring" ? sp.sort : "newest";
   const requestedPage = Number.parseInt(sp.page ?? "1", 10);
   const page =
     Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
-  const and: Prisma.ListingWhereInput[] = [
-    { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
-  ];
-
-  if (type) and.push({ type });
-  if (categories.length) and.push({ category: { in: categories } });
-  if (q) {
-    and.push({
-      OR: [
-        { title: { contains: q, mode: "insensitive" } },
-        { location: { contains: q, mode: "insensitive" } },
-        { description: { contains: q, mode: "insensitive" } },
-      ],
-    });
-  }
-
-  const where: Prisma.ListingWhereInput = { status: "active", AND: and };
-
-  const orderBy =
-    sort === "oldest"
-      ? { createdAt: "asc" as const }
-      : sort === "expiring"
-        ? { expiresAt: "asc" as const }
-        : { createdAt: "desc" as const };
-
-  const total = await prisma.listing.count({ where });
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-
-  const listings = await prisma.listing.findMany({
-    where,
-    orderBy,
-    skip: (currentPage - 1) * PAGE_SIZE,
-    take: PAGE_SIZE,
+  const { items, total, totalPages, currentPage } = await getPublishedListings({
+    q,
+    type,
+    categories,
+    sort,
+    page,
+    pageSize: PAGE_SIZE,
   });
 
   const from = total ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
@@ -79,7 +58,7 @@ export default async function ProductPage({
       <div className="space-y-1.5">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
-            Products
+            {q ? t("searchResultsTitle", { query: q }) : "Products"}
           </h1>
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
             {total}
@@ -104,10 +83,10 @@ export default async function ProductPage({
         </span>
       </div>
 
-      {listings.length ? (
+      {items.length ? (
         <>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-            {listings.map((listing) => (
+            {items.map((listing) => (
               <ProductCard key={listing.id} listing={listing} />
             ))}
           </div>
@@ -123,6 +102,23 @@ export default async function ProductPage({
             }}
           />
         </>
+      ) : q ? (
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-14 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <Search className="h-5 w-5 text-muted-foreground" />
+          </div>
+          <div>
+            <p className="font-semibold">
+              {t("noSearchResults", { query: q })}
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="mt-1 inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"
+          >
+            {t("browseAllGoods")}
+          </Link>
+        </div>
       ) : (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-14 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
