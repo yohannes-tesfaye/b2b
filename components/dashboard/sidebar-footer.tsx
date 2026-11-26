@@ -14,95 +14,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, LogOut, UserRound } from "lucide-react";
+import {
+  Building2,
+  Calendar,
+  CheckCircle2,
+  ChevronDown,
+  Globe,
+  LogOut,
+  Phone,
+  UserRound,
+  Users,
+  Factory,
+} from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Link, useRouter } from "@/i18n/navigation";
 import { initialsFrom } from "@/lib/profile";
-import { UserRow } from "./user-list";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building2, Calendar, CheckCircle2, Globe, Link as LinkIcon, Phone } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-
-function InfoRow({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex items-start gap-2">
-      <Icon className="size-3.5 text-muted-foreground shrink-0" aria-hidden="true" />
-      <div className="flex flex-col min-w-0">
-        <span className="text-[10px] text-muted-foreground">{label}</span>
-        <span className="text-xs text-foreground truncate">{value}</span>
-      </div>
-    </div>
-  );
-}
-
-function roleVariant(role: string) {
-  switch (role) {
-    case "superadmin":
-      return "secondary";
-    case "admin":
-      return "outline";
-    default:
-      return "default";
-  }
-}
-
-function ProfileCard({ user }: { user: UserRow }) {
-  const complete = [user.companyName, user.country, user.industry, user.companySize].filter(Boolean).length;
-  const pct = Math.round((complete / 4) * 100);
-
-  return (
-    <Card className="w-80">
-      <CardHeader className="flex flex-row items-center gap-3 px-4 py-3">
-        <Avatar className="h-10 w-10">
-          {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
-          <AvatarFallback>{initialsFrom(user.name || user.email)}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <CardTitle className="text-sm truncate">{user.name || "Unnamed"}</CardTitle>
-          <div className="text-xs text-muted-foreground truncate">{user.email}</div>
-          <Badge variant={roleVariant(user.role || "buyer")} className="mt-1 h-5 text-[10px]">
-            {user.role || "buyer"}
-          </Badge>
-        </div>
-      </CardHeader>
-      <CardContent className="px-4 py-2 space-y-2 text-xs">
-        <InfoRow icon={Building2} label="Company" value={user.companyName || "—"} />
-        <InfoRow icon={Globe} label="Country" value={user.country || "—"} />
-        <InfoRow icon={LinkIcon} label="Industry" value={user.industry || "—"} />
-        <InfoRow icon={LinkIcon} label="Company size" value={user.companySize || "—"} />
-        <InfoRow icon={Phone} label="Phone" value={user.phone || "—"} />
-        <InfoRow icon={LinkIcon} label="Website" value={user.website || "—"} />
-        <InfoRow icon={Calendar} label="Joined" value={user.createdAt.toLocaleDateString()} />
-        <InfoRow
-          icon={CheckCircle2}
-          label="Email verified"
-          value={user.emailVerified ? "Yes" : "No"}
-        />
-        <div className="mt-2">
-          <div className="flex justify-between text-[10px] text-muted-foreground">
-            <span>Profile completion</span>
-            <span>{pct}%</span>
-          </div>
-          <Progress value={pct} className="h-1.5" />
-        </div>
-        {user.banned && user.banReason ? (
-          <div className="mt-2 text-destructive">
-            <div className="text-[10px] text-muted-foreground">Ban reason</div>
-            <div className="text-xs">{user.banReason}</div>
-          </div>
-        ) : null}
-      </CardContent>
-    </Card>
-  );
-}
 
 export function SidebarUserFooter({
   user,
@@ -130,23 +57,26 @@ export function SidebarUserFooter({
     await authClient.signOut({ fetchOptions: { onSuccess: () => { router.push("/"); router.refresh(); } } });
   };
 
-  const profileUser = {
-    id: "",
-    name: user.name,
-    email: user.email,
-    image: user.image ?? null,
-    role: user.role ?? null,
-    banned: user.banned ?? null,
-    banReason: user.banReason ?? null,
-    companyName: user.companyName ?? null,
-    country: user.country ?? null,
-    industry: user.industry ?? null,
-    companySize: user.companySize ?? null,
-    phone: user.phone ?? null,
-    website: user.website ?? null,
-    emailVerified: user.emailVerified ?? null,
-    createdAt: user.createdAt ?? new Date(),
-  };
+  const complete = [user.companyName, user.country, user.industry, user.companySize].filter(Boolean).length;
+  const pct = Math.round((complete / 4) * 100);
+
+  function roleVariant(role: string) {
+    switch (role) {
+      case "superadmin":
+        return "secondary";
+      case "admin":
+        return "outline";
+      default:
+        return "default";
+    }
+  }
+
+  const quickInfo = [
+    { icon: Building2, label: "Company", value: user.companyName },
+    { icon: Globe, label: "Country", value: user.country },
+    { icon: Factory, label: "Industry", value: user.industry },
+    { icon: Users, label: "Size", value: user.companySize },
+  ];
 
   return (
     <SidebarMenu>
@@ -158,9 +88,9 @@ export function SidebarUserFooter({
               tooltip={user.name || "Account"}
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="h-8 w-8 rounded-lg ring-2 ring-sidebar-border">
                 {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
-                <AvatarFallback className="rounded-lg">
+                <AvatarFallback className="rounded-lg text-xs font-semibold">
                   {initialsFrom(user.name || user.email)}
                 </AvatarFallback>
               </Avatar>
@@ -168,33 +98,137 @@ export function SidebarUserFooter({
                 <span className="truncate font-semibold">{user.name || "User"}</span>
                 <span className="truncate text-xs text-muted-foreground">{user.email}</span>
               </div>
-              <ChevronDown className="ml-auto size-4 shrink-0" />
+              <ChevronDown className="ml-auto size-4 shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-80 max-h-[70vh] overflow-y-auto rounded-lg p-0"
+            className="w-80 overflow-hidden rounded-xl p-0 shadow-lg"
             side="top"
             align="end"
-            sideOffset={4}
+            sideOffset={6}
           >
-            <div className="p-2">
-              <ProfileCard user={profileUser as unknown as UserRow} />
+            {/* Header */}
+            <div className="relative bg-gradient-to-br from-primary/15 via-primary/5 to-transparent px-4 py-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12 ring-2 ring-background shadow-md">
+                  {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
+                  <AvatarFallback className="text-sm font-bold">
+                    {initialsFrom(user.name || user.email)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="truncate text-sm font-semibold leading-tight">
+                    {user.name || "Unnamed"}
+                  </p>
+                  <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                  <Badge
+                    variant={roleVariant(user.role || "buyer")}
+                    className="mt-1.5 h-5 text-[10px] capitalize"
+                  >
+                    {user.role || "buyer"}
+                  </Badge>
+                </div>
+              </div>
             </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="cursor-pointer mx-2 mb-1"
-              render={<Link href="/dashboard/profile" />}
-            >
-              <UserRound className="mr-2 h-4 w-4" />
-              View profile
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer mx-2 mb-2 text-destructive focus:text-destructive"
-              onClick={handleSignOut}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              Sign out
-            </DropdownMenuItem>
+
+            {/* Quick info grid */}
+            <div className="grid grid-cols-2 gap-px bg-border/60">
+              {quickInfo.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.label}
+                    className="flex items-center gap-2.5 bg-popover px-3 py-2.5"
+                  >
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
+                      <Icon className="h-3.5 w-3.5" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        {item.label}
+                      </p>
+                      <p className="truncate text-xs font-medium">
+                        {item.value || "—"}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Contact details */}
+            {(user.phone || user.website) ? (
+              <div className="space-y-1 px-4 py-3">
+                {user.phone ? (
+                  <a
+                    href={`tel:${user.phone}`}
+                    className="flex items-center gap-2.5 rounded-md px-1 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <Phone className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">{user.phone}</span>
+                  </a>
+                ) : null}
+                {user.website ? (
+                  <a
+                    href={user.website.startsWith("http") ? user.website : `https://${user.website}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 rounded-md px-1 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <Globe className="h-3.5 w-3.5 shrink-0" />
+                    <span className="truncate">
+                      {user.website.replace(/^https?:\/\//, "")}
+                    </span>
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
+
+            {/* Profile completion */}
+            <div className="px-4 py-3">
+              <div className="mb-1.5 flex items-center justify-between text-xs">
+                <span className="font-medium">Profile completion</span>
+                <span className="text-muted-foreground">{pct}%</span>
+              </div>
+              <Progress value={pct} className="h-1.5" />
+              <div className="mt-2 flex items-center gap-3 text-[10px] text-muted-foreground">
+                <span className="inline-flex items-center gap-1">
+                  <Calendar className="h-3 w-3" />
+                  Joined {user.createdAt ? user.createdAt.toLocaleDateString(undefined, { month: "short", year: "numeric" }) : "—"}
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <CheckCircle2 className={`h-3 w-3 ${user.emailVerified ? "text-emerald-500" : "text-muted-foreground"}`} />
+                  {user.emailVerified ? "Verified" : "Unverified"}
+                </span>
+              </div>
+            </div>
+
+            {user.banned && user.banReason ? (
+              <div className="mx-4 mb-3 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-destructive">
+                  Ban reason
+                </p>
+                <p className="mt-0.5 text-xs text-destructive">{user.banReason}</p>
+              </div>
+            ) : null}
+
+            <DropdownMenuSeparator className="m-0" />
+            <div className="p-1.5">
+              <DropdownMenuItem
+                className="cursor-pointer rounded-md"
+                render={<Link href="/dashboard/profile" />}
+              >
+                <UserRound className="mr-2 h-4 w-4" />
+                View profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="cursor-pointer rounded-md text-destructive focus:text-destructive"
+                onClick={handleSignOut}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
