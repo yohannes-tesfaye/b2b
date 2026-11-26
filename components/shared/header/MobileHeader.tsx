@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronRight, Heart, Mail, Menu, Phone, X } from "lucide-react";
+import { ChevronRight, Mail, Menu, Phone, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { useSession } from "@/lib/auth-client";
 import { Link } from "@/i18n/navigation";
 import { MOBILE_NAV_LINKS } from "@/lib/config/navigation";
 import { SITE } from "@/lib/config/site";
@@ -30,7 +29,6 @@ export function MobileHeader() {
   const t = useTranslations("header");
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
-  const { data: session } = useSession();
 
   return (
     <div className="lg:hidden">
@@ -69,7 +67,11 @@ export function MobileHeader() {
 
             <div className="flex-1 overflow-y-auto px-4 pb-4">
               <nav className="space-y-0.5">
-                {MOBILE_NAV_LINKS.map((item) => {
+                {MOBILE_NAV_LINKS.filter(
+                  (item) =>
+                    item.labelKey !== "nav.home" &&
+                    item.labelKey !== "nav.allProducts"
+                ).map((item) => {
                   const Icon = item.icon;
                   return (
                     <Link
@@ -133,18 +135,6 @@ export function MobileHeader() {
         <BrandMark className="min-w-0" />
 
         <div className="ml-auto flex items-center gap-1">
-          {session ? (
-            <Button
-              variant="ghost"
-              size="icon-lg"
-              className="h-11 w-11 rounded-xl"
-              aria-label="Favorites"
-              render={<Link href="/dashboard/favorites" />}
-              nativeButton={false}
-            >
-              <Heart className="h-5 w-5 text-red-500" />
-            </Button>
-          ) : null}
           <UserMenu compact />
         </div>
       </div>
