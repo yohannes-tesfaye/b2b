@@ -1,5 +1,6 @@
 import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { publicListingWhere } from "@/features/listings/filters";
 import type { ListingType } from "@/types/listing";
 
 export const MAX_SEARCH_LENGTH = 100;
@@ -35,9 +36,7 @@ export async function getPublishedListings({
 }: GetPublishedListingsParams = {}) {
   const query = normalizeSearchQuery(q);
 
-  const and: Prisma.ListingWhereInput[] = [
-    { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
-  ];
+  const and: Prisma.ListingWhereInput[] = [];
 
   if (type) and.push({ type });
   if (categories.length) and.push({ category: { in: categories } });
@@ -51,7 +50,10 @@ export async function getPublishedListings({
     });
   }
 
-  const where: Prisma.ListingWhereInput = { status: "active", AND: and };
+  const where: Prisma.ListingWhereInput = {
+    ...publicListingWhere(),
+    ...(and.length ? { AND: and } : {}),
+  };
   const orderBy =
     sort === "oldest"
       ? { createdAt: "asc" as const }
