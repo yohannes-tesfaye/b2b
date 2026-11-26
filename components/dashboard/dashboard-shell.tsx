@@ -37,13 +37,13 @@ import { Breadcrumbs } from "@/components/dashboard/breadcrumbs";
 import { SidebarUserFooter } from "@/components/dashboard/sidebar-footer";
 import { adminRoles } from "@/lib/permissions";
 import { parseRoles } from "@/lib/profile";
+import { cn } from "cn";
 
 type SidebarItem = {
   title: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: number;
-  /** Only highlight on an exact match instead of a prefix match. */
   exact?: boolean;
 };
 
@@ -216,6 +216,38 @@ export function DashboardShell({
             <UserMenu compact />
           </div>
         </header>
+        {/* Mobile-only icon strip so dashboard nav is discoverable */}
+        <div className="px-4 pt-2 md:hidden">
+          <div className="flex gap-2 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {(inAdmin ? adminItems : userItems).map((item) => {
+              const Icon = item.icon;
+              const active = item.exact
+                ? pathname === item.url
+                : pathname === item.url || pathname.startsWith(`${item.url}/`);
+              return (
+                <Link
+                  key={item.title}
+                  href={item.url}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
+                    active
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border bg-background text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  <span className="whitespace-nowrap">{item.title}</span>
+                  {item.badge ? (
+                    <span className="ml-0.5 rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
+                      {item.badge > 99 ? "99+" : item.badge}
+                    </span>
+                  ) : null}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
         <div className="px-4 pt-3 md:px-6">
           <Breadcrumbs />
         </div>
