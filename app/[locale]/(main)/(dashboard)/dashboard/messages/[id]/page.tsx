@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/dashboard-access";
 import { markRead } from "@/utils/inquiries/actions";
@@ -18,6 +18,7 @@ export default async function ThreadPage({
 }) {
   const { id } = await params;
   const user = await requireUser();
+  const t = await getTranslations("inbox");
   const base = "/dashboard";
 
   const conversation = await prisma.conversation.findUnique({
@@ -45,9 +46,9 @@ export default async function ThreadPage({
   if (!conversation) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-14 text-center">
-        <p className="font-semibold">Conversation not found</p>
+        <p className="font-semibold">{t("thread.notFound")}</p>
         <Link href={`${base}/messages`} className="text-sm text-primary">
-          Back to inbox
+          {t("thread.backToInbox")}
         </Link>
       </div>
     );
@@ -58,7 +59,7 @@ export default async function ThreadPage({
   if (!isBuyer && !isSeller) {
     return (
       <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-14 text-center">
-        <p className="font-semibold">Not authorized</p>
+        <p className="font-semibold">{t("thread.notAuthorized")}</p>
       </div>
     );
   }
@@ -108,7 +109,7 @@ export default async function ThreadPage({
         <Link
           href={`${base}/messages`}
           className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-          aria-label="Back to inbox"
+          aria-label={t("thread.backToInbox")}
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -153,7 +154,7 @@ export default async function ThreadPage({
         {conversation.messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
             <p className="text-sm text-muted-foreground">
-              No messages yet. Start the conversation!
+              {t("thread.noMessagesYet")}
             </p>
           </div>
         ) : (

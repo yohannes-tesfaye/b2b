@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { Send, Paperclip, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "cn";
+import { useTranslations } from "next-intl";
 
 interface ChatInputProps {
   conversationId: string;
@@ -13,6 +13,7 @@ interface ChatInputProps {
 }
 
 export function ChatInput({ conversationId, onSend, isPending = false }: ChatInputProps) {
+  const t = useTranslations();
   const [body, setBody] = useState("");
   const [attachment, setAttachment] = useState<string | null>(null);
   const [attachmentName, setAttachmentName] = useState<string | null>(null);
@@ -81,7 +82,7 @@ export function ChatInput({ conversationId, onSend, isPending = false }: ChatInp
           size="icon"
           className="h-11 w-11 shrink-0 rounded-full"
           onClick={() => fileInputRef.current?.click()}
-          aria-label="Attach file"
+          aria-label={t("inbox.input.attach")}
         >
           <Paperclip className="h-5 w-5" />
         </Button>
@@ -90,7 +91,7 @@ export function ChatInput({ conversationId, onSend, isPending = false }: ChatInp
           value={body}
           onChange={(e) => setBody(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Type a message..."
+          placeholder={t("inbox.input.placeholder")}
           rows={1}
           className="min-h-[40px] max-h-[120px] flex-1 resize-none rounded-2xl px-4 py-2 text-sm"
         />
@@ -101,7 +102,7 @@ export function ChatInput({ conversationId, onSend, isPending = false }: ChatInp
           className="h-11 w-11 shrink-0 rounded-full"
           onClick={handleSend}
           disabled={isPending || (!body.trim() && !attachment)}
-          aria-label="Send message"
+          aria-label={t("inbox.input.send")}
         >
           <Send className="h-4 w-4" />
         </Button>

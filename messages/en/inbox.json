@@ -1,0 +1,46 @@
+{
+  "inbox": {
+    "title": "Messages",
+    "unread": "{count} unread",
+    "searchPlaceholder": "Search conversations...",
+    "tabs": {
+      "all": "All",
+      "unread": "Unread",
+      "buying": "Buying",
+      "selling": "Selling"
+    },
+    "relative": {
+      "justNow": "just now",
+      "minutesAgo": "{minutes}m ago",
+      "hoursAgo": "{hours}h ago",
+      "yesterday": "Yesterday",
+      "daysAgo": "{days}d ago"
+    },
+    "noConversationsMatch": "No conversations match",
+    "noMessagesYet": "No messages yet",
+    "tryDifferentSearch": "Try a different search term.",
+    "emptyInbox": "Inquiries you send or receive will appear here.",
+    "unknown": "Unknown",
+    "thread": {
+      "backToInbox": "Back to inbox",
+      "notFound": "Conversation not found",
+      "notAuthorized": "Not authorized",
+      "noMessagesYet": "No messages yet. Start the conversation!",
+      "listingContext": "Listing",
+      "viewProfile": "View profile"
+    },
+    "input": {
+      "placeholder": "Type a message...",
+      "attach": "Attach file",
+      "send": "Send message",
+      "attachmentRemove": "Remove attachment"
+    },
+    "dateSeparator": {
+      "today": "Today",
+      "yesterday": "Yesterday"
+    },
+    "listingRef": {
+      "viewListing": "View listing"
+    }
+  }
+}

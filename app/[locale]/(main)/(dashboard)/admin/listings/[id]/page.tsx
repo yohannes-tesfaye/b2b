@@ -465,6 +465,40 @@ export default async function AdminListingDetailPage({
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
+              <CardTitle className="text-base">Conversations</CardTitle>
+              <CardDescription>
+                {listing._count.conversations} thread
+                {listing._count.conversations === 1 ? "" : "s"} about this
+                listing.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {listing.conversations.length ? (
+                listing.conversations.map((conversation) => (
+                  <Link
+                    key={conversation.id}
+                    href={`/dashboard/messages/${conversation.id}`}
+                    className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm transition-colors hover:bg-muted/40"
+                  >
+                    <span className="inline-flex items-center gap-2">
+                      <MessageSquare className="size-4 text-muted-foreground" />
+                      Open thread
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {conversation.id.slice(-6)}
+                    </span>
+                  </Link>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  No conversations yet.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle className="text-base">Activity</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">

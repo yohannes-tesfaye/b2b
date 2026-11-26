@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/email";
+import { newInquiryEmail } from "@/lib/email-templates";
+import { newReplyEmail } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/site-url";
 import {
   conversationStartSchema,
@@ -161,12 +163,12 @@ export async function startConversation(
   sendEmail({
     to: seller.email,
     subject: `New inquiry: "${listing.title}"`,
-    html: `<p>Hi ${seller.name ?? ""},</p>
-<p>You have a new message about <strong>${listing.title}</strong>.</p>
-<blockquote style="border-left:3px solid #ccc;padding-left:12px;color:#555;">
-${parsed.data.message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
-</blockquote>
-<p>Reply here: <a href="${threadUrl}">${threadUrl}</a></p>`,
+    html: newInquiryEmail({
+      recipientName: seller.name,
+      listingTitle: listing.title,
+      message: parsed.data.message,
+      threadUrl,
+    }),
   }).catch((error) => {
     console.error("[inquiry] seller notification failed", error);
   });
@@ -360,12 +362,12 @@ export async function sendMessage(
   sendEmail({
     to: counterpart.email,
     subject: `Re: ${conversation.listing.title}`,
-    html: `<p>Hi ${counterpart.name ?? ""},</p>
-<p>You have a new reply about <strong>${conversation.listing.title}</strong>.</p>
-<blockquote style="border-left:3px solid #ccc;padding-left:12px;color:#555;">
-${parsed.data.body.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
-</blockquote>
-<p>View the conversation: <a href="${threadUrl}">${threadUrl}</a></p>`,
+    html: newReplyEmail({
+      recipientName: counterpart.name,
+      listingTitle: conversation.listing.title,
+      message: parsed.data.body,
+      threadUrl,
+    }),
   }).catch((error) => {
     console.error("[inquiry] reply notification failed", error);
   });

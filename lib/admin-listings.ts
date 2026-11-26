@@ -216,6 +216,8 @@ export async function getAdminListingDetail(
           changedBy: { select: { id: true, name: true, email: true } },
         },
       },
+      _count: { select: { conversations: true } },
+      conversations: { select: { id: true }, take: 5, orderBy: { lastMessageAt: "desc" } },
     },
   });
 

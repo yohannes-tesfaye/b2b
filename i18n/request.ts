@@ -10,6 +10,7 @@ import productEn from "../messages/en/product.json";
 import footerEn from "../messages/en/footer.json";
 import homeEn from "../messages/en/home.json";
 import listingEn from "../messages/en/listing.json";
+import inboxEn from "../messages/en/inbox.json";
 import commonAm from "../messages/am/common.json";
 import headerAm from "../messages/am/header.json";
 import heroAm from "../messages/am/hero.json";
@@ -18,11 +19,12 @@ import productAm from "../messages/am/product.json";
 import footerAm from "../messages/am/footer.json";
 import homeAm from "../messages/am/home.json";
 import listingAm from "../messages/am/listing.json";
+import inboxAm from "../messages/am/inbox.json";
 import { routing } from "./routing";
 
 const messageFiles = {
-  en: { ...commonEn, ...headerEn, ...heroEn, ...authEn, ...productEn, ...footerEn, ...homeEn, ...listingEn },
-  am: { ...commonAm, ...headerAm, ...heroAm, ...authAm, ...productAm, ...footerAm, ...homeAm, ...listingAm },
+  en: { ...commonEn, ...headerEn, ...heroEn, ...authEn, ...productEn, ...footerEn, ...homeEn, ...listingEn, ...inboxEn },
+  am: { ...commonAm, ...headerAm, ...heroAm, ...authAm, ...productAm, ...footerAm, ...homeAm, ...listingAm, ...inboxAm },
 } as const;
 
 export type Messages = (typeof messageFiles)["en"];

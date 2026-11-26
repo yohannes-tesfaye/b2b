@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Search, Inbox, Package, User as UserIcon } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 const relativeTime = (date: Date | string) => {
     try {
@@ -52,6 +53,7 @@ export function MessagesPageClient({
   base,
   initialFilter,
 }: MessagesPageClientProps) {
+  const t = useTranslations();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState(initialFilter);
 
@@ -106,10 +108,10 @@ export function MessagesPageClient({
     <div className="flex flex-col gap-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Messages</h2>
+        <h2 className="text-2xl font-bold">{t("inbox.title")}</h2>
         {unreadTotal > 0 ? (
           <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
-            {unreadTotal} unread
+            {t("inbox.unread", { count: unreadTotal })}
           </span>
         ) : null}
       </div>
@@ -118,7 +120,7 @@ export function MessagesPageClient({
       <div className="relative">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Search conversations..."
+          placeholder={t("inbox.searchPlaceholder")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="h-10 rounded-xl pl-9"
@@ -128,10 +130,10 @@ export function MessagesPageClient({
       {/* Filter tabs */}
       <div className="flex items-center gap-1 rounded-xl border bg-muted/30 p-1">
         {[
-          { value: "all", label: "All" },
-          { value: "unread", label: "Unread" },
-          { value: "buying", label: "Buying" },
-          { value: "selling", label: "Selling" },
+          { value: "all", label: t("inbox.tabs.all") },
+          { value: "unread", label: t("inbox.tabs.unread") },
+          { value: "buying", label: t("inbox.tabs.buying") },
+          { value: "selling", label: t("inbox.tabs.selling") },
         ].map((tab) => {
           const active = filter === tab.value;
           return (
@@ -197,7 +199,7 @@ export function MessagesPageClient({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
                     <Link href={`/profile/${counterpart.id}`} className="truncate text-sm font-semibold hover:underline">
-                      {counterpart.companyName || counterpart.name || "Unknown"}
+                      {counterpart.companyName || counterpart.name || t("inbox.unknown")}
                     </Link>
                     <span className="shrink-0 text-[10px] text-muted-foreground">
                       {relativeTime(conv.lastMessageAt)}
@@ -221,12 +223,12 @@ export function MessagesPageClient({
           </div>
           <div>
             <p className="font-semibold">
-              {search ? "No conversations match" : "No messages yet"}
+              {search ? t("inbox.noConversationsMatch") : t("inbox.noMessagesYet")}
             </p>
             <p className="mt-1 text-sm text-muted-foreground">
               {search
-                ? "Try a different search term."
-                : "Inquiries you send or receive will appear here."}
+                ? t("inbox.tryDifferentSearch")
+                : t("inbox.emptyInbox")}
             </p>
           </div>
         </div>

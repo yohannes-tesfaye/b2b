@@ -39,6 +39,8 @@ export type AdminListingDetail = ListingRow & {
   user: (ListingOwnerSummary & { _count: { listings: number } }) | null;
   reviewedBy: { id: string; name: string | null; email: string } | null;
   statusHistory: ListingStatusHistoryEntry[];
+  _count: { conversations: number };
+  conversations: { id: string }[];
 };
 
 export type ListingRow = {

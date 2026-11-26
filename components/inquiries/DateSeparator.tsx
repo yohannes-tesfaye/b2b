@@ -1,8 +1,13 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 interface DateSeparatorProps {
   date: Date | string;
 }
 
 export function DateSeparator({ date }: DateSeparatorProps) {
+  const t = useTranslations();
   const d = new Date(date);
   const now = new Date();
   const isToday =
@@ -19,9 +24,9 @@ export function DateSeparator({ date }: DateSeparatorProps) {
 
   let label: string;
   if (isToday) {
-    label = "Today";
+    label = t("inbox.dateSeparator.today");
   } else if (isYesterday) {
-    label = "Yesterday";
+    label = t("inbox.dateSeparator.yesterday");
   } else {
     label = d.toLocaleDateString(undefined, {
       weekday: "short",
