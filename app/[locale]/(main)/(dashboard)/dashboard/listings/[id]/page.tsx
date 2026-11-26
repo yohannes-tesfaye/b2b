@@ -2,8 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Eye, MessageSquare } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { requireOwnDashboard } from "@/lib/dashboard-access";
-import { userDashboardPath } from "@/lib/dashboard-paths";
+import { requireUser } from "@/lib/dashboard-access";
 import {
   categoryLabel,
   daysLeftLabel,
@@ -34,11 +33,11 @@ function DetailRow({ label, value }: { label: string; value: React.ReactNode }) 
 export default async function ListingDetailPage({
   params,
 }: {
-  params: Promise<{ id: string; userId: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { id, userId } = await params;
-  const user = await requireOwnDashboard(userId);
-  const base = userDashboardPath(user.id);
+  const { id } = await params;
+  const user = await requireUser();
+  const base = "/dashboard";
 
   const listing = await prisma.listing.findFirst({
     where: { id, userId: user.id },
@@ -258,8 +257,6 @@ export default async function ListingDetailPage({
                   {listing.inquiries}
                 </div>
               </div>
-              {/* TODO: increment these counters from the public listing page
-                  once Marketplace listings are backed by the database. */}
             </CardContent>
           </Card>
         </div>

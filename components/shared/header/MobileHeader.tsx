@@ -41,7 +41,7 @@ export function MobileHeader() {
               <Button
                 variant="ghost"
                 size="icon-lg"
-                className="h-10 w-10 rounded-full"
+                className="h-11 w-11 rounded-full"
                 aria-label={t("openMenu")}
               />
             }
@@ -58,7 +58,7 @@ export function MobileHeader() {
                   <Button
                     variant="ghost"
                     size="icon-lg"
-                    className="h-9 w-9 rounded-full"
+                    className="h-11 w-11 rounded-full"
                     aria-label={t("closeMenu")}
                   />
                 }
@@ -137,9 +137,9 @@ export function MobileHeader() {
             <Button
               variant="ghost"
               size="icon-lg"
-              className="h-10 w-10 rounded-xl"
+              className="h-11 w-11 rounded-xl"
               aria-label="Favorites"
-              render={<Link href={`/${session.user.id}/dashboard/favorite`} />}
+              render={<Link href="/dashboard/favorites" />}
               nativeButton={false}
             >
               <Heart className="h-5 w-5 text-red-500" />

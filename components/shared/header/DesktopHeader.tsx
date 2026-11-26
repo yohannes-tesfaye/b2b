@@ -30,7 +30,7 @@ export function DesktopHeader() {
         <div className="ml-auto flex shrink-0 items-center gap-1">
           {session ? (
             <Link
-              href={`/${session.user.id}/dashboard/favorite`}
+              href="/dashboard/favorites"
               className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-red-500"
               aria-label="Favorites"
             >

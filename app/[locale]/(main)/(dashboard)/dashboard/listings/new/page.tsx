@@ -1,16 +1,10 @@
 import { defaultListingType } from "@/lib/listings";
-import { requireOwnDashboard } from "@/lib/dashboard-access";
-import { userDashboardPath } from "@/lib/dashboard-paths";
+import { requireUser } from "@/lib/dashboard-access";
 import { ListingForm } from "@/components/dashboard/listing-form";
 
-export default async function NewListingPage({
-  params,
-}: {
-  params: Promise<{ userId: string }>;
-}) {
-  const { userId } = await params;
-  const user = await requireOwnDashboard(userId);
-  const base = userDashboardPath(user.id);
+export default async function NewListingPage() {
+  const user = await requireUser();
+  const base = "/dashboard";
 
   return (
     <div className="flex flex-col gap-6">

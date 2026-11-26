@@ -48,7 +48,7 @@ const handleToggle = (e: React.MouseEvent) => {
           ? `mt-3 h-11 w-full rounded-xl text-sm font-semibold ${
               isFavorited ? "border-red-500 text-red-500" : ""
             }`
-          : `h-8 w-8 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 ${
+          : `h-11 w-11 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 sm:h-8 sm:w-8 ${
               isFavorited ? "text-red-500" : "text-white"
             }`
       }

@@ -64,9 +64,22 @@ export function ContactActions({
     if (state.status === "success") {
       toast.success("Message sent");
     }
-    setOpen(false);
     router.replace(state.redirectTo);
   }, [state.redirectTo, state.status, router]);
+
+  // Coming back from sign-in with `?contact=1` reopens the inquiry form.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("contact") !== "1") return;
+    params.delete("contact");
+    const query = params.toString();
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`
+    );
+    queueMicrotask(() => setOpen(true));
+  }, []);
 
   const role = isWanted ? "buyer" : "supplier";
 
@@ -107,7 +120,7 @@ export function ContactActions({
             type="button"
             onClick={copyEmail}
             aria-label="Copy email address"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-muted-foreground active:bg-muted"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-muted-foreground active:bg-muted"
           >
             <Copy className="h-4 w-4" />
           </button>
@@ -237,7 +250,7 @@ export function ContactActions({
                   <Button
                     variant="ghost"
                     size="icon-lg"
-                    className="h-10 w-10 rounded-full"
+                    className="h-11 w-11 rounded-full"
                     aria-label="Close contact form"
                   />
                 }

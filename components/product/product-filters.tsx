@@ -217,7 +217,7 @@ export function ProductFilters({
                   <Button
                     variant="ghost"
                     size="icon-lg"
-                    className="h-10 w-10 rounded-full"
+                    className="h-11 w-11 rounded-full"
                     aria-label="Close filters"
                   />
                 }
@@ -525,7 +525,7 @@ export function ProductFilters({
           size="icon"
           onClick={clear}
           aria-label="Clear filters"
-          className="lg:ml-auto"
+          className="h-11 w-11 lg:ml-auto"
         >
           <X className="h-4 w-4" />
         </Button>

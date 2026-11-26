@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import {
   MessageCircle,
@@ -50,6 +50,7 @@ export function PublicProfileHeader({
   const [shareOpen, setShareOpen] = useState(false);
   const [isStartingChat, startChatTransition] = useTransition();
   const router = useRouter();
+  const autoStarted = useRef(false);
 
   const handleMessage = () => {
     startChatTransition(async () => {
@@ -67,6 +68,23 @@ export function PublicProfileHeader({
       }
     });
   };
+
+  // Coming back from sign-in with `?chat=1` opens the conversation right away.
+  useEffect(() => {
+    if (isOwner || autoStarted.current) return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("chat") !== "1") return;
+    autoStarted.current = true;
+    params.delete("chat");
+    const query = params.toString();
+    window.history.replaceState(
+      {},
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`
+    );
+    handleMessage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOwner]);
 
   const memberSince = user.createdAt
     ? new Intl.DateTimeFormat(undefined, { year: "numeric", month: "long" }).format(
@@ -203,7 +221,7 @@ export function PublicProfileHeader({
         {isOwner ? (
           <Button
             className="flex-1"
-            render={<Link href={`/${user.id}/dashboard/profile`} />}
+            render={<Link href="/dashboard/profile" />}
             nativeButton={false}
           >
             Edit profile

@@ -18,14 +18,14 @@ export async function toggleFavorite(listingId: string): Promise<{ isFavorited: 
     await prisma.favorite.delete({
       where: { userId_listingId: { userId: user.id, listingId } },
     });
-    revalidatePath("/[locale]/[userId]/dashboard/favorite", "page");
+    revalidatePath("/[locale]/dashboard/favorites", "page");
     return { isFavorited: false };
   }
 
   await prisma.favorite.create({
     data: { userId: user.id, listingId },
   });
-  revalidatePath("/[locale]/[userId]/dashboard/favorite", "page");
+  revalidatePath("/[locale]/dashboard/favorites", "page");
   return { isFavorited: true };
 }
 

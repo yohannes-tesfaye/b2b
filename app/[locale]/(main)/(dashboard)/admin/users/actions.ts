@@ -25,8 +25,8 @@ export async function banUser(userId: string, reason: string) {
     }),
     prisma.session.deleteMany({ where: { userId } }),
   ]);
-  revalidatePath("/[locale]/dashboard/user", "page");
-  revalidatePath("/[locale]/dashboard/user/[id]", "page");
+  revalidatePath("/[locale]/admin/users", "page");
+  revalidatePath("/[locale]/admin/users/[id]", "page");
 }
 
 export async function unbanUser(userId: string) {
@@ -36,15 +36,15 @@ export async function unbanUser(userId: string) {
     where: { id: userId },
     data: { banned: false, banReason: null },
   });
-  revalidatePath("/[locale]/dashboard/user", "page");
-  revalidatePath("/[locale]/dashboard/user/[id]", "page");
+  revalidatePath("/[locale]/admin/users", "page");
+  revalidatePath("/[locale]/admin/users/[id]", "page");
 }
 
 export async function deleteUser(userId: string) {
   const session = await requireAdmin();
   if (session.user.id === userId) throw new Error("Cannot delete yourself");
   await prisma.user.delete({ where: { id: userId } });
-  revalidatePath("/[locale]/dashboard/user", "page");
+  revalidatePath("/[locale]/admin/users", "page");
 }
 
 export async function toggleVerified(userId: string) {
@@ -58,6 +58,6 @@ export async function toggleVerified(userId: string) {
     where: { id: userId },
     data: { verified: !user.verified },
   });
-  revalidatePath("/[locale]/dashboard/user", "page");
-  revalidatePath("/[locale]/dashboard/user/[id]", "page");
+  revalidatePath("/[locale]/admin/users", "page");
+  revalidatePath("/[locale]/admin/users/[id]", "page");
 }

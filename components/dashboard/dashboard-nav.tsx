@@ -23,7 +23,7 @@ export function DashboardNav({
     { title: "Messages", url: messages, icon: Inbox },
     { title: "My Listings", url: listings, icon: Package },
     { title: "New Listing", url: newListing, icon: Plus },
-    { title: "Favorites", url: `${base}/favorite`, icon: Heart },
+    { title: "Favorites", url: `${base}/favorites`, icon: Heart },
     { title: "Profile", url: `${base}/profile`, icon: User },
   ];
 

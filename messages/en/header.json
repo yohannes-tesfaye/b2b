@@ -23,6 +23,13 @@
     "closeMenu": "Close menu",
     "support": "Support",
     "language": "Language",
+    "bottomNav": {
+      "home": "Home",
+      "products": "Products",
+      "messages": "Messages",
+      "favorites": "Favorites",
+      "profile": "Profile"
+    },
     "nav": {
       "home": "Home",
       "products": "Products",

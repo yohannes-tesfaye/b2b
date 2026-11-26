@@ -1,16 +1,11 @@
 import { Link } from "@/i18n/navigation";
 import { Heart } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { requireOwnDashboard } from "@/lib/dashboard-access";
+import { requireUser } from "@/lib/dashboard-access";
 import { ProductCard } from "@/components/shared/ProductCard";
 
-export default async function FavoritesPage({
-  params,
-}: {
-  params: Promise<{ userId: string }>;
-}) {
-  const { userId } = await params;
-  const user = await requireOwnDashboard(userId);
+export default async function FavoritesPage() {
+  const user = await requireUser();
 
   const favorites = await prisma.favorite.findMany({
     where: { userId: user.id },

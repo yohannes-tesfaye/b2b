@@ -2,8 +2,7 @@ import { Link } from "@/i18n/navigation";
 import { Plus } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { effectiveStatus } from "@/lib/listings";
-import { requireOwnDashboard } from "@/lib/dashboard-access";
-import { userDashboardPath } from "@/lib/dashboard-paths";
+import { requireUser } from "@/lib/dashboard-access";
 import { Button } from "@/components/ui/button";
 import { RoleBadges } from "@/components/dashboard/role-badges";
 import { ListingsTable } from "@/components/dashboard/listings-table";
@@ -18,16 +17,13 @@ const ALLOWED_STATUSES = ["pending", "active", "rejected", "expired", "closed"];
 const ALLOWED_TYPES = ["wanted", "available"];
 
 export default async function ListingsPage({
-  params,
   searchParams,
 }: {
-  params: Promise<{ userId: string }>;
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const { userId } = await params;
-  const user = await requireOwnDashboard(userId);
-  const base = userDashboardPath(user.id);
+  const user = await requireUser();
+  const base = "/dashboard";
 
   const status = ALLOWED_STATUSES.includes(sp.status ?? "")
     ? (sp.status as string)

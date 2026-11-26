@@ -121,17 +121,17 @@ async function syncListingExtras(
   });
 }
 
-function revalidateListings(userId: string, listingId?: string) {
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/listings", "page");
+function revalidateListings(_userId: string, listingId?: string) {
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/listings", "page");
   if (listingId) {
-    revalidatePath("/[locale]/[userId]/dashboard/listings/[id]", "page");
+    revalidatePath("/[locale]/dashboard/listings/[id]", "page");
   }
 }
 
-/** Personal dashboard path for a user, used for redirects after writes. */
-function dashboardPath(userId: string, suffix = "") {
-  return `/${userId}/dashboard${suffix}`;
+/** Dashboard path, used for redirects after writes. */
+function dashboardPath(suffix = "") {
+  return `/dashboard${suffix}`;
 }
 
 export async function createListing(
@@ -175,7 +175,7 @@ export async function createListing(
     return {
       status: "success",
       message: "Listing submitted for approval.",
-      redirectTo: dashboardPath(user.id, "/listings"),
+      redirectTo: dashboardPath("/listings"),
     };
   } catch (error) {
     console.error("createListing failed", error);
@@ -237,7 +237,7 @@ export async function updateListing(
     return {
       status: "success",
       message: "Listing updated and submitted for approval.",
-      redirectTo: dashboardPath(user.id, `/listings/${id}`),
+      redirectTo: dashboardPath(`/listings/${id}`),
     };
   } catch (error) {
     console.error("updateListing failed", error);

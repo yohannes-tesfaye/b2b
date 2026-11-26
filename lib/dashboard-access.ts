@@ -28,6 +28,23 @@ export async function requireOwnDashboard(userId: string) {
 }
 
 /**
+ * Ensures someone is signed in before rendering the shared dashboard. Every
+ * role gets the same dashboard; admin-only pages call `requireAdmin()`.
+ */
+export async function requireUser() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return redirect({
+      href: "/log-in?next=%2Fdashboard",
+      locale: await getLocale(),
+    });
+  }
+
+  return user;
+}
+
+/**
  * Ensures the signed-in user has an admin or superadmin role.
  *
  * TODO(dev): role check temporarily disabled so any signed-in user can reach

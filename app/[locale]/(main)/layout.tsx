@@ -3,6 +3,8 @@ import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { auth } from "@/lib/auth";
 import { isOnboardingComplete } from "@/lib/profile";
+import { prisma } from "@/lib/prisma";
+import { MobileBottomNav } from "@/components/shared/MobileBottomNav";
 
 export default async function MainLayout({
   children,
@@ -21,5 +23,25 @@ export default async function MainLayout({
     redirect({ href: "/log-in?banned=1", locale: await getLocale() });
   }
 
-  return children;
+  let unreadCount = 0;
+  if (session?.user?.id) {
+    const conversations = await prisma.conversation.findMany({
+      where: {
+        OR: [{ buyerId: session.user.id }, { sellerId: session.user.id }],
+      },
+      select: { buyerId: true, sellerId: true, buyerUnread: true, sellerUnread: true },
+    });
+    unreadCount = conversations.reduce((total, conversation) => {
+      if (conversation.buyerId === session.user.id) total += conversation.buyerUnread;
+      if (conversation.sellerId === session.user.id) total += conversation.sellerUnread;
+      return total;
+    }, 0);
+  }
+
+  return (
+    <>
+      {children}
+      <MobileBottomNav signedIn={Boolean(session)} unreadCount={unreadCount} />
+    </>
+  );
 }

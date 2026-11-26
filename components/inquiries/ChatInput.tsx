@@ -79,7 +79,7 @@ export function ChatInput({ conversationId, onSend, isPending = false }: ChatInp
           type="button"
           variant="ghost"
           size="icon"
-          className="h-10 w-10 shrink-0 rounded-full"
+          className="h-11 w-11 shrink-0 rounded-full"
           onClick={() => fileInputRef.current?.click()}
           aria-label="Attach file"
         >
@@ -98,7 +98,7 @@ export function ChatInput({ conversationId, onSend, isPending = false }: ChatInp
         <Button
           type="button"
           size="icon"
-          className="h-10 w-10 shrink-0 rounded-full"
+          className="h-11 w-11 shrink-0 rounded-full"
           onClick={handleSend}
           disabled={isPending || (!body.trim() && !attachment)}
           aria-label="Send message"

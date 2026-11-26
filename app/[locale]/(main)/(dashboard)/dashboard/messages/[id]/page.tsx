@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireOwnDashboard } from "@/lib/dashboard-access";
-import { userDashboardPath } from "@/lib/dashboard-paths";
+import { requireUser } from "@/lib/dashboard-access";
 import { markRead } from "@/utils/inquiries/actions";
 import { ChatBubble } from "@/components/inquiries/ChatBubble";
 import { DateSeparator } from "@/components/inquiries/DateSeparator";
@@ -15,11 +14,11 @@ import { initialsFrom } from "@/lib/profile";
 export default async function ThreadPage({
   params,
 }: {
-  params: Promise<{ userId: string; id: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { userId, id } = await params;
-  const user = await requireOwnDashboard(userId);
-  const base = userDashboardPath(user.id);
+  const { id } = await params;
+  const user = await requireUser();
+  const base = "/dashboard";
 
   const conversation = await prisma.conversation.findUnique({
     where: { id },
@@ -67,7 +66,6 @@ export default async function ThreadPage({
   await markRead(id);
 
   const counterpart = isBuyer ? conversation.seller : conversation.buyer;
-  const counterpartUnread = isBuyer ? conversation.sellerUnread : conversation.buyerUnread;
 
   // The listing this whole thread is about; shown as a reply preview on messages.
   const listingRef = {
@@ -81,7 +79,9 @@ export default async function ThreadPage({
   };
 
   // Group messages by date for separators
-  const messagesWithDates: Array<{ type: "date"; date: Date } | { type: "msg"; msg: (typeof conversation.messages)[0] }> = [];
+  const messagesWithDates: Array<
+    { type: "date"; date: Date } | { type: "msg"; msg: (typeof conversation.messages)[0] }
+  > = [];
   let lastDate: string | null = null;
   for (const msg of conversation.messages) {
     const msgDate = new Date(msg.createdAt).toDateString();
@@ -102,17 +102,18 @@ export default async function ThreadPage({
   };
 
   return (
-    <div className="flex h-[calc(100vh-8rem)] flex-col">
+    <div className="flex h-[calc(100dvh-10rem)] flex-col md:h-[calc(100dvh-8rem)]">
       {/* Sticky header */}
-      <div className="flex items-center gap-3 border-b bg-background/95 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="flex items-center gap-3 border-b bg-background/95 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-4 sm:py-3">
         <Link
           href={`${base}/messages`}
-          className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+          aria-label="Back to inbox"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <Link href={`/profile/${counterpart.id}`} className="shrink-0">
-          <Avatar className="h-9 w-9">
+          <Avatar className="h-11 w-11">
             {counterpart.image ? (
               <AvatarImage src={counterpart.image} alt={counterpart.name ?? ""} />
             ) : null}
@@ -164,7 +165,9 @@ export default async function ThreadPage({
             const isOwn = msg.senderId === user.id;
             const grouped = isGrouped(index);
             const isRead = isOwn
-              ? (isBuyer ? conversation.buyerUnread === 0 : conversation.sellerUnread === 0)
+              ? isBuyer
+                ? conversation.buyerUnread === 0
+                : conversation.sellerUnread === 0
               : false;
 
             return (
@@ -175,7 +178,9 @@ export default async function ThreadPage({
                 timestamp={msg.createdAt}
                 isRead={isRead}
                 showAvatar={!isOwn && !grouped}
-                avatarFallback={initialsFrom(msg.sender.name || msg.sender.companyName || "?")}
+                avatarFallback={initialsFrom(
+                  msg.sender.name || msg.sender.companyName || "?"
+                )}
                 isGrouped={grouped}
                 attachment={msg.attachment}
                 senderId={msg.senderId}

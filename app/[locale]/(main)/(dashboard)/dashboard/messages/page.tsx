@@ -1,22 +1,18 @@
 import { prisma } from "@/lib/prisma";
-import { requireOwnDashboard } from "@/lib/dashboard-access";
-import { userDashboardPath } from "@/lib/dashboard-paths";
+import { requireUser } from "@/lib/dashboard-access";
 import { MessagesPageClient } from "@/components/inquiries/MessagesPageClient";
 
 type SearchParams = Promise<{ filter?: string }>;
 
 export default async function MessagesPage({
-  params,
   searchParams,
 }: {
-  params: Promise<{ userId: string }>;
   searchParams: SearchParams;
 }) {
-  const { userId } = await params;
-  const user = await requireOwnDashboard(userId);
+  const user = await requireUser();
   const sp = await searchParams;
   const filter = sp.filter ?? "all";
-  const base = userDashboardPath(user.id);
+  const base = "/dashboard";
 
   const conversations = await prisma.conversation.findMany({
     where: {

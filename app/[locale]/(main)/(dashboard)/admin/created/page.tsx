@@ -4,5 +4,5 @@ import { requireAdmin } from "@/lib/dashboard-access";
 
 export default async function CreatedListingsPage() {
   await requireAdmin();
-  redirect({ href: "/dashboard/listing", locale: await getLocale() });
+  redirect({ href: "/admin/listings", locale: await getLocale() });
 }

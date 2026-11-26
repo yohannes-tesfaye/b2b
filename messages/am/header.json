@@ -23,6 +23,13 @@
     "closeMenu": "ማውጫ ዝጋ",
     "support": "ድጋፍ",
     "language": "ቋንቋ",
+    "bottomNav": {
+      "home": "መነሻ",
+      "products": "ምርቶች",
+      "messages": "መልዕክቶች",
+      "favorites": "ተወዳጆች",
+      "profile": "መገለጫ"
+    },
     "nav": {
       "home": "መነሻ",
       "products": "ምርቶች",

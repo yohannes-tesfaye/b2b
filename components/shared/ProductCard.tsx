@@ -150,7 +150,7 @@ export function ProductCard({
 
         {/* Mobile: horizontal (image left, content right). Desktop: vertical. */}
         <CardContent className="flex flex-1 flex-row gap-3 p-0 sm:flex-col sm:gap-0 sm:px-4 sm:pb-3 sm:pt-3">
-          <div className="relative w-32 shrink-0 self-stretch overflow-hidden bg-muted sm:aspect-[4/3] sm:h-auto sm:w-full">
+          <div className="relative w-24 shrink-0 self-stretch overflow-hidden bg-muted sm:aspect-[4/3] sm:h-auto sm:w-full">
             <ProductImage
               src={resolvedImage}
               alt={resolvedTitle}

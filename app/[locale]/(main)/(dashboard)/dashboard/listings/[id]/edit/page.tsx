@@ -1,19 +1,18 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { defaultListingType } from "@/lib/listings";
-import { requireOwnDashboard } from "@/lib/dashboard-access";
-import { userDashboardPath } from "@/lib/dashboard-paths";
+import { requireUser } from "@/lib/dashboard-access";
 import { ListingForm } from "@/components/dashboard/listing-form";
 import type { ListingRow } from "@/types/listing";
 
 export default async function EditListingPage({
   params,
 }: {
-  params: Promise<{ id: string; userId: string }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { id, userId } = await params;
-  const user = await requireOwnDashboard(userId);
-  const base = userDashboardPath(user.id);
+  const { id } = await params;
+  const user = await requireUser();
+  const base = "/dashboard";
 
   const listing = await prisma.listing.findFirst({
     where: { id, userId: user.id },

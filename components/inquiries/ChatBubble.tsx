@@ -51,17 +51,17 @@ export function ChatBubble({
       {!isOwn && showAvatar ? (
         senderId ? (
           <Link href={`/${senderId}`} className="shrink-0">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary transition-opacity hover:opacity-80">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary transition-opacity hover:opacity-80">
               {avatarFallback}
             </div>
           </Link>
         ) : (
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
             {avatarFallback}
           </div>
         )
       ) : !isOwn ? (
-        <div className="w-7 shrink-0" />
+        <div className="w-11 shrink-0" />
       ) : null}
 
       <div

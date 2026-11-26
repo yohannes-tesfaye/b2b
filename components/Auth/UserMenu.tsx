@@ -34,7 +34,7 @@ function UserMenu({ compact = false }: { compact?: boolean }) {
         <Button
           variant="ghost"
           size="icon-lg"
-          className="h-10 w-10 rounded-xl"
+          className="h-11 w-11 rounded-xl"
           aria-label={t("signIn")}
           render={<Link href="/log-in" />}
           nativeButton={false}
@@ -115,14 +115,14 @@ function UserMenu({ compact = false }: { compact?: boolean }) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="cursor-pointer"
-          render={<Link href={`/${user.id}/dashboard`} />}
+          render={<Link href="/dashboard" />}
         >
           <LayoutDashboard className="mr-2 h-4 w-4" />
           {t("myDashboard")}
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
-          render={<Link href={`/${user.id}/dashboard/profile`} />}
+          render={<Link href="/dashboard/profile" />}
         >
           <UserRound className="mr-2 h-4 w-4" />
           {t("profileLink")}

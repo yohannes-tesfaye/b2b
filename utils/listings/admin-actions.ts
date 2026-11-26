@@ -24,11 +24,12 @@ async function requireAdminUser() {
 }
 
 function revalidateAllListings() {
-  revalidatePath("/[locale]/dashboard/created", "page");
+  revalidatePath("/[locale]/admin/listings", "page");
+  revalidatePath("/[locale]/admin", "page");
   revalidatePath("/[locale]/listings", "page");
   revalidatePath("/[locale]/listings/[id]", "page");
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/listings", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/listings", "page");
   revalidatePath("/[locale]", "layout");
 }
 

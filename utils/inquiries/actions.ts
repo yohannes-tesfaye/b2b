@@ -157,7 +157,7 @@ export async function startConversation(
 
   // Email the seller (fire-and-forget; do not block the response).
   const siteUrl = getSiteUrl();
-  const threadUrl = `${siteUrl}/en/${seller.id}/dashboard/messages/${conversation.id}`;
+  const threadUrl = `${siteUrl}/en/dashboard/messages/${conversation.id}`;
   sendEmail({
     to: seller.email,
     subject: `New inquiry: "${listing.title}"`,
@@ -171,9 +171,9 @@ ${parsed.data.message.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
     console.error("[inquiry] seller notification failed", error);
   });
 
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/messages", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/messages/[id]", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/messages", "page");
+  revalidatePath("/[locale]/dashboard/messages/[id]", "page");
 
   return {
     status: "success",
@@ -195,7 +195,7 @@ export async function startChatWithSeller(
   const user = await getCurrentUser();
   if (!user) {
     return {
-      redirectTo: `/log-in?next=${encodeURIComponent(`/profile/${sellerId}`)}`,
+      redirectTo: `/log-in?next=${encodeURIComponent(`/profile/${sellerId}?chat=1`)}`,
     };
   }
 
@@ -254,8 +254,8 @@ export async function startChatWithSeller(
     },
   });
 
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/messages", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/messages", "page");
 
   return { redirectTo: `/messages/${conversation.id}` };
 }
@@ -356,11 +356,7 @@ export async function sendMessage(
 
   // Notify the counterpart (fire-and-forget).
   const counterpart = isBuyer ? conversation.seller : conversation.buyer;
-  const counterpartIsBuyer = !isBuyer;
-  const counterpartPath = counterpartIsBuyer
-    ? `${counterpart.id}/dashboard/messages/${conversation.id}`
-    : `${counterpart.id}/dashboard/messages/${conversation.id}`;
-  const threadUrl = `${getSiteUrl()}/en/${counterpartPath}`;
+  const threadUrl = `${getSiteUrl()}/en/dashboard/messages/${conversation.id}`;
   sendEmail({
     to: counterpart.email,
     subject: `Re: ${conversation.listing.title}`,
@@ -374,9 +370,9 @@ ${parsed.data.body.replace(/</g, "&lt;").replace(/>/g, "&gt;")}
     console.error("[inquiry] reply notification failed", error);
   });
 
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/messages", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/messages/[id]", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/messages", "page");
+  revalidatePath("/[locale]/dashboard/messages/[id]", "page");
   revalidatePath("/[locale]/messages/[id]", "page");
 
   return {
@@ -432,6 +428,6 @@ export async function archiveConversation(conversationId: string): Promise<void>
     data: { status: "archived" },
   });
 
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/messages", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/messages", "page");
 }
