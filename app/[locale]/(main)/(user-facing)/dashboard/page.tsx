@@ -6,6 +6,7 @@ import {
   Clock,
   Package,
   Plus,
+  ShieldCheck,
   UserRound,
 } from "lucide-react";
 import { RoleBadges } from "@/components/dashboard/role-badges";
@@ -21,6 +22,8 @@ import {
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/dashboard-access";
 import { isOnboardingComplete } from "@/lib/profile";
+import { adminRoles } from "@/lib/permissions";
+import { parseRoles } from "@/lib/profile";
 import {
   categoryLabel,
   daysLeftLabel,
@@ -32,6 +35,7 @@ import {
 
 export default async function UserDashboardPage() {
   const user = await requireUser();
+  const isAdmin = parseRoles(user.role).some((role) => adminRoles.includes(role));
   const base = "/dashboard";
 
   const listings = await prisma.listing.findMany({
@@ -114,6 +118,16 @@ export default async function UserDashboardPage() {
             <Plus />
             Post new listing
           </Button>
+          {isAdmin ? (
+            <Button
+              render={<Link href="/admin" />}
+              variant="outline"
+              nativeButton={false}
+            >
+              <ShieldCheck />
+              Admin console
+            </Button>
+          ) : null}
         </div>
       </div>
 
