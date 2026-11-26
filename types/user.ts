@@ -8,6 +8,7 @@ export type AdminUserRow = {
   banReason: string | null;
   banExpires: Date | null;
   emailVerified: boolean;
+  requiresReview: boolean;
   companyName: string | null;
   country: string | null;
   industry: string | null;
