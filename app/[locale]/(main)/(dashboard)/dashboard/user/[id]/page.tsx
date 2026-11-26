@@ -32,6 +32,7 @@ import { Separator } from "@/components/ui/separator";
 import { ListingStatusBadge } from "@/components/dashboard/listing-status-badge";
 import { RoleBadges } from "@/components/dashboard/role-badges";
 import { AdminUserActions } from "@/components/dashboard/admin-user-actions";
+import { UserReviewToggle } from "@/components/dashboard/user-review-toggle";
 
 function DetailRow({
   label,
@@ -403,6 +404,10 @@ export default async function AdminUserDetailPage({
                     {user.emailVerified ? "Verified" : "Not verified"}
                   </Badge>
                 }
+              />
+              <DetailRow
+                label="Require review"
+                value={<UserReviewToggle userId={user.id} initial={user.requiresReview} />}
               />
               <DetailRow label="Role" value={user.role || "buyer"} />
               <DetailRow

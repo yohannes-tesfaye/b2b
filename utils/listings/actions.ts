@@ -10,6 +10,7 @@ import {
   type ListingFormState,
   type ListingFormValues,
 } from "@/lib/validation/listing";
+import { getApprovalSettings, determineListingStatus } from "@/features/listings/approval";
 
 const SENSITIVE_KEY = /pass(word)?|secret|token|cookie|authorization/i;
 
@@ -174,13 +175,16 @@ export async function createListing(
     };
   }
 
+  const settings = await getApprovalSettings();
+  const listingStatus = determineListingStatus(user, settings);
+
   const payload = listingPayload(parsed.data);
   const saveData = {
     ...payload,
     userId: user.id,
-    // New listings always wait for admin approval. The expiry clock starts
-    // when an admin approves the listing.
-    status: "pending",
+    // New listings wait for admin approval unless the approval rule says
+    // otherwise (approval off, or auto-approve verified users).
+    status: listingStatus,
   };
   console.log("[createListing] saving", {
     callId,

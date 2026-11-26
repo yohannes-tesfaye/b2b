@@ -29,14 +29,27 @@ model User {
   country              String?
   industry             String?
   companySize          String?
+  requiresReview       Boolean                @default(false)
   sessions             Session[]
   accounts             Account[]
   listings             Listing[]
   reviewedListings     Listing[]              @relation("ListingReviews")
   listingStatusChanges ListingStatusHistory[]
+  updatedSettings      AppSettings[]          @relation("AppSettingsUpdates")
 
   @@unique([email])
   @@map("user")
+}
+
+model AppSettings {
+  id                    String   @id @default("default")
+  listingApprovalEnabled Boolean @default(true)
+  autoApproveVerified   Boolean  @default(false)
+  updatedAt             DateTime @updatedAt
+  updatedById           String?
+  updatedBy             User?    @relation("AppSettingsUpdates", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@map("app_settings")
 }
 
 model Session {

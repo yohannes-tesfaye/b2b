@@ -27,6 +27,7 @@ import {
   Plus,
   Building2,
   ClipboardList,
+  Settings,
 } from "lucide-react";
 import { Breadcrumbs } from "@/components/dashboard/breadcrumbs";
 import { SidebarUserFooter } from "@/components/dashboard/sidebar-footer";
@@ -35,6 +36,7 @@ const coreItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Users", url: "/dashboard/user", icon: Users },
   { title: "Listings", url: "/dashboard/listing", icon: ClipboardList },
+  { title: "Settings", url: "/dashboard/settings", icon: Settings },
 ];
 
 type SidebarItem = {
