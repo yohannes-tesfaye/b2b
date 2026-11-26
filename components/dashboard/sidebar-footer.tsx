@@ -1,13 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useSidebar } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
-import { ChevronDown, LogOut } from "lucide-react";
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ChevronDown, LogOut, UserRound } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { initialsFrom } from "@/lib/profile";
 import { UserRow } from "./user-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,7 +89,7 @@ function ProfileCard({ user }: { user: UserRow }) {
         <div className="mt-2">
           <div className="flex justify-between text-[10px] text-muted-foreground">
             <span>Profile completion</span>
-            <span>{Math.round(([user.companyName, user.country, user.industry, user.companySize].filter(Boolean).length / 4) * 100)}%</span>
+            <span>{pct}%</span>
           </div>
           <Progress value={pct} className="h-1.5" />
         </div>
@@ -116,72 +125,78 @@ export function SidebarUserFooter({
   };
 }) {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
-  const { state } = useSidebar();
 
   const handleSignOut = async () => {
     await authClient.signOut({ fetchOptions: { onSuccess: () => { router.push("/"); router.refresh(); } } });
   };
 
-  const canShowProfile = state === "expanded";
+  const profileUser = {
+    id: "",
+    name: user.name,
+    email: user.email,
+    image: user.image ?? null,
+    role: user.role ?? null,
+    banned: user.banned ?? null,
+    banReason: user.banReason ?? null,
+    companyName: user.companyName ?? null,
+    country: user.country ?? null,
+    industry: user.industry ?? null,
+    companySize: user.companySize ?? null,
+    phone: user.phone ?? null,
+    website: user.website ?? null,
+    emailVerified: user.emailVerified ?? null,
+    createdAt: user.createdAt ?? new Date(),
+  };
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <div className="relative">
-          <div
-            className="flex items-center gap-3 rounded-md p-2 hover:bg-muted transition-colors cursor-pointer w-full"
-            onClick={() => setIsOpen((prev) => !prev)}
-            aria-label="User profile"
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              tooltip={user.name || "Account"}
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <Avatar className="h-8 w-8 rounded-lg">
+                {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
+                <AvatarFallback className="rounded-lg">
+                  {initialsFrom(user.name || user.email)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight min-w-0">
+                <span className="truncate font-semibold">{user.name || "User"}</span>
+                <span className="truncate text-xs text-muted-foreground">{user.email}</span>
+              </div>
+              <ChevronDown className="ml-auto size-4 shrink-0" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-80 max-h-[70vh] overflow-y-auto rounded-lg p-0"
+            side="top"
+            align="end"
+            sideOffset={4}
           >
-<Avatar className="h-8 w-8 shrink-0">
-  {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
-  <AvatarFallback>{initialsFrom(user.name || user.email)}</AvatarFallback>
-</Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight min-w-0 group-data-[collapsible=icon]:hidden">
-              <span className="truncate font-medium">{user.name || "User"}</span>
-              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
-              {user.role ? (
-                <Badge variant="secondary" className="mt-1 w-fit text-[10px]">
-                  {user.role}
-                </Badge>
-              ) : null}
+            <div className="p-2">
+              <ProfileCard user={profileUser as unknown as UserRow} />
             </div>
-            <ChevronDown className="h-4 w-4 shrink-0 group-data-[collapsible=icon]:hidden" />
-          </div>
-
-          {canShowProfile && isOpen && (
-            <div className="absolute bottom-full left-0 mb-2 z-50">
-              <ProfileCard
-                user={{
-                  id: "",
-                  name: user.name,
-                  email: user.email,
-                  image: user.image ?? null,
-                  role: user.role ?? null,
-                  banned: user.banned ?? null,
-                  banReason: user.banReason ?? null,
-                  companyName: user.companyName ?? null,
-                  country: user.country ?? null,
-                  industry: user.industry ?? null,
-                  companySize: user.companySize ?? null,
-                  phone: user.phone ?? null,
-                  website: user.website ?? null,
-                  emailVerified: user.emailVerified ?? null,
-                  createdAt: user.createdAt ?? new Date(),
-                }}
-              />
-            </div>
-          )}
-
-<button
-  onClick={handleSignOut}
-  className="shrink-0 rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground group-data-[collapsible=icon]:hidden"
-  aria-label="Sign out"
->
-  <LogOut className="h-4 w-4" />
-</button>
-        </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer mx-2 mb-1"
+              render={<Link href="/dashboard/profile" />}
+            >
+              <UserRound className="mr-2 h-4 w-4" />
+              View profile
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer mx-2 mb-2 text-destructive focus:text-destructive"
+              onClick={handleSignOut}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
   );
