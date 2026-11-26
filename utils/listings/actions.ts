@@ -11,6 +11,39 @@ import {
   type ListingFormValues,
 } from "@/lib/validation/listing";
 
+const SENSITIVE_KEY = /pass(word)?|secret|token|cookie|authorization/i;
+
+/** Snapshot FormData for logs, with obvious secrets redacted. */
+function readFormData(formData: FormData) {
+  const data: Record<string, string> = {};
+  for (const [key, value] of formData.entries()) {
+    data[key] = SENSITIVE_KEY.test(key) ? "[redacted]" : String(value);
+  }
+  return data;
+}
+
+function newCallId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+/** Pull the useful parts out of Prisma/driver errors without losing the raw error. */
+function describeError(error: unknown) {
+  const value = error as {
+    name?: string;
+    code?: string;
+    message?: string;
+    meta?: unknown;
+    cause?: unknown;
+  };
+  return {
+    name: value?.name ?? typeof error,
+    code: value?.code ?? null,
+    message: value?.message ?? String(error),
+    meta: value?.meta ?? null,
+    cause: value?.cause ?? null,
+  };
+}
+
 function parseListingForm(formData: FormData) {
   return listingSchema.safeParse({
     type: String(formData.get("type") ?? ""),
@@ -90,9 +123,30 @@ export async function createListing(
   _prevState: ListingFormState,
   formData: FormData
 ): Promise<ListingFormState> {
+  const callId = newCallId();
+  const startedAt = new Date().toISOString();
+  const startedMs = Date.now();
+  console.log("[createListing] start", {
+    callId,
+    startedAt,
+    formDataKeys: Array.from(formData.keys()),
+  });
+  console.log("[createListing] incoming", {
+    callId,
+    startedAt,
+    data: readFormData(formData),
+  });
+
   const parsed = parseListingForm(formData);
 
   if (!parsed.success) {
+    console.warn("[createListing] validation failed", {
+      callId,
+      issues: parsed.error.issues.map((issue) => ({
+        path: issue.path,
+        message: issue.message,
+      })),
+    });
     return {
       status: "error",
       message: "Please fix the highlighted fields.",
@@ -100,7 +154,18 @@ export async function createListing(
     };
   }
 
+  console.log("[createListing] validation passed", {
+    callId,
+    type: parsed.data.type,
+    title: parsed.data.title,
+  });
+
   const user = await getCurrentUser();
+  console.log("[createListing] session", {
+    callId,
+    hasUser: Boolean(user),
+    userId: user?.id ?? null,
+  });
   if (!user) {
     return {
       status: "error",
@@ -109,18 +174,39 @@ export async function createListing(
     };
   }
 
+  const payload = listingPayload(parsed.data);
+  const saveData = {
+    ...payload,
+    userId: user.id,
+    // New listings always wait for admin approval. The expiry clock starts
+    // when an admin approves the listing.
+    status: "pending",
+  };
+  console.log("[createListing] saving", {
+    callId,
+    fields: Object.keys(saveData),
+    data: saveData,
+  });
+
   try {
-    await prisma.listing.create({
-      data: {
-        ...listingPayload(parsed.data),
-        userId: user.id,
-        // New listings always wait for admin approval. The expiry clock starts
-        // when an admin approves the listing.
-        status: "pending",
-      },
+    const created = await prisma.listing.create({ data: saveData });
+    console.log("[createListing] saved", {
+      callId,
+      listingId: created.id,
+      elapsedMs: Date.now() - startedMs,
     });
   } catch (error) {
-    console.error("createListing failed", error);
+    console.error("[createListing] failed", {
+      callId,
+      startedAt,
+      failedAt: new Date().toISOString(),
+      elapsedMs: Date.now() - startedMs,
+      error: describeError(error),
+      userId: user.id,
+      fields: Object.keys(saveData),
+      data: saveData,
+    });
+    console.error("[createListing] raw error", { callId, error });
     return {
       status: "error",
       message: "Could not save this listing. Please try again.",
