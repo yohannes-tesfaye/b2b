@@ -346,12 +346,12 @@ function RowActions({
   return (
     <div className="flex flex-wrap items-center justify-end gap-1">
       <Button
-        render={<Link href={`${basePath}/${listing.id}`} />}
+        render={<Link href={`/products/${listing.id}`} />}
         size="xs"
         variant="ghost"
         nativeButton={false}
       >
-        View
+        View live
       </Button>
       <Button
         render={<Link href={`${basePath}/${listing.id}/edit`} />}
@@ -411,12 +411,12 @@ function MobileRowActions({
       onClick={(event) => event.stopPropagation()}
     >
       <Button
-        render={<Link href={`${basePath}/${listing.id}`} />}
+        render={<Link href={`/products/${listing.id}`} />}
         size="xs"
         variant="ghost"
         nativeButton={false}
       >
-        View
+        View live
       </Button>
       <Button
         render={<Link href={`${basePath}/${listing.id}/edit`} />}
@@ -439,6 +439,9 @@ function MobileRowActions({
           <MoreHorizontal />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem render={<Link href={`/products/${listing.id}`} />}>
+            View live
+          </DropdownMenuItem>
           {effectiveStatus(listing) === "expired" ? (
             <DropdownMenuItem
               disabled={isPending}
