@@ -132,7 +132,8 @@ function ListingActions({
         render={
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
+            className="size-9 sm:size-8"
             aria-label={`Actions for ${listing.title}`}
           />
         }
@@ -245,11 +246,11 @@ export function AdminListingsModerationTable({
   return (
     <div className="space-y-4">
       {selectedIds.length ? (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-muted/50 p-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-lg border bg-muted/50 p-2">
           <p className="text-sm font-medium">
             {selectedIds.length} selected
           </p>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             <Button
               size="sm"
               variant="outline"
@@ -271,6 +272,7 @@ export function AdminListingsModerationTable({
             <Button
               size="sm"
               variant="ghost"
+              className="col-span-2 sm:col-span-1"
               onClick={() => setSelectedIds([])}
             >
               Clear
@@ -285,6 +287,7 @@ export function AdminListingsModerationTable({
             <TableRow>
               <TableHead className="w-10">
                 <Checkbox
+                  className="size-5"
                   checked={allPendingSelected}
                   indeterminate={somePendingSelected}
                   disabled={!pendingOnPage.length}
@@ -319,6 +322,7 @@ export function AdminListingsModerationTable({
                   <TableCell onClick={(event) => event.stopPropagation()}>
                     {listing.status === "pending" ? (
                       <Checkbox
+                        className="size-5"
                         checked={selectedIds.includes(listing.id)}
                         onCheckedChange={(checked) =>
                           toggleSelected(listing.id, checked)
@@ -326,7 +330,7 @@ export function AdminListingsModerationTable({
                         aria-label={`Select ${listing.title}`}
                       />
                     ) : (
-                      <span className="block size-4" />
+                      <span className="block size-5" />
                     )}
                   </TableCell>
                   <TableCell className="max-w-72">
@@ -405,11 +409,12 @@ export function AdminListingsModerationTable({
               className="cursor-pointer"
               onClick={() => router.push(`/admin/listings/${listing.id}`)}
             >
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-3 p-4">
                 <div className="flex items-start gap-3">
                   {listing.status === "pending" ? (
                     <div onClick={(event) => event.stopPropagation()}>
                       <Checkbox
+                        className="size-5"
                         checked={selectedIds.includes(listing.id)}
                         onCheckedChange={(checked) =>
                           toggleSelected(listing.id, checked)
@@ -420,10 +425,10 @@ export function AdminListingsModerationTable({
                   ) : null}
                   <Thumbnail listing={listing} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
+                    <p className="line-clamp-2 text-sm font-semibold">
                       {listing.title}
                     </p>
-                    <p className="truncate text-xs text-muted-foreground">
+                    <p className="mt-0.5 truncate text-xs text-muted-foreground">
                       {listing.location}
                     </p>
                   </div>
@@ -450,13 +455,17 @@ export function AdminListingsModerationTable({
                   </Badge>
                 </div>
 
-                <div className="flex items-end justify-between gap-3 text-xs text-muted-foreground">
-                  <OwnerCell listing={listing} />
+                <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <span className="truncate">{listing.user?.name || "Unknown owner"}</span>
+                    {listing.user?.emailVerified ? <BadgeCheck className="size-3.5 shrink-0 text-primary" /> : null}
+                  </div>
                   <div className="text-right">
                     <p>{formatListingDate(listing.createdAt)}</p>
-                    <p>{daysLeftLabel(listing.expiresAt)}</p>
+                    <p className={effectiveStatus(listing)==="expired" ? "text-destructive" : ""}>{daysLeftLabel(listing.expiresAt)}</p>
                   </div>
                 </div>
+                <p className="truncate text-[11px] text-muted-foreground/80">{listing.user?.companyName || listing.user?.email || "—"}</p>
               </CardContent>
             </Card>
           ))
@@ -468,10 +477,13 @@ export function AdminListingsModerationTable({
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">
-          {total} listing{total === 1 ? "" : "s"} total
+        <p className="text-sm text-muted-foreground sm:hidden">
+          Page {query.page} of {totalPages}
         </p>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            {total} listing{total === 1 ? "" : "s"} total
+          </p>
           <Select
             value={String(query.pageSize)}
             onValueChange={(value) =>
@@ -485,7 +497,7 @@ export function AdminListingsModerationTable({
               )
             }
           >
-            <SelectTrigger className="w-24" aria-label="Listings per page">
+            <SelectTrigger className="w-full sm:w-24" aria-label="Listings per page">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -493,52 +505,54 @@ export function AdminListingsModerationTable({
               <SelectItem value="20">20 / page</SelectItem>
             </SelectContent>
           </Select>
-
-          <Pagination className="mx-0 w-auto justify-start sm:justify-end">
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => goToPage(Math.max(1, query.page - 1))}
-                  disabled={query.page <= 1}
-                >
-                  Previous
-                </Button>
-              </PaginationItem>
-              {pages.map((page, index) => {
-                const previous = pages[index - 1];
-                return (
-                  <PaginationItem key={page} className="hidden sm:block">
-                    {previous && page - previous > 1 ? (
-                      <span className="px-1 text-xs text-muted-foreground">…</span>
-                    ) : null}
-                    <Button
-                      variant={page === query.page ? "outline" : "ghost"}
-                      size="icon-sm"
-                      onClick={() => goToPage(page)}
-                      aria-current={page === query.page ? "page" : undefined}
-                      aria-label={`Page ${page}`}
-                      className="hidden sm:inline-flex"
-                    >
-                      {page}
-                    </Button>
-                  </PaginationItem>
-                );
-              })}
-              <PaginationItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => goToPage(Math.min(totalPages, query.page + 1))}
-                  disabled={query.page >= totalPages}
-                >
-                  Next
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
         </div>
+
+        <Pagination className="mx-0 w-auto justify-start sm:justify-end">
+          <PaginationContent>
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 sm:flex-none"
+                onClick={() => goToPage(Math.max(1, query.page - 1))}
+                disabled={query.page <= 1}
+              >
+                Previous
+              </Button>
+            </PaginationItem>
+            {pages.map((page, index) => {
+              const previous = pages[index - 1];
+              return (
+                <PaginationItem key={page} className="hidden sm:block">
+                  {previous && page - previous > 1 ? (
+                    <span className="px-1 text-xs text-muted-foreground"></span>
+                  ) : null}
+                  <Button
+                    variant={page === query.page ? "outline" : "ghost"}
+                    size="icon-sm"
+                    onClick={() => goToPage(page)}
+                    aria-current={page === query.page ? "page" : undefined}
+                    aria-label={`Page ${page}`}
+                    className="hidden sm:inline-flex"
+                  >
+                    {page}
+                  </Button>
+                </PaginationItem>
+              );
+            })}
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 sm:flex-none"
+                onClick={() => goToPage(Math.min(totalPages, query.page + 1))}
+                disabled={query.page >= totalPages}
+              >
+                Next
+              </Button>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
 
       <ApproveListingDialog

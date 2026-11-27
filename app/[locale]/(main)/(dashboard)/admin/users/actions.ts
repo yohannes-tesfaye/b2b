@@ -4,14 +4,14 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { adminRoles } from "@/lib/permissions";
 
 async function requireAdmin() {
   const session = await auth.api.getSession({ headers: await headers() });
-  const role = (session?.user as { role?: string | null } | undefined)?.role ?? null;
-  if (!session || !role || !adminRoles.includes(role)) {
-    throw new Error("Forbidden");
-  }
+  // TODO(dev): role check temporarily disabled so any signed-in user can reach
+  // `/dashboard` and all its routes during development. Re-enable (using
+  // parseRoles from @/lib/profile) alongside lib/dashboard-access.ts before
+  // shipping.
+  if (!session) throw new Error("Forbidden");
   return session;
 }
 

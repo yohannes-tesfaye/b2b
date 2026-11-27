@@ -25,9 +25,10 @@ export default async function LegacyDashboardRedirect({
     const href = second ? `/admin/users/${second}` : "/admin/users";
     redirect({ href, locale });
   }
-  if (first === "categories") {
-    redirect({ href: "/admin/categories", locale });
-  }
+  // Taxonomy admin is parked; old /dashboard/categories links fall through.
+  // if (first === "categories") {
+  //   redirect({ href: "/admin/categories", locale });
+  // }
 
   const tail = legacy.length ? `/${legacy.join("/")}` : "";
   const href = `/dashboard${tail}`;

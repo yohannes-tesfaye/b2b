@@ -61,10 +61,10 @@ export default async function AdminListingsPage({
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h2 className="text-2xl font-bold">Listings</h2>
-        <p className="text-sm text-muted-foreground">
+    <div className="flex flex-col gap-4 sm:gap-6">
+      <div className="space-y-1">
+        <h2 className="text-xl font-bold sm:text-2xl">Listings</h2>
+        <p className="text-xs text-muted-foreground sm:text-sm">
           Review, approve, and manage every listing posted by users.
         </p>
       </div>

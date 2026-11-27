@@ -28,7 +28,6 @@ import {
   Plus,
   Search,
   ShieldCheck,
-  Tags,
   UserRound,
   Users,
 } from "lucide-react";
@@ -145,7 +144,9 @@ export function DashboardShell({
       icon: ClipboardList,
       badge: pendingListings,
     },
-    { title: "Taxonomy", url: "/admin/categories", icon: Tags },
+    // Taxonomy admin is parked for now — see
+    // app/[locale]/(main)/(dashboard)/admin/categories/page.disabled.tsx
+    // { title: "Taxonomy", url: "/admin/categories", icon: Tags },
   ];
 
   return (

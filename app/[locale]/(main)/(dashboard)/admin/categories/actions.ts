@@ -1,3 +1,8 @@
+// TAXONOMY ADMIN — DORMANT
+// Server actions for the taxonomy admin. Currently unused because the route
+// is disabled (see page.disabled.tsx). Kept here so re-enabling is a
+// rename + nav uncomment. Do not delete.
+
 "use server";
 
 import { revalidatePath } from "next/cache";

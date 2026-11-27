@@ -8,7 +8,7 @@ export default function AdminUsersLoading() {
         <Skeleton className="h-4 w-80" />
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <Skeleton key={index} className="h-28 rounded-xl" />
         ))}
@@ -16,7 +16,7 @@ export default function AdminUsersLoading() {
 
       <Skeleton className="h-24 rounded-xl" />
 
-      <div className="rounded-xl border">
+      <div className="hidden md:block rounded-xl border">
         <div className="flex items-center gap-4 border-b p-3">
           <Skeleton className="size-4" />
           <Skeleton className="h-4 w-48" />
@@ -32,6 +32,12 @@ export default function AdminUsersLoading() {
             <Skeleton className="ml-auto h-4 w-20" />
             <Skeleton className="h-4 w-24" />
           </div>
+        ))}
+      </div>
+
+      <div className="md:hidden space-y-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Skeleton key={index} className="h-16 rounded-xl border p-4" />
         ))}
       </div>
     </div>

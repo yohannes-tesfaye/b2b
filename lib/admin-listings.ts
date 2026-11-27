@@ -48,7 +48,7 @@ export function normaliseAdminListingFilters(
     (filters.status ?? "") as ListingStatus | "all"
   )
     ? (filters.status as string)
-    : "pending";
+    : "all";
   const type = ["wanted", "available"].includes(filters.type ?? "")
     ? (filters.type as string)
     : "all";
