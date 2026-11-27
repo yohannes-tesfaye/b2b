@@ -12,16 +12,22 @@ export function WizardStep({
   step,
   type,
   onTypeChange,
+  mode,
+  isPending,
   ...stepProps
 }: StepProps & {
   step: number;
   type: ListingType;
   onTypeChange: (type: ListingType) => void;
+  mode: "create" | "edit";
+  isPending: boolean;
 }) {
   if (step === 0) {
     return <StepType value={type} onChange={onTypeChange} />;
   }
   if (step === 1) return <StepBasics {...stepProps} />;
   if (step === 2) return <StepDetails {...stepProps} />;
-  return <StepReview values={stepProps.values} />;
+  return (
+    <StepReview values={stepProps.values} mode={mode} isPending={isPending} />
+  );
 }

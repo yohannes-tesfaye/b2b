@@ -345,7 +345,7 @@ export default async function AdminListingDetailPage({
             </Card>
 
             {/* Images */}
-            {!wanted && listing.images.length ? (
+            {listing.images.length ? (
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base">

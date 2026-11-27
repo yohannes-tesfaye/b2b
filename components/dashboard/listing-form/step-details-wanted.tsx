@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { LISTING_LIMITS } from "@/lib/validation/listing";
+import { ListingImageInput } from "./listing-image-input";
 import { TextField } from "./text-field";
 import type { StepProps } from "./types";
 
@@ -74,6 +75,12 @@ export function StepDetailsWanted({
         maxLength={LISTING_LIMITS.technicalDocument}
         onChange={(value) => onChange("technicalDocument", value)}
         onTouch={() => onTouch("technicalDocument")}
+      />
+      <ListingImageInput
+        value={values.images}
+        error={errors.images}
+        onChange={(value) => onChange("images", value)}
+        onTouch={() => onTouch("images")}
       />
     </section>
   );

@@ -252,12 +252,12 @@ function refineImages(values: ImageValues, ctx: z.RefinementCtx) {
 }
 
 export const listingSchema = listingBaseSchema.superRefine((values, ctx) => {
+  refineImages(values, ctx);
   if (values.type === "wanted") {
     refineWanted(values, ctx);
     return;
   }
   refineAvailable(values, ctx);
-  refineImages(values, ctx);
 });
 
 export const listingTypeStepSchema = listingBaseSchema.pick({ type: true });
@@ -285,12 +285,12 @@ export const listingDetailsStepSchema = listingBaseSchema
     images: true,
   })
   .superRefine((values, ctx) => {
+    refineImages(values, ctx);
     if (values.type === "wanted") {
       refineWanted(values, ctx);
       return;
     }
     refineAvailable(values, ctx);
-    refineImages(values, ctx);
   });
 
 /** One schema per wizard step, in order. Index 3 validates the whole listing. */

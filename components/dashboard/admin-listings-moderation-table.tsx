@@ -95,7 +95,7 @@ function OwnerCell({ listing }: { listing: AdminListingRow }) {
 }
 
 function Thumbnail({ listing }: { listing: AdminListingRow }) {
-  const image = listing.type === "available" ? listing.images[0] : null;
+  const image = listing.images?.[0] ?? null;
 
   if (image) {
     return (

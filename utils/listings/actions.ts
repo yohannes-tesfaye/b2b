@@ -60,12 +60,11 @@ function parseListingForm(formData: FormData) {
 
 function listingPayload(values: ListingFormValues) {
   const wanted = values.type === "wanted";
-  const images = wanted
-    ? []
-    : values.images
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean);
+  // Both listing types can carry images (uploaded data URLs or links).
+  const images = values.images
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 
   return {
     type: values.type,

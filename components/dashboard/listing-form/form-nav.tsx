@@ -10,7 +10,6 @@ export function FormNav({
   total,
   canContinue,
   isPending,
-  mode,
   onBack,
   onNext,
   onCancel,
@@ -37,15 +36,10 @@ export function FormNav({
           <Button type="button" variant="ghost" onClick={onCancel} className="w-full sm:w-auto">
             {t("cancel")}
           </Button>
-          {last ? (
-            <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
-              {isPending
-                ? t("saving")
-                : mode === "create"
-                ? t("submitCreate")
-                : t("submitEdit")}
-            </Button>
-          ) : (
+          {/* On the review step, the Submit button lives inside the review card.
+              The footer never renders a submit so a click can't fall through
+              from "Next" onto publishing. */}
+          {!last ? (
             <Button
               type="button"
               onClick={onNext}
@@ -54,7 +48,7 @@ export function FormNav({
             >
               {t("next")} <ChevronRight className="size-(--spacing-4)" />
             </Button>
-          )}
+          ) : null}
         </div>
         {!last && !canContinue ? (
           <p className="text-xs text-muted-foreground">{t("disabledHint")}</p>

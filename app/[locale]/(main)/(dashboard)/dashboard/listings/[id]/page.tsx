@@ -187,21 +187,21 @@ export default async function ListingDetailPage({
                       </span>
                     }
                   />
-                  {listing.images.length ? (
-                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                      {listing.images.map((image) => (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          key={image}
-                          src={image}
-                          alt={listing.title}
-                          className="h-28 w-full rounded-lg border object-cover"
-                        />
-                      ))}
-                    </div>
-                  ) : null}
                 </div>
               )}
+              {listing.images.length ? (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {listing.images.map((image) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={image}
+                      src={image}
+                      alt={listing.title}
+                      className="h-28 w-full rounded-lg border object-cover"
+                    />
+                  ))}
+                </div>
+              ) : null}
             </CardContent>
           </Card>
         </div>

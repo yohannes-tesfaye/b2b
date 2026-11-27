@@ -48,7 +48,12 @@ export function ListingForm({
     const target = event.target as HTMLElement;
     if (target.tagName === "TEXTAREA") return;
     if (target.tagName === "BUTTON") return; // let buttons do their own thing
-    if (step >= total - 1) return; // real submit on last step
+    // On the review step, Enter in any field does NOT submit; only an
+    // explicit click (or Enter on the focused Submit button) publishes.
+    if (step >= total - 1) {
+      event.preventDefault();
+      return;
+    }
     event.preventDefault();
     goNext();
   };
@@ -74,6 +79,8 @@ export function ListingForm({
         onTypeChange={setType}
         onChange={change}
         onTouch={touch}
+        mode={mode}
+        isPending={isPending}
       />
       {formMessage ? (
         <div
