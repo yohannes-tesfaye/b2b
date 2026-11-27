@@ -124,7 +124,7 @@ export function ListingsTable({ listings, status, type, basePath }: Props) {
     } else {
       run(
         () => renewListing(listing.id),
-        "Listing submitted for renewal",
+        "Listing renewed",
         "Failed to renew listing"
       );
     }
@@ -152,7 +152,7 @@ export function ListingsTable({ listings, status, type, basePath }: Props) {
     }
     return {
       title: `Renew "${listing.title}"?`,
-      description: `It will be submitted for approval again for another ${listing.durationDays} days.`,
+      description: `It will go live again for another ${listing.durationDays} days.`,
       action: "Renew listing",
     };
   })();

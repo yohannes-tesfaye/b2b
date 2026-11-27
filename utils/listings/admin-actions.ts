@@ -34,8 +34,11 @@ function revalidateAllListings() {
 }
 
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+  // Listings are auto-approved, but admins can still approve anything pending.
   active: ["pending"],
-  rejected: ["pending"],
+  // Nothing is submitted for review anymore, but admins can still take down a
+  // live (or closed/expired) listing.
+  rejected: ["pending", "active", "closed", "expired"],
   closed: ["pending", "active", "rejected", "expired"],
 };
 
@@ -258,7 +261,7 @@ export async function bulkRejectListings(
 
   await prisma.$transaction(async (tx) => {
     const listings = await tx.listing.findMany({
-      where: { id: { in: listingIds }, status: "pending" },
+      where: { id: { in: listingIds }, status: { in: ["pending", "active"] } },
       select: { id: true, status: true, title: true, user: { select: { email: true, name: true } } },
     });
 

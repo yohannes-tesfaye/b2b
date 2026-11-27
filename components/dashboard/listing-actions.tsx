@@ -58,14 +58,14 @@ export function ListingActions({
   const handleRenew = () => {
     if (
       !window.confirm(
-        `Renew "${title}" for another ${durationDays} days? It will be submitted for approval again.`
+        `Renew "${title}" for another ${durationDays} days? It will go live again.`
       )
     ) {
       return;
     }
     run(
       () => renewListing(id),
-      "Listing submitted for renewal",
+      "Listing renewed",
       "Failed to renew listing"
     );
   };

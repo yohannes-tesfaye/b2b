@@ -26,7 +26,7 @@
     "cancelConfirm": "Discard this draft? Your saved draft will be removed.",
     "invalidToast": "Check the highlighted fields and try again.",
     "reviewTitle": "Review & submit",
-    "reviewNotice": "New and edited listings are reviewed by an admin before going live.",
+    "reviewNotice": "New and edited listings are published immediately.",
     "untitled": "Untitled listing",
     "fix": {
       "generic": "Check this field and try again.",

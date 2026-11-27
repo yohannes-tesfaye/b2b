@@ -3,12 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
-import { effectiveStatus } from "@/lib/listings";
+import { addDays, effectiveStatus } from "@/lib/listings";
 import { buildListingSearchText } from "@/lib/search";
 import { parseTagSlugs, tagSlugToLabel } from "@/lib/slug";
 import { countryName } from "@/lib/countries";
-import { listingIssuesToFieldErrors } from "@/lib/validation/listing";
-import { listingSchema, type ListingFormValues, type ListingFormState } from "@/lib/validation/listing";
+import {
+  LISTING_FORM_FIELD_KEYS,
+  listingIssuesToFieldErrors,
+  listingSchema,
+  type ListingFormValues,
+  type ListingFormState,
+} from "@/lib/validation/listing";
 
 const SENSITIVE_KEY = /pass(word)?|secret|token|cookie|authorization/i;
 
@@ -44,17 +49,13 @@ function describeError(error: unknown) {
 }
 
 function parseListingForm(formData: FormData) {
-  return listingSchema.safeParse({
-    type: String(formData.get("type") ?? ""),
-    title: String(formData.get("title") ?? ""),
-    description: String(formData.get("description") ?? ""),
-    category: String(formData.get("category") ?? ""),
-    quantity: String(formData.get("quantity") ?? ""),
-    location: String(formData.get("location") ?? ""),
-    countryCode: String(formData.get("countryCode") ?? ""),
-    tags: String(formData.get("tags") ?? ""),
-    durationDays: String(formData.get("durationDays") ?? ""),
-  });
+  // Build input from a canonical key list so FormData parsing can never drift
+  // from `listingSchema`. Missing fields fall back to "".
+  const data: Record<string, string> = {};
+  for (const key of LISTING_FORM_FIELD_KEYS) {
+    data[key] = String(formData.get(key) ?? "");
+  }
+  return listingSchema.safeParse(data);
 }
 
 function listingPayload(values: ListingFormValues) {
@@ -226,9 +227,10 @@ export async function createListing(
   const saveData = {
     ...payload,
     userId: user.id,
-    // New listings always wait for admin approval. The expiry clock starts
-    // when an admin approves the listing.
-    status: "pending",
+    // Listings are auto-approved: published immediately, no admin review. The
+    // expiry clock starts now.
+    status: "active",
+    expiresAt: addDays(new Date(), parsed.data.durationDays),
   };
   console.log("[createListing] saving", {
     callId,
@@ -246,11 +248,20 @@ export async function createListing(
 
     await syncListingExtras(listing.id, parsed.data, { companyName: user.companyName });
 
+    await prisma.listingStatusHistory.create({
+      data: {
+        listingId: listing.id,
+        fromStatus: null,
+        toStatus: "active",
+        changedById: user.id,
+      },
+    });
+
     revalidateListings(user.id);
 
     return {
       status: "success",
-      message: "Listing submitted for approval.",
+      message: "Listing is live.",
       redirectTo: dashboardPath("/listings"),
     };
   } catch (error) {
@@ -306,12 +317,11 @@ export async function updateListing(
       where: { id, userId: user.id },
       data: {
         ...listingPayload(parsed.data),
-        // Edits need to be reviewed again. This also moves an active listing
-        // back to pending, which is the simplest acceptable workflow. The
-        // expiry clock restarts on approval.
-        status: "pending",
+        // Edits publish immediately, no admin re-review. The expiry clock
+        // restarts now.
+        status: "active",
         rejectionReason: null,
-        expiresAt: null,
+        expiresAt: addDays(new Date(), parsed.data.durationDays),
       },
     });
     if (!result.count) {
@@ -322,7 +332,7 @@ export async function updateListing(
 
     return {
       status: "success",
-      message: "Listing updated and submitted for approval.",
+      message: "Listing updated and live.",
       redirectTo: dashboardPath(`/listings/${id}`),
     };
   } catch (error) {
@@ -375,11 +385,11 @@ export async function renewListing(id: string): Promise<void> {
   await prisma.listing.updateMany({
     where: { id, userId: user.id },
     data: {
-      // Renewals go back through approval as well, and the expiry clock
-      // restarts when an admin approves the renewal.
-      status: "pending",
+      // Renewals re-publish immediately, no admin re-approval. The expiry
+      // clock restarts now.
+      status: "active",
       rejectionReason: null,
-      expiresAt: null,
+      expiresAt: addDays(new Date(), listing.durationDays),
     },
   });
 

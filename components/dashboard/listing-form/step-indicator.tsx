@@ -4,7 +4,13 @@ import { useTranslations } from "next-intl";
 import { StepNode } from "./step-node";
 
 /** Four-step wizard progress with a translated "Step X of Y" caption. */
-export function StepIndicator({ step }: { step: number }) {
+export function StepIndicator({
+  step,
+  onStepChange,
+}: {
+  step: number;
+  onStepChange?: (index: number) => void;
+}) {
   const t = useTranslations("listingForm");
   const labels = [
     t("steps.type"),
@@ -24,6 +30,7 @@ export function StepIndicator({ step }: { step: number }) {
             step={step}
             label={label}
             last={index === labels.length - 1}
+            onSelect={onStepChange}
           />
         ))}
       </ol>

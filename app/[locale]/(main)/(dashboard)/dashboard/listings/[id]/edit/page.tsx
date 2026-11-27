@@ -25,7 +25,7 @@ export default async function EditListingPage({
       <div>
         <h2 className="text-2xl font-bold">Edit listing</h2>
         <p className="text-sm text-muted-foreground">
-          Saving changes submits this listing for approval again.
+          Saving changes publishes your listing.
         </p>
       </div>
       <ListingForm

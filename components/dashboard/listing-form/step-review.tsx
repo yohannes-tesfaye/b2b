@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { LISTING_TYPE_META } from "@/lib/listings";
 import type { StepProps } from "./types";
 
-/** Step 4: calm summary before the listing is sent for approval. */
+/** Step 4: calm summary before the listing is published. */
 export function StepReview({ values }: Pick<StepProps, "values">) {
   const t = useTranslations("listingForm");
   const type =

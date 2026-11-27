@@ -12,7 +12,7 @@ export default async function NewListingPage() {
         <h2 className="text-2xl font-bold">Post a new listing</h2>
         <p className="text-sm text-muted-foreground">
           Tell buyers or suppliers what you need or what you have available.
-          Listings go live after admin approval.
+          Listings are published immediately.
         </p>
       </div>
       <ListingForm

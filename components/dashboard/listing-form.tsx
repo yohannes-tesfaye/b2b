@@ -28,19 +28,36 @@ export function ListingForm({
     isPending,
     formAction,
     canContinue,
+    formMessage,
     change,
     setType,
     touch,
     goNext,
     goBack,
+    goTo,
     handleSubmit,
     handleCancel,
   } = useListingWizard({ mode, defaultType, listing, basePath });
+
+  const total = TOTAL_STEPS;
+
+  const onKeyDown = (event: React.KeyboardEvent<HTMLFormElement>) => {
+    if (event.key !== "Enter") return;
+    if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+    if (event.defaultPrevented) return; // a child already handled it (e.g. "Add link")
+    const target = event.target as HTMLElement;
+    if (target.tagName === "TEXTAREA") return;
+    if (target.tagName === "BUTTON") return; // let buttons do their own thing
+    if (step >= total - 1) return; // real submit on last step
+    event.preventDefault();
+    goNext();
+  };
 
   return (
     <form
       action={formAction}
       onSubmit={handleSubmit}
+      onKeyDown={onKeyDown}
       className="flex flex-col gap-(--spacing-6)"
     >
       <HiddenFields values={values} />
@@ -48,7 +65,7 @@ export function ListingForm({
         <input type="hidden" name="id" value={listing.id} />
       ) : null}
 
-      <StepIndicator step={step} />
+      <StepIndicator step={step} onStepChange={goTo} />
       <WizardStep
         step={step}
         values={values}
@@ -58,9 +75,18 @@ export function ListingForm({
         onChange={change}
         onTouch={touch}
       />
+      {formMessage ? (
+        <div
+          role="alert"
+          className="rounded-xl border border-destructive/30 bg-destructive/5 px-(--spacing-4) py-(--spacing-3) text-sm text-destructive"
+        >
+          {formMessage}
+        </div>
+      ) : null}
+
       <FormNav
         step={step}
-        total={TOTAL_STEPS}
+        total={total}
         canContinue={canContinue}
         isPending={isPending}
         mode={mode}

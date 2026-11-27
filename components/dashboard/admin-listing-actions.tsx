@@ -74,15 +74,19 @@ export function AdminListingActionButtons({
   const ctx = useContext(Ctx);
   if (!ctx) return null;
   const listing = ctx.listing;
-  const canReview = listing.status === "pending";
   const effective = effectiveStatus(listing);
+  // Listings are auto-approved; Approve only applies to anything still pending,
+  // Reject applies to anything not already rejected/closed.
+  const canApprove = listing.status === "pending";
+  const canReject =
+    listing.status !== "rejected" && effective !== "closed";
 
   return (
     <div className={className ?? "flex flex-wrap items-center gap-2"}>
       <Button
         size="sm"
         onClick={() => ctx.open("approve")}
-        disabled={!canReview}
+        disabled={!canApprove}
       >
         <Check />
         Approve
@@ -91,7 +95,7 @@ export function AdminListingActionButtons({
         size="sm"
         variant="outline"
         onClick={() => ctx.open("reject")}
-        disabled={!canReview}
+        disabled={!canReject}
       >
         <X />
         Reject
