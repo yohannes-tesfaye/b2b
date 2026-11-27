@@ -71,20 +71,21 @@ export function ListingActions({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
+    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
       <Button
         render={<Link href={`${basePath}/${id}/edit`} />}
         variant="outline"
         nativeButton={false}
+        className="w-full sm:w-auto"
       >
         Edit listing
       </Button>
       {effective === "expired" ? (
-        <Button disabled={isPending} onClick={handleRenew}>
+        <Button disabled={isPending} onClick={handleRenew} className="w-full sm:w-auto">
           Renew listing
         </Button>
       ) : effective !== "closed" ? (
-        <Button variant="outline" disabled={isPending} onClick={handleClose}>
+        <Button variant="outline" disabled={isPending} onClick={handleClose} className="w-full sm:w-auto">
           Close listing
         </Button>
       ) : null}

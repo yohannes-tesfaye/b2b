@@ -1,14 +1,15 @@
 "use client";
 
-import { ArrowRight, Heart, ShieldCheck } from "lucide-react";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import UserMenu from "@/components/Auth/UserMenu";
-import { useSession } from "@/lib/auth-client";
+
 import { BrandMark } from "./BrandMark";
 import { HeaderNav } from "./HeaderNav";
+import { FavoritesLink } from "./FavoritesLink";
 import { SearchBar } from "./SearchBar";
 import { SellButton } from "./SellButton";
 
@@ -18,7 +19,6 @@ import { SellButton } from "./SellButton";
  */
 export function DesktopHeader() {
   const t = useTranslations("header");
-  const { data: session } = useSession();
 
   return (
     <div className="hidden lg:block">
@@ -28,15 +28,7 @@ export function DesktopHeader() {
         <SearchBar className="mx-auto max-w-2xl" />
 
         <div className="ml-auto flex shrink-0 items-center gap-1">
-          {session ? (
-            <Link
-              href="/dashboard/favorites"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-red-500"
-              aria-label="Favorites"
-            >
-              <Heart className="h-5 w-5" />
-            </Link>
-          ) : null}
+          <FavoritesLink className="inline-flex h-9 w-9 items-center justify-center rounded-full" />
           <UserMenu />
           <SellButton />
         </div>

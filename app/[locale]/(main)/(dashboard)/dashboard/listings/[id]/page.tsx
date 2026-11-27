@@ -61,7 +61,7 @@ export default async function ListingDetailPage({
           <ArrowLeft />
           Back to listings
         </Button>
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <ListingStatusBadge
@@ -72,7 +72,7 @@ export default async function ListingDetailPage({
                 {typeLabel(listing.type)}
               </Badge>
             </div>
-            <h2 className="text-2xl font-bold">{listing.title}</h2>
+            <h2 className="text-xl font-bold sm:text-2xl">{listing.title}</h2>
             <p className="text-sm text-muted-foreground">
               {categoryLabel(listing.category)} · {listing.location}
             </p>

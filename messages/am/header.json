@@ -27,8 +27,15 @@
       "home": "መነሻ",
       "products": "ምርቶች",
       "messages": "መልዕክቶች",
+      "profile": "መገለጫ",
+      "post": "ለጥፍ"
+    },
+    "account": {
+      "listings": "የእኔ ማስታወቂያዎች",
       "favorites": "ተወዳጆች",
-      "profile": "መገለጫ"
+      "messages": "መልዕክቶች",
+      "newListing": "አዲስ ማስታወቂያ",
+      "verified": "ተረጋግጧል"
     },
     "nav": {
       "home": "መነሻ",

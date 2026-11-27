@@ -2,29 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Search, Inbox, Package, User as UserIcon } from "lucide-react";
+import { Search, Inbox } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
-const relativeTime = (date: Date | string) => {
-    try {
-      const d = new Date(date);
-      const now = new Date();
-      const diff = now.getTime() - d.getTime();
-      const seconds = Math.floor(diff / 1000);
-      const minutes = Math.floor(seconds / 60);
-      const hours = Math.floor(minutes / 60);
-      const days = Math.floor(hours / 24);
-
-      if (seconds < 60) return "just now";
-      if (minutes < 60) return `${minutes}m ago`;
-      if (hours < 24) return `${hours}h ago`;
-      if (days === 1) return "Yesterday";
-      if (days < 7) return `${days}d ago`;
-      return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-    } catch {
-      return "";
-    }
-  };
 
 interface ConversationItem {
   id: string;
@@ -107,7 +87,7 @@ export function MessagesPageClient({
   return (
     <div className="flex flex-col gap-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold">{t("inbox.title")}</h2>
         {unreadTotal > 0 ? (
           <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
@@ -128,7 +108,7 @@ export function MessagesPageClient({
       </div>
 
       {/* Filter tabs */}
-      <div className="flex items-center gap-1 rounded-xl border bg-muted/30 p-1">
+      <div className="grid grid-cols-2 gap-1 rounded-xl border bg-muted/30 p-1 sm:flex sm:items-center">
         {[
           { value: "all", label: t("inbox.tabs.all") },
           { value: "unread", label: t("inbox.tabs.unread") },
@@ -141,7 +121,7 @@ export function MessagesPageClient({
               key={tab.value}
               type="button"
               onClick={() => setFilter(tab.value)}
-              className={`flex-1 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`w-full whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-medium transition-colors sm:flex-1 ${
                 active
                   ? "bg-background text-foreground shadow-sm ring-1 ring-foreground/10"
                   : "text-muted-foreground hover:bg-background/60 hover:text-foreground"
@@ -165,7 +145,7 @@ export function MessagesPageClient({
               <Link
                 key={conv.id}
                 href={`${base}/messages/${conv.id}`}
-                className={`flex items-center gap-3 rounded-xl border bg-card p-3 transition-colors hover:border-primary/40 ${
+                className={`flex items-center gap-3 rounded-xl border bg-card p-3.5 transition-colors hover:border-primary/40 ${
                   unread ? "ring-1 ring-primary/30" : ""
                 }`}
               >

@@ -18,6 +18,7 @@ import { SITE } from "@/lib/config/site";
 import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import UserMenu from "@/components/Auth/UserMenu";
+import { FavoritesLink } from "./FavoritesLink";
 import { BrandMark } from "./BrandMark";
 import { SearchBar } from "./SearchBar";
 import { SellButton } from "./SellButton";
@@ -135,7 +136,10 @@ export function MobileHeader() {
         <BrandMark className="min-w-0" />
 
         <div className="ml-auto flex items-center gap-1">
-          <UserMenu compact />
+          <FavoritesLink className="h-11 w-11 rounded-xl" iconClassName="h-5 w-5" />
+          <div className="hidden md:block">
+            <UserMenu variant="compact" />
+          </div>
         </div>
       </div>
 

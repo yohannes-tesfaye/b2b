@@ -103,7 +103,7 @@ export default async function ThreadPage({
   };
 
   return (
-    <div className="flex h-[calc(100dvh-10rem)] flex-col md:h-[calc(100dvh-8rem)]">
+    <div className="flex h-[calc(100dvh-4rem)] flex-col">
       {/* Sticky header */}
       <div className="flex items-center gap-3 border-b bg-background/95 px-2 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80 sm:px-4 sm:py-3">
         <Link

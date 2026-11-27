@@ -104,6 +104,7 @@ export function DashboardShell({
 }) {
   const pathname = usePathname() || "";
   const inAdmin = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isThread = pathname.startsWith("/dashboard/messages/");
   const isAdmin = parseRoles(user.role).some((role) =>
     adminRoles.includes(role)
   );
@@ -186,7 +187,7 @@ export function DashboardShell({
             title="Toggle sidebar"
           />
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-lg font-bold text-foreground md:text-xl">
+            <h1 className="hidden truncate text-lg font-bold text-foreground md:block md:text-xl">
               {inAdmin ? "Admin" : "Dashboard"}
             </h1>
           </div>
@@ -208,18 +209,26 @@ export function DashboardShell({
             </form>
             <Link
               href="/dashboard/listings/new"
-              className="hidden h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 sm:flex"
+              className="hidden h-10 items-center gap-2 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:flex"
             >
               <Plus className="h-4 w-4" />
               New listing
             </Link>
-            <UserMenu compact />
+            <div className="hidden md:block">
+              <UserMenu variant="compact" unreadCount={unreadCount} />
+            </div>
           </div>
         </header>
         {/* Mobile-only icon strip so dashboard nav is discoverable */}
+        {!isThread ? (
         <div className="px-4 pt-2 md:hidden">
           <div className="flex gap-2 overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {(inAdmin ? adminItems : userItems).map((item) => {
+            {(inAdmin
+              ? adminItems
+              : userItems.filter((item) =>
+                  ["My Listings", "Favorites"].includes(item.title)
+                )
+            ).map((item) => {
               const Icon = item.icon;
               const active = item.exact
                 ? pathname === item.url
@@ -248,9 +257,12 @@ export function DashboardShell({
             })}
           </div>
         </div>
+        ) : null}
+        {!isThread ? (
         <div className="px-4 pt-3 md:px-6">
           <Breadcrumbs />
         </div>
+        ) : null}
         <div className="flex min-w-0 flex-1 flex-col gap-6 p-4 md:p-6">
           {children}
         </div>

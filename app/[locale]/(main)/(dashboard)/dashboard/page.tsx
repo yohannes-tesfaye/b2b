@@ -99,8 +99,9 @@ export default async function UserDashboardPage() {
             <RoleBadges role={user.role} />
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap sm:items-center">
           <Button
+            className="w-full sm:w-auto"
             render={<Link href={`${base}/listings`} />}
             variant="outline"
             nativeButton={false}
@@ -108,6 +109,7 @@ export default async function UserDashboardPage() {
             My listings
           </Button>
           <Button
+            className="w-full sm:w-auto"
             render={<Link href={`${base}/listings/new`} />}
             nativeButton={false}
           >
@@ -119,7 +121,7 @@ export default async function UserDashboardPage() {
 
       {!profileComplete ? (
         <Card className="border-primary/30">
-          <CardContent className="flex flex-wrap items-center justify-between gap-3 pt-6">
+          <CardContent className="flex flex-col gap-3 pt-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <span className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <UserRound className="size-4" aria-hidden="true" />
@@ -133,6 +135,7 @@ export default async function UserDashboardPage() {
               </div>
             </div>
             <Button
+              className="w-full sm:w-auto"
               render={<Link href={`${base}/profile`} />}
               variant="outline"
               size="sm"
@@ -145,7 +148,7 @@ export default async function UserDashboardPage() {
         </Card>
       ) : null}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -161,7 +164,7 @@ export default async function UserDashboardPage() {
                     : "h-full transition-colors hover:bg-muted/40"
                 }
               >
-                <CardContent className="flex items-start justify-between gap-3">
+                <CardContent className="flex items-start justify-between gap-3 p-4">
                   <div className="space-y-1">
                     <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                       {stat.label}
@@ -169,22 +172,22 @@ export default async function UserDashboardPage() {
                     <p
                       className={
                         stat.highlight
-                          ? "text-3xl font-semibold text-primary"
-                          : "text-3xl font-semibold"
+                          ? "text-2xl font-semibold text-primary sm:text-3xl"
+                          : "text-2xl font-semibold sm:text-3xl"
                       }
                     >
                       {stat.value}
                     </p>
-                    <p className="text-xs text-muted-foreground">{stat.hint}</p>
+                    <p className="hidden text-xs text-muted-foreground sm:block">{stat.hint}</p>
                   </div>
                   <span
                     className={
                       stat.highlight
-                        ? "flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary"
-                        : "flex size-9 items-center justify-center rounded-lg bg-muted text-muted-foreground"
+                        ? "flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary sm:size-9"
+                        : "flex size-8 items-center justify-center rounded-lg bg-muted text-muted-foreground sm:size-9"
                     }
                   >
-                    <Icon className="size-4" aria-hidden="true" />
+                    <Icon className="size-3.5 sm:size-4" aria-hidden="true" />
                   </span>
                 </CardContent>
               </Card>
@@ -200,6 +203,7 @@ export default async function UserDashboardPage() {
             <CardDescription>Your last 5 listings.</CardDescription>
           </div>
           <Button
+            className="shrink-0"
             render={<Link href={`${base}/listings`} />}
             variant="outline"
             size="sm"
@@ -215,7 +219,7 @@ export default async function UserDashboardPage() {
               {recent.map((listing) => (
                 <div
                   key={listing.id}
-                  className="flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"
+                  className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between first:pt-0 last:pb-0"
                 >
                   <div className="min-w-0 space-y-1">
                     <Link
@@ -233,7 +237,7 @@ export default async function UserDashboardPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="hidden text-xs text-muted-foreground sm:inline">
+                    <span className="text-xs text-muted-foreground">
                       {daysLeftLabel(listing.expiresAt)}
                     </span>
                     <ListingStatusBadge

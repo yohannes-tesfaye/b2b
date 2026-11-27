@@ -321,7 +321,9 @@ function ProfileForm({
       </section>
 
       <div className="flex justify-end">
-        <Button type="submit">{t("profile.saveChanges")}</Button>
+        <Button type="submit" className="w-full sm:w-auto">
+          {t("profile.saveChanges")}
+        </Button>
       </div>
 
       <LocaleField />

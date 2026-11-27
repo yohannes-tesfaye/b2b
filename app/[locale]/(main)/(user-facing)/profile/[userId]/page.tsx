@@ -4,7 +4,6 @@ import { getCurrentUser } from "@/lib/current-user";
 import { PublicProfileHeader } from "@/components/profile/PublicProfileHeader";
 import { ListingGrid } from "@/components/profile/ListingGrid";
 import { effectiveStatus } from "@/lib/listings";
-import { countryName } from "@/lib/countries";
 
 export default async function PublicProfilePage({
   params,
@@ -73,7 +72,7 @@ export default async function PublicProfilePage({
   const totalCount = listings.length;
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-6 lg:py-8">
+    <div className="mx-auto w-full max-w-5xl px-4 py-6 lg:py-8">
       <PublicProfileHeader
         user={user}
         isOwner={isOwner}
@@ -84,12 +83,8 @@ export default async function PublicProfilePage({
       <div className="mt-6">
         <ListingGrid
           listings={activeListings}
-          title="Listings"
-          emptyMessage={
-            isOwner
-              ? "You haven't posted any listings yet."
-              : "No active listings yet."
-          }
+          isOwner={isOwner}
+          showFilters
         />
       </div>
 
@@ -97,9 +92,9 @@ export default async function PublicProfilePage({
         <div className="mt-8">
           <ListingGrid
             listings={privateListings}
-            title="Private listings"
-            emptyMessage="No pending or rejected listings."
             isPrivate
+            isOwner={isOwner}
+            showFilters={false}
           />
         </div>
       ) : null}

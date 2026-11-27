@@ -1,3 +1,19 @@
+export type PublicProfileListing = {
+  id: string;
+  title: string;
+  type: string;
+  status: string;
+  category: string | null;
+  images: string[];
+  location: string;
+  price: string | null;
+  budgetRange: string | null;
+  views: number;
+  inquiries: number;
+  createdAt: Date | string;
+  expiresAt: Date | string | null;
+};
+
 export type ProfileUser = {
   id: string;
   name: string;

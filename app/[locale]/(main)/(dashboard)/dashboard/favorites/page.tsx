@@ -37,7 +37,7 @@ export default async function FavoritesPage() {
             Listings you&apos;ve saved for later.
           </p>
         </div>
-        <span className="rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+        <span className="self-start rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
           {favorites.length} saved
         </span>
       </div>

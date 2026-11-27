@@ -28,17 +28,17 @@ export function FormNav({
   const last = step >= total - 1;
 
   return (
-    <div className="flex flex-wrap items-start justify-between gap-(--spacing-3) border-t border-border pt-(--spacing-4)">
-      <Button type="button" variant="outline" onClick={onBack}>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between border-t border-border pt-(--spacing-4)">
+      <Button type="button" variant="outline" onClick={onBack} className="w-full sm:w-auto">
         <ChevronLeft className="size-(--spacing-4)" /> {t("back")}
       </Button>
       <div className="flex flex-col items-end gap-(--spacing-1)">
-        <div className="flex flex-wrap items-center gap-(--spacing-2)">
-          <Button type="button" variant="ghost" onClick={onCancel}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-(--spacing-2)">
+          <Button type="button" variant="ghost" onClick={onCancel} className="w-full sm:w-auto">
             {t("cancel")}
           </Button>
           {last ? (
-            <Button type="submit" disabled={isPending}>
+            <Button type="submit" disabled={isPending} className="w-full sm:w-auto">
               {isPending
                 ? t("saving")
                 : mode === "create"
@@ -50,6 +50,7 @@ export function FormNav({
               type="button"
               onClick={onNext}
               disabled={!canContinue || isPending}
+              className="w-full sm:w-auto"
             >
               {t("next")} <ChevronRight className="size-(--spacing-4)" />
             </Button>

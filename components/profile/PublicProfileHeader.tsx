@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import {
   MessageCircle,
@@ -10,7 +10,9 @@ import {
   Building2,
   Globe2,
   CalendarDays,
+  Users,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -47,9 +49,9 @@ export function PublicProfileHeader({
   activeCount,
   totalCount,
 }: PublicProfileHeaderProps) {
-  const [shareOpen, setShareOpen] = useState(false);
   const [isStartingChat, startChatTransition] = useTransition();
   const router = useRouter();
+  const t = useTranslations("publicProfile");
   const autoStarted = useRef(false);
 
   const handleMessage = () => {
@@ -108,8 +110,7 @@ export function PublicProfileHeader({
     } else {
       try {
         await navigator.clipboard.writeText(url);
-        setShareOpen(true);
-        setTimeout(() => setShareOpen(false), 2000);
+        toast.success(t("header.copied"));
       } catch {
         // ignore
       }
@@ -140,7 +141,7 @@ export function PublicProfileHeader({
                 className="gap-1 bg-blue-500/10 text-blue-600 dark:text-blue-400"
               >
                 <ShieldCheck className="h-3.5 w-3.5" />
-                Verified
+                {t("header.verified")}
               </Badge>
             ) : null}
           </div>
@@ -184,6 +185,12 @@ export function PublicProfileHeader({
             {user.industry.replace(/-/g, " ")}
           </span>
         ) : null}
+        {user.companySize ? (
+          <span className="inline-flex items-center gap-1">
+            <Users className="h-3.5 w-3.5" />
+            {t("header.companySize", { size: user.companySize })}
+          </span>
+        ) : null}
         {user.website ? (
           <a
             href={user.website.startsWith("http") ? user.website : `https://${user.website}`}
@@ -198,21 +205,21 @@ export function PublicProfileHeader({
         {memberSince ? (
           <span className="inline-flex items-center gap-1">
             <CalendarDays className="h-3.5 w-3.5" />
-            Member since {memberSince}
+            {t("header.memberSince", { date: memberSince })}
           </span>
         ) : null}
       </div>
 
       {/* Stats */}
-      <div className="flex items-center gap-6 rounded-xl border bg-card px-4 py-3">
+      <div className="grid grid-cols-2 gap-2 rounded-xl border bg-card px-4 py-3 sm:flex sm:items-center sm:gap-6">
         <div className="text-center">
           <p className="text-lg font-bold">{totalCount}</p>
-          <p className="text-xs text-muted-foreground">Listings</p>
+          <p className="text-xs text-muted-foreground">{t("header.listings")}</p>
         </div>
-        <div className="h-8 w-px bg-border" />
+        <div className="hidden h-8 w-px bg-border sm:block" />
         <div className="text-center">
           <p className="text-lg font-bold">{activeCount}</p>
-          <p className="text-xs text-muted-foreground">Active</p>
+          <p className="text-xs text-muted-foreground">{t("header.active")}</p>
         </div>
       </div>
 
@@ -224,7 +231,7 @@ export function PublicProfileHeader({
             render={<Link href="/dashboard/profile" />}
             nativeButton={false}
           >
-            Edit profile
+            {t("header.editProfile")}
           </Button>
         ) : (
           <Button
@@ -233,19 +240,18 @@ export function PublicProfileHeader({
             disabled={isStartingChat}
           >
             <MessageCircle className="h-4 w-4" />
-            {isStartingChat ? "Opening chat…" : "Message"}
+            {isStartingChat ? t("header.openingChat") : t("header.message")}
           </Button>
         )}
-        <Button variant="outline" size="icon" onClick={handleShare}>
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={handleShare}
+          aria-label={t("header.share")}
+        >
           <Share2 className="h-4 w-4" />
         </Button>
       </div>
-
-      {shareOpen ? (
-        <p className="text-center text-xs text-muted-foreground">
-          Profile link copied to clipboard
-        </p>
-      ) : null}
     </div>
   );
 }

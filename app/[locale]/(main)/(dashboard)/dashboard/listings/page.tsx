@@ -51,7 +51,7 @@ export default async function ListingsPage({
           </p>
           <RoleBadges role={user.role} />
         </div>
-        <Button render={<Link href={`${base}/listings/new`} />} nativeButton={false}>
+        <Button className="w-full sm:w-auto" render={<Link href={`${base}/listings/new`} />} nativeButton={false}>
           <Plus />
           Post new listing
         </Button>

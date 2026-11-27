@@ -1,0 +1,49 @@
+{
+  "publicProfile": {
+    "header": {
+      "verified": "Verified",
+      "companySize": "{size} employees",
+      "memberSince": "Member since {date}",
+      "listings": "Listings",
+      "active": "Active",
+      "editProfile": "Edit profile",
+      "message": "Message",
+      "openingChat": "Opening chat…",
+      "share": "Share profile",
+      "copied": "Profile link copied to clipboard",
+      "website": "Website",
+      "country": "Country",
+      "industry": "Industry"
+    },
+    "listings": {
+      "title": "Listings",
+      "count": "{count, plural, =0 {No listings} =1 {1 listing} other {# listings}}",
+      "all": "All",
+      "available": "Available",
+      "wanted": "Wanted",
+      "emptyPublic": "No active listings yet",
+      "emptyPublicHint": "Check back later for new listings.",
+      "emptyOwner": "You haven't posted any listings yet",
+      "emptyOwnerHint": "Post your first listing to reach buyers and suppliers.",
+      "emptyFiltered": "No listings match this filter",
+      "clearFilter": "Clear filter",
+      "postListing": "Post a listing",
+      "privateTitle": "Private listings",
+      "privateHint": "Only visible to you",
+      "privateEmpty": "No pending or rejected listings.",
+      "priceOnRequest": "Price on request",
+      "budgetOpen": "Budget open",
+      "daysLeft": "{days, plural, =0 {Ends today} one {1 day left} other {# days left}}",
+      "expired": "Expired",
+      "views": "{count} views",
+      "inquiries": "{count} inquiries"
+    },
+    "status": {
+      "pending": "Pending approval",
+      "active": "Active",
+      "rejected": "Rejected",
+      "expired": "Expired",
+      "closed": "Closed"
+    }
+  }
+}

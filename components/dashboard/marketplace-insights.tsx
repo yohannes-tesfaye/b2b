@@ -29,7 +29,7 @@ export function MarketplaceInsights() {
       <h2 className="text-lg font-semibold text-foreground">
         Marketplace Insights
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {insights.map((insight, index) => (
           <Card
             key={index}
@@ -43,7 +43,7 @@ export function MarketplaceInsights() {
                 {insight.title}
               </CardTitle>
             </CardHeader>
-            <CardContent className="pb-6">
+            <CardContent className="pb-4">
               <p className="font-semibold text-base text-foreground leading-relaxed">
                 {insight.value}
               </p>

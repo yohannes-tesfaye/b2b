@@ -3,10 +3,16 @@
 import { useState, useTransition } from "react";
 import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
-import { Package } from "lucide-react";
+import { MoreHorizontal, Package } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Select,
   SelectContent,
@@ -164,12 +170,12 @@ export function ListingsTable({ listings, status, type, basePath }: Props) {
           </TabsList>
         </Tabs>
 
-        <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm text-muted-foreground">
             {listings.length} listing{listings.length === 1 ? "" : "s"}
           </p>
           <Select value={type} onValueChange={(value) => value && update({ type: value })}>
-            <SelectTrigger className="w-40" aria-label="Filter by listing type">
+            <SelectTrigger className="w-full sm:w-40" aria-label="Filter by listing type">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
             <SelectContent>
@@ -267,7 +273,7 @@ export function ListingsTable({ listings, status, type, basePath }: Props) {
                       </p>
                     </div>
                     <div onClick={(event) => event.stopPropagation()}>
-                      <RowActions
+                      <MobileRowActions
                         listing={listing}
                         isPending={isPending}
                         basePath={basePath}
@@ -384,6 +390,80 @@ function RowActions({
       >
         Delete
       </Button>
+    </div>
+  );
+}
+
+function MobileRowActions({
+  listing,
+  isPending,
+  basePath,
+  onConfirm,
+}: {
+  listing: ListingRow;
+  isPending: boolean;
+  basePath: string;
+  onConfirm: (action: NonNullable<ConfirmAction>) => void;
+}) {
+  return (
+    <div
+      className="flex flex-wrap items-center justify-end gap-1"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <Button
+        render={<Link href={`${basePath}/${listing.id}`} />}
+        size="xs"
+        variant="ghost"
+        nativeButton={false}
+      >
+        View
+      </Button>
+      <Button
+        render={<Link href={`${basePath}/${listing.id}/edit`} />}
+        size="xs"
+        variant="ghost"
+        nativeButton={false}
+      >
+        Edit
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={`More actions for ${listing.title}`}
+            />
+          }
+        >
+          <MoreHorizontal />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          {effectiveStatus(listing) === "expired" ? (
+            <DropdownMenuItem
+              disabled={isPending}
+              onClick={() => onConfirm({ kind: "renew", listing })}
+            >
+              Renew
+            </DropdownMenuItem>
+          ) : null}
+          {effectiveStatus(listing) !== "closed" ? (
+            <DropdownMenuItem
+              disabled={isPending}
+              onClick={() => onConfirm({ kind: "close", listing })}
+            >
+              Close
+            </DropdownMenuItem>
+          ) : null}
+          <DropdownMenuItem
+            variant="destructive"
+            disabled={isPending}
+            onClick={() => onConfirm({ kind: "delete", listing })}
+          >
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

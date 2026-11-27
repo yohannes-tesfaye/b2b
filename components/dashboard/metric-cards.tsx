@@ -5,10 +5,10 @@ import { TrendingUp, MessageSquare, CheckCircle } from "lucide-react";
 
 export function MetricCards() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-2">
+    <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
       {/* Active Listings */}
       <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Active Listings
           </CardTitle>
@@ -16,8 +16,8 @@ export function MetricCards() {
             <TrendingUp className="h-4 w-4" />
           </div>
         </CardHeader>
-        <CardContent className="pb-6">
-          <div className="text-3xl font-extrabold text-foreground leading-tight">
+        <CardContent className="pb-4">
+          <div className="text-2xl sm:text-3xl font-extrabold text-foreground leading-tight">
             24
           </div>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
@@ -25,7 +25,7 @@ export function MetricCards() {
           </p>
           <Badge
             variant="secondary"
-            className="mt-4 bg-green-100 text-green-700 hover:bg-green-100 border-green-200"
+            className="mt-2 bg-green-100 text-green-700 hover:bg-green-100 border-green-200"
           >
             +12% this month
           </Badge>
@@ -34,7 +34,7 @@ export function MetricCards() {
 
       {/* Active Deals */}
       <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Active Deals
           </CardTitle>
@@ -42,8 +42,8 @@ export function MetricCards() {
             <CheckCircle className="h-4 w-4" />
           </div>
         </CardHeader>
-        <CardContent className="pb-6">
-          <div className="text-3xl font-extrabold text-foreground leading-tight">
+        <CardContent className="pb-4">
+          <div className="text-2xl sm:text-3xl font-extrabold text-foreground leading-tight">
             18
           </div>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
@@ -51,7 +51,7 @@ export function MetricCards() {
           </p>
           <Badge
             variant="secondary"
-            className="mt-4 bg-purple-100 text-purple-700 hover:bg-purple-100 border-purple-200"
+            className="mt-2 bg-purple-100 text-purple-700 hover:bg-purple-100 border-purple-200"
           >
             +5% this week
           </Badge>
@@ -60,7 +60,7 @@ export function MetricCards() {
 
       {/* New Inquiries */}
       <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             New Inquiries
           </CardTitle>
@@ -68,14 +68,14 @@ export function MetricCards() {
             <MessageSquare className="h-4 w-4" />
           </div>
         </CardHeader>
-        <CardContent className="pb-6">
-          <div className="text-3xl font-extrabold text-foreground leading-tight">
+        <CardContent className="pb-4">
+          <div className="text-2xl sm:text-3xl font-extrabold text-foreground leading-tight">
             12
           </div>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
             Unread buyer messages
           </p>
-          <Badge variant="destructive" className="mt-4 animate-pulse">
+          <Badge variant="destructive" className="mt-2 animate-pulse">
             Needs attention
           </Badge>
         </CardContent>
@@ -83,7 +83,7 @@ export function MetricCards() {
 
       {/* Profile Completion */}
       <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
           <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Profile Completion
           </CardTitle>
@@ -91,8 +91,8 @@ export function MetricCards() {
             <CheckCircle className="h-4 w-4" />
           </div>
         </CardHeader>
-        <CardContent className="pb-6">
-          <div className="text-3xl font-extrabold text-foreground leading-tight">
+        <CardContent className="pb-4">
+          <div className="text-2xl sm:text-3xl font-extrabold text-foreground leading-tight">
             85%
           </div>
           <p className="text-sm text-muted-foreground mt-2 leading-relaxed">

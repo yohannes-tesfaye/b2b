@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "@/i18n/navigation";
+import { cn } from "cn";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 
-export function Breadcrumbs() {
+export function Breadcrumbs({ className }: { className?: string }) {
   const pathname = usePathname() || "";
   const segments = pathname.split("/").filter(Boolean);
   const crumbs: { label: string; href: string }[] = [];
@@ -22,7 +23,7 @@ export function Breadcrumbs() {
   });
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className={cn(className, items.length <= 1 ? "hidden sm:block" : "")}>
       <BreadcrumbList>
         {items.map((c, i) => (
           <span key={c.href} className="contents">

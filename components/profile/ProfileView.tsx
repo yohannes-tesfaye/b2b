@@ -50,7 +50,7 @@ function ProfileView({ user }: { user: ProfileUser }) {
         <p className="text-sm text-muted-foreground">{t("profile.subtitle")}</p>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-xl border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-xl border bg-card p-4 sm:p-5 sm:flex-row sm:items-center sm:justify-between">
         <AvatarUpload name={user.name} email={user.email} image={user.image} />
         <div className="flex flex-col items-start gap-2 sm:items-end">
           {user.bio ? (
@@ -80,7 +80,7 @@ function ProfileView({ user }: { user: ProfileUser }) {
       </div>
 
       <Tabs defaultValue="personal">
-        <TabsList variant="line">
+        <TabsList variant="line" className="w-full sm:w-auto">
           <TabsTrigger value="personal">
             {t("profile.tabPersonal")}
           </TabsTrigger>
