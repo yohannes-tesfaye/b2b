@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LISTING_CATEGORIES } from "@/lib/listings";
+import { LISTING_LIMITS } from "@/lib/validation/listing";
 import { FormField } from "./form-field";
 import { TextField } from "./text-field";
 import type { StepProps } from "./types";
@@ -51,8 +52,9 @@ export function StepBasicsGrid({
         label="Quantity"
         value={values.quantity}
         error={errors.quantity}
-        hint="Include units, e.g. 500 kg or 1,000 units."
+        hint="Amount and unit, e.g. 500 kg."
         placeholder="e.g. 500 kg"
+        maxLength={LISTING_LIMITS.quantity}
         onChange={(value) => onChange("quantity", value)}
         onTouch={() => onTouch("quantity")}
       />
@@ -62,6 +64,7 @@ export function StepBasicsGrid({
         value={values.location}
         error={errors.location}
         placeholder="e.g. Addis Ababa, Ethiopia"
+        maxLength={LISTING_LIMITS.location}
         onChange={(value) => onChange("location", value)}
         onTouch={() => onTouch("location")}
       />
@@ -70,10 +73,12 @@ export function StepBasicsGrid({
         label="Listing duration (days)"
         value={values.durationDays}
         error={errors.durationDays}
-        hint="How long the listing stays live once approved."
-        type="number"
-        min={1}
-        max={365}
+        hint="How long the listing stays live once approved. 1–365 days."
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        maxLength={LISTING_LIMITS.durationDaysMaxLength}
+        digitsOnly
         onChange={(value) => onChange("durationDays", value)}
         onTouch={() => onTouch("durationDays")}
       />

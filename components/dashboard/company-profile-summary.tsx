@@ -15,12 +15,12 @@ const teamMembers = [
 export function CompanyProfileSummary() {
   return (
     <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold">
           Company Profile
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-5 pb-6">
+      <CardContent className="space-y-5 pb-4">
         {/* Company Info */}
         <div className="flex items-center gap-4">
           <Avatar className="h-16 w-16">

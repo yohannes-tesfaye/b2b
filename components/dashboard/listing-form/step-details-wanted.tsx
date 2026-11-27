@@ -1,6 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { LISTING_LIMITS } from "@/lib/validation/listing";
+import { ListingImageInput } from "./listing-image-input";
 import { TextField } from "./text-field";
 import type { StepProps } from "./types";
 
@@ -9,21 +11,25 @@ const FIELDS = [
     id: "qualityStandard",
     label: "Quality standard",
     placeholder: "e.g. Grade 1, organic certified",
+    maxLength: LISTING_LIMITS.qualityStandard,
   },
   {
     id: "deliveryTimeline",
     label: "Delivery timeline",
     placeholder: "e.g. Within 30 days",
+    maxLength: LISTING_LIMITS.deliveryTimeline,
   },
   {
     id: "preferredRegion",
     label: "Preferred region",
     placeholder: "e.g. East Africa",
+    maxLength: LISTING_LIMITS.preferredRegion,
   },
   {
     id: "budgetRange",
     label: "Budget range",
     placeholder: "e.g. USD 10,000 – 25,000",
+    maxLength: LISTING_LIMITS.budgetRange,
   },
 ] as const;
 
@@ -63,8 +69,18 @@ export function StepDetailsWanted({
         placeholder="https://example.com/specification.pdf"
         optional
         type="url"
+        inputMode="url"
+        autoCapitalize="none"
+        spellCheck={false}
+        maxLength={LISTING_LIMITS.technicalDocument}
         onChange={(value) => onChange("technicalDocument", value)}
         onTouch={() => onTouch("technicalDocument")}
+      />
+      <ListingImageInput
+        value={values.images}
+        error={errors.images}
+        onChange={(value) => onChange("images", value)}
+        onTouch={() => onTouch("images")}
       />
     </section>
   );

@@ -54,7 +54,7 @@ export default async function LocaleLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${jakarta.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeWrapper>
           <NextIntlClientProvider messages={messages}>
             <TooltipProvider>{children}</TooltipProvider>

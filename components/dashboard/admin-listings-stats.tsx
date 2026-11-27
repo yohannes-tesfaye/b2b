@@ -68,12 +68,12 @@ export function AdminListingsStats({
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
       {cards.map((card) => (
         <Link
           key={card.key}
           href={card.href}
-          className="rounded-xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="rounded-xl outline-none active:scale-[0.99] transition-transform focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <Card
             className={
@@ -82,32 +82,32 @@ export function AdminListingsStats({
                 : "h-full transition-colors hover:bg-muted/40"
             }
           >
-            <CardContent className="flex items-start justify-between gap-3">
+            <CardContent className="flex items-start justify-between gap-2 p-3 sm:p-4">
               <div className="space-y-1">
-                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-xs">
                   {card.label}
                 </p>
                 <p
                   className={
                     card.highlight
-                      ? "text-3xl font-semibold text-primary"
-                      : "text-3xl font-semibold"
+                      ? "text-2xl font-semibold text-primary sm:text-3xl"
+                      : "text-2xl font-semibold sm:text-3xl"
                   }
                 >
                   {card.value}
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="hidden text-xs text-muted-foreground sm:block">
                   {card.highlight ? "Main review queue" : "View matching listings"}
                 </p>
               </div>
               <div
                 className={
                   card.highlight
-                    ? "rounded-lg bg-primary/10 p-2 text-primary"
-                    : "rounded-lg bg-muted p-2 text-muted-foreground"
+                    ? "rounded-lg bg-primary/10 p-1.5 text-primary sm:p-2"
+                    : "rounded-lg bg-muted p-1.5 text-muted-foreground sm:p-2"
                 }
               >
-                <card.icon className="size-4" aria-hidden="true" />
+                <card.icon className="size-3.5 sm:size-4" aria-hidden="true" />
               </div>
             </CardContent>
           </Card>

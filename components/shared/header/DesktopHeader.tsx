@@ -1,11 +1,13 @@
+"use client";
+
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
-import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import UserMenu from "@/components/Auth/UserMenu";
+
 import { BrandMark } from "./BrandMark";
 import { HeaderNav } from "./HeaderNav";
+import { FavoritesLink } from "./FavoritesLink";
 import { SearchBar } from "./SearchBar";
 import { SellButton } from "./SellButton";
 
@@ -24,6 +26,7 @@ export function DesktopHeader() {
         <SearchBar className="mx-auto max-w-2xl" />
 
         <div className="ml-auto flex shrink-0 items-center gap-1">
+          <FavoritesLink className="inline-flex h-9 w-9 items-center justify-center rounded-full" />
           <UserMenu />
           <SellButton />
         </div>
@@ -34,16 +37,6 @@ export function DesktopHeader() {
           <HeaderNav />
 
           <div className="flex shrink-0 items-center gap-1">
-            <ThemeSwitcher />
-            <span className="mx-1 h-4 w-px bg-border" aria-hidden />
-            <LanguageSwitcher
-              size="sm"
-              className="h-9 rounded-full border-transparent bg-transparent px-2.5 text-xs hover:bg-muted/70"
-            />
-            <span
-              className="mx-1 hidden h-4 w-px bg-border xl:block"
-              aria-hidden
-            />
             <Link
               href="/#regions"
               className="hidden items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground xl:inline-flex"

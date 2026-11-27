@@ -23,6 +23,20 @@
     "closeMenu": "Close menu",
     "support": "Support",
     "language": "Language",
+    "bottomNav": {
+      "home": "Home",
+      "products": "Products",
+      "messages": "Messages",
+      "profile": "Profile",
+      "post": "Post"
+    },
+    "account": {
+      "listings": "My Listings",
+      "favorites": "Favorites",
+      "messages": "Messages",
+      "newListing": "New listing",
+      "verified": "Verified"
+    },
     "nav": {
       "home": "Home",
       "products": "Products",

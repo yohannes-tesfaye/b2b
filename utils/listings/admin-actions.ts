@@ -24,17 +24,21 @@ async function requireAdminUser() {
 }
 
 function revalidateAllListings() {
-  revalidatePath("/[locale]/dashboard/created", "page");
+  revalidatePath("/[locale]/admin/listings", "page");
+  revalidatePath("/[locale]/admin", "page");
   revalidatePath("/[locale]/listings", "page");
   revalidatePath("/[locale]/listings/[id]", "page");
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/listings", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/listings", "page");
   revalidatePath("/[locale]", "layout");
 }
 
 const ALLOWED_TRANSITIONS: Record<string, string[]> = {
+  // Listings are auto-approved, but admins can still approve anything pending.
   active: ["pending"],
-  rejected: ["pending"],
+  // Nothing is submitted for review anymore, but admins can still take down a
+  // live (or closed/expired) listing.
+  rejected: ["pending", "active", "closed", "expired"],
   closed: ["pending", "active", "rejected", "expired"],
 };
 
@@ -257,7 +261,7 @@ export async function bulkRejectListings(
 
   await prisma.$transaction(async (tx) => {
     const listings = await tx.listing.findMany({
-      where: { id: { in: listingIds }, status: "pending" },
+      where: { id: { in: listingIds }, status: { in: ["pending", "active"] } },
       select: { id: true, status: true, title: true, user: { select: { email: true, name: true } } },
     });
 

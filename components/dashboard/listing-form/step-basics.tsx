@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { LISTING_LIMITS } from "@/lib/validation/listing";
 import { StepBasicsGrid } from "./step-basics-grid";
 import { TextField } from "./text-field";
 import type { StepProps } from "./types";
@@ -19,6 +20,7 @@ export function StepBasics(props: StepProps) {
           value={props.values.title}
           error={props.errors.title}
           placeholder="e.g. Premium green coffee beans, 500 kg"
+          maxLength={LISTING_LIMITS.title}
           onChange={(value) => props.onChange("title", value)}
           onTouch={() => props.onTouch("title")}
         />
@@ -31,6 +33,7 @@ export function StepBasics(props: StepProps) {
           placeholder="Add the details a buyer or supplier needs to respond."
           multiline
           rows={4}
+          maxLength={LISTING_LIMITS.description}
           onChange={(value) => props.onChange("description", value)}
           onTouch={() => props.onTouch("description")}
         />

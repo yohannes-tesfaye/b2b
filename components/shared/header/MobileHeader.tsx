@@ -18,6 +18,7 @@ import { SITE } from "@/lib/config/site";
 import LanguageSwitcher from "@/components/shared/LanguageSwitcher";
 import ThemeSwitcher from "@/components/shared/ThemeSwitcher";
 import UserMenu from "@/components/Auth/UserMenu";
+import { FavoritesLink } from "./FavoritesLink";
 import { BrandMark } from "./BrandMark";
 import { SearchBar } from "./SearchBar";
 import { SellButton } from "./SellButton";
@@ -39,7 +40,7 @@ export function MobileHeader() {
               <Button
                 variant="ghost"
                 size="icon-lg"
-                className="h-10 w-10 rounded-full"
+                className="h-11 w-11 rounded-full"
                 aria-label={t("openMenu")}
               />
             }
@@ -56,7 +57,7 @@ export function MobileHeader() {
                   <Button
                     variant="ghost"
                     size="icon-lg"
-                    className="h-9 w-9 rounded-full"
+                    className="h-11 w-11 rounded-full"
                     aria-label={t("closeMenu")}
                   />
                 }
@@ -67,7 +68,11 @@ export function MobileHeader() {
 
             <div className="flex-1 overflow-y-auto px-4 pb-4">
               <nav className="space-y-0.5">
-                {MOBILE_NAV_LINKS.map((item) => {
+                {MOBILE_NAV_LINKS.filter(
+                  (item) =>
+                    item.labelKey !== "nav.home" &&
+                    item.labelKey !== "nav.allProducts"
+                ).map((item) => {
                   const Icon = item.icon;
                   return (
                     <Link
@@ -130,8 +135,11 @@ export function MobileHeader() {
 
         <BrandMark className="min-w-0" />
 
-        <div className="ml-auto flex items-center">
-          <UserMenu compact />
+        <div className="ml-auto flex items-center gap-1">
+          <FavoritesLink className="h-11 w-11 rounded-xl" iconClassName="h-5 w-5" />
+          <div className="hidden md:block">
+            <UserMenu variant="compact" />
+          </div>
         </div>
       </div>
 

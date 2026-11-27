@@ -32,6 +32,9 @@
 # testing
 /coverage
 
+# local database dumps (scripts/db-backup.mjs)
+/.backups
+
 # next.js
 /.next/
 /out/

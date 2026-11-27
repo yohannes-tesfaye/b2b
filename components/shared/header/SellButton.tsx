@@ -22,7 +22,7 @@ export function SellButton({
   const t = useTranslations("header");
   const { data: session } = useSession();
   const href = session
-    ? `/${session.user.id}/dashboard/listings/new`
+    ? "/dashboard/listings/new"
     : "/sign-up";
 
   return (

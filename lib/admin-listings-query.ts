@@ -11,7 +11,7 @@ export type AdminListingQuery = {
 
 export const DEFAULT_ADMIN_LISTING_QUERY: AdminListingQuery = {
   q: "",
-  status: "pending",
+  status: "all",
   type: "all",
   category: "all",
   sort: "newest",
@@ -23,7 +23,7 @@ export const DEFAULT_ADMIN_LISTING_QUERY: AdminListingQuery = {
 export function adminListingsHref(query: AdminListingQuery): string {
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
-  if (query.status && query.status !== "pending") {
+  if (query.status && query.status !== "all") {
     params.set("status", query.status);
   }
   if (query.type && query.type !== "all") params.set("type", query.type);
@@ -35,6 +35,6 @@ export function adminListingsHref(query: AdminListingQuery): string {
   if (query.page > 1) params.set("page", String(query.page));
   if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
   const search = params.toString();
-  return search ? `/dashboard/listing?${search}` : "/dashboard/listing";
+  return search ? `/admin/listings?${search}` : "/admin/listings";
 }
 

@@ -48,7 +48,7 @@ export function normaliseAdminListingFilters(
     (filters.status ?? "") as ListingStatus | "all"
   )
     ? (filters.status as string)
-    : "pending";
+    : "all";
   const type = ["wanted", "available"].includes(filters.type ?? "")
     ? (filters.type as string)
     : "all";
@@ -216,6 +216,8 @@ export async function getAdminListingDetail(
           changedBy: { select: { id: true, name: true, email: true } },
         },
       },
+      _count: { select: { conversations: true } },
+      conversations: { select: { id: true }, take: 5, orderBy: { lastMessageAt: "desc" } },
     },
   });
 

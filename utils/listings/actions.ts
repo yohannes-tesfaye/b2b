@@ -3,12 +3,16 @@
 import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "@/lib/current-user";
 import { prisma } from "@/lib/prisma";
-import { effectiveStatus } from "@/lib/listings";
+import { addDays, effectiveStatus } from "@/lib/listings";
+import { buildListingSearchText } from "@/lib/search";
+import { parseTagSlugs, tagSlugToLabel } from "@/lib/slug";
+import { countryName } from "@/lib/countries";
 import {
+  LISTING_FORM_FIELD_KEYS,
   listingIssuesToFieldErrors,
   listingSchema,
-  type ListingFormState,
   type ListingFormValues,
+  type ListingFormState,
 } from "@/lib/validation/listing";
 
 const SENSITIVE_KEY = /pass(word)?|secret|token|cookie|authorization/i;
@@ -45,39 +49,22 @@ function describeError(error: unknown) {
 }
 
 function parseListingForm(formData: FormData) {
-  return listingSchema.safeParse({
-    type: String(formData.get("type") ?? ""),
-    title: String(formData.get("title") ?? ""),
-    description: String(formData.get("description") ?? ""),
-    category: String(formData.get("category") ?? ""),
-    quantity: String(formData.get("quantity") ?? ""),
-    location: String(formData.get("location") ?? ""),
-    durationDays: String(formData.get("durationDays") ?? ""),
-    qualityStandard: String(formData.get("qualityStandard") ?? ""),
-    deliveryTimeline: String(formData.get("deliveryTimeline") ?? ""),
-    preferredRegion: String(formData.get("preferredRegion") ?? ""),
-    budgetRange: String(formData.get("budgetRange") ?? ""),
-    technicalDocument: String(formData.get("technicalDocument") ?? ""),
-    images: String(formData.get("images") ?? ""),
-    price: String(formData.get("price") ?? ""),
-    deliveryOptions: String(formData.get("deliveryOptions") ?? ""),
-    technicalSpecs: String(formData.get("technicalSpecs") ?? ""),
-    currency: String(formData.get("currency") ?? ""),
-    moq: String(formData.get("moq") ?? ""),
-    certifications: String(formData.get("certifications") ?? ""),
-    incoterms: String(formData.get("incoterms") ?? ""),
-    originCountry: String(formData.get("originCountry") ?? ""),
-  });
+  // Build input from a canonical key list so FormData parsing can never drift
+  // from `listingSchema`. Missing fields fall back to "".
+  const data: Record<string, string> = {};
+  for (const key of LISTING_FORM_FIELD_KEYS) {
+    data[key] = String(formData.get(key) ?? "");
+  }
+  return listingSchema.safeParse(data);
 }
 
 function listingPayload(values: ListingFormValues) {
   const wanted = values.type === "wanted";
-  const images = wanted
-    ? []
-    : values.images
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean);
+  // Both listing types can carry images (uploaded data URLs or links).
+  const images = values.images
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
 
   return {
     type: values.type,
@@ -86,6 +73,7 @@ function listingPayload(values: ListingFormValues) {
     category: values.category,
     quantity: values.quantity,
     location: values.location,
+    countryCode: values.countryCode || null,
     durationDays: values.durationDays,
     qualityStandard: wanted ? values.qualityStandard : null,
     deliveryTimeline: wanted ? values.deliveryTimeline : null,
@@ -106,17 +94,77 @@ function listingPayload(values: ListingFormValues) {
   };
 }
 
-function revalidateListings(userId: string, listingId?: string) {
-  revalidatePath("/[locale]/[userId]/dashboard", "page");
-  revalidatePath("/[locale]/[userId]/dashboard/listings", "page");
+async function syncListingExtras(
+  listingId: string,
+  values: ListingFormValues,
+  user: { companyName?: string | null }
+) {
+  const tagSlugs = parseTagSlugs(values.tags);
+
+  if (tagSlugs.length) {
+    await prisma.tag.createMany({
+      data: tagSlugs.map((slug) => ({ slug, name: tagSlugToLabel(slug) })),
+      skipDuplicates: true,
+    });
+  }
+
+  const tags = tagSlugs.length
+    ? await prisma.tag.findMany({
+        where: { slug: { in: tagSlugs } },
+        select: { id: true, slug: true, name: true },
+      })
+    : [];
+
+  await prisma.listingTag.deleteMany({ where: { listingId } });
+  if (tags.length) {
+    await prisma.listingTag.createMany({
+      data: tags.map((tag) => ({ listingId, tagId: tag.id })),
+      skipDuplicates: true,
+    });
+  }
+
+  const category = await prisma.category.findUnique({
+    where: { slug: values.category },
+    select: { name: true },
+  });
+
+  const countryCode = values.countryCode || null;
+
+  const searchText = buildListingSearchText({
+    title: values.title,
+    description: values.description,
+    category: values.category,
+    categoryLabel: category?.name ?? null,
+    location: values.location,
+    countryCode,
+    countryName: countryCode ? countryName(countryCode) : null,
+    quantity: values.quantity,
+    moq: values.moq || null,
+    certifications: values.certifications || null,
+    incoterms: values.incoterms || null,
+    originCountry: values.originCountry || null,
+    technicalSpecs: values.technicalSpecs || null,
+    tags: tags.flatMap((tag) => [tag.slug, tag.name]),
+    companyName: user.companyName ?? null,
+  });
+
+  await prisma.listing.update({
+    where: { id: listingId },
+    data: { countryCode, searchText },
+  });
+}
+
+function revalidateListings(_userId: string, listingId?: string) {
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/dashboard/listings", "page");
   if (listingId) {
-    revalidatePath("/[locale]/[userId]/dashboard/listings/[id]", "page");
+    revalidatePath("/[locale]/dashboard/listings/[id]", "page");
   }
 }
 
-/** Personal dashboard path for a user, used for redirects after writes. */
-function dashboardPath(userId: string, suffix = "") {
-  return `/${userId}/dashboard${suffix}`;
+/** Dashboard path, used for redirects after writes. */
+function dashboardPath(suffix = "") {
+  return `/dashboard${suffix}`;
 }
 
 export async function createListing(
@@ -178,9 +226,10 @@ export async function createListing(
   const saveData = {
     ...payload,
     userId: user.id,
-    // New listings always wait for admin approval. The expiry clock starts
-    // when an admin approves the listing.
-    status: "pending",
+    // Listings are auto-approved: published immediately, no admin review. The
+    // expiry clock starts now.
+    status: "active",
+    expiresAt: addDays(new Date(), parsed.data.durationDays),
   };
   console.log("[createListing] saving", {
     callId,
@@ -189,12 +238,31 @@ export async function createListing(
   });
 
   try {
-    const created = await prisma.listing.create({ data: saveData });
+    const listing = await prisma.listing.create({ data: saveData });
     console.log("[createListing] saved", {
       callId,
-      listingId: created.id,
+      listingId: listing.id,
       elapsedMs: Date.now() - startedMs,
     });
+
+    await syncListingExtras(listing.id, parsed.data, { companyName: user.companyName });
+
+    await prisma.listingStatusHistory.create({
+      data: {
+        listingId: listing.id,
+        fromStatus: null,
+        toStatus: "active",
+        changedById: user.id,
+      },
+    });
+
+    revalidateListings(user.id);
+
+    return {
+      status: "success",
+      message: "Listing is live.",
+      redirectTo: dashboardPath("/listings"),
+    };
   } catch (error) {
     console.error("[createListing] failed", {
       callId,
@@ -212,14 +280,6 @@ export async function createListing(
       message: "Could not save this listing. Please try again.",
     };
   }
-
-  revalidateListings(user.id);
-
-  return {
-    status: "success",
-    message: "Listing submitted for approval.",
-    redirectTo: dashboardPath(user.id, "/listings"),
-  };
 }
 
 export async function updateListing(
@@ -256,17 +316,24 @@ export async function updateListing(
       where: { id, userId: user.id },
       data: {
         ...listingPayload(parsed.data),
-        // Edits need to be reviewed again. This also moves an active listing
-        // back to pending, which is the simplest acceptable workflow. The
-        // expiry clock restarts on approval.
-        status: "pending",
+        // Edits publish immediately, no admin re-review. The expiry clock
+        // restarts now.
+        status: "active",
         rejectionReason: null,
-        expiresAt: null,
+        expiresAt: addDays(new Date(), parsed.data.durationDays),
       },
     });
     if (!result.count) {
       return { status: "error", message: "Listing not found." };
     }
+    await syncListingExtras(id, parsed.data, { companyName: user.companyName });
+    revalidateListings(user.id, id);
+
+    return {
+      status: "success",
+      message: "Listing updated and live.",
+      redirectTo: dashboardPath(`/listings/${id}`),
+    };
   } catch (error) {
     console.error("updateListing failed", error);
     return {
@@ -274,14 +341,6 @@ export async function updateListing(
       message: "Could not save this listing. Please try again.",
     };
   }
-
-  revalidateListings(user.id, id);
-
-  return {
-    status: "success",
-    message: "Listing updated and submitted for approval.",
-    redirectTo: dashboardPath(user.id, `/listings/${id}`),
-  };
 }
 
 export async function deleteListing(id: string): Promise<void> {
@@ -322,17 +381,16 @@ export async function renewListing(id: string): Promise<void> {
     throw new Error("Only expired listings can be renewed");
   }
 
-  const result = await prisma.listing.updateMany({
+  await prisma.listing.updateMany({
     where: { id, userId: user.id },
     data: {
-      // Renewals go back through approval as well, and the expiry clock
-      // restarts when an admin approves the renewal.
-      status: "pending",
+      // Renewals re-publish immediately, no admin re-approval. The expiry
+      // clock restarts now.
+      status: "active",
       rejectionReason: null,
-      expiresAt: null,
+      expiresAt: addDays(new Date(), listing.durationDays),
     },
   });
-  if (!result.count) throw new Error("Listing not found");
 
   revalidateListings(user.id, id);
 }

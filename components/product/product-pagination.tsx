@@ -8,6 +8,9 @@ export type ProductQuery = {
   category?: string;
   q?: string;
   sort?: string;
+  country?: string;
+  industry?: string;
+  tag?: string;
 };
 
 export function ProductPagination({
@@ -27,6 +30,9 @@ export function ProductPagination({
     if (query.category) params.set("category", query.category);
     if (query.q) params.set("q", query.q);
     if (query.sort) params.set("sort", query.sort);
+    if (query.country) params.set("country", query.country);
+    if (query.industry) params.set("industry", query.industry);
+    if (query.tag) params.set("tag", query.tag);
     if (target > 1) params.set("page", String(target));
     const qs = params.toString();
     return `/products${qs ? `?${qs}` : ""}`;

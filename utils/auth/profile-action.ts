@@ -38,6 +38,7 @@ export async function updateProfile(
     country: String(formData.get("country") ?? ""),
     industry: String(formData.get("industry") ?? ""),
     companySize: String(formData.get("companySize") ?? ""),
+    bio: String(formData.get("bio") ?? ""),
   });
 
   if (!parsed.success) {
@@ -67,6 +68,18 @@ export async function updateProfile(
     return { status: "error", message: resolveAuthErrorMessage(error, translate) };
   }
 
+  // Auto-verify: if email is verified and company details are filled, mark verified
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { emailVerified: true, verified: true },
+  });
+
+  const shouldVerify =
+    !user?.verified &&
+    user?.emailVerified === true &&
+    parsed.data.companyName.trim().length > 0 &&
+    parsed.data.industry.trim().length > 0;
+
   await prisma.user.update({
     where: { id: session.user.id },
     data: {
@@ -77,6 +90,8 @@ export async function updateProfile(
       country: parsed.data.country,
       industry: parsed.data.industry,
       companySize: parsed.data.companySize || null,
+      bio: parsed.data.bio || null,
+      ...(shouldVerify ? { verified: true } : {}),
     },
   });
 

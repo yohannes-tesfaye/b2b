@@ -61,6 +61,7 @@ export const businessFieldsSchema = z.object({
   country: z.string().trim().min(1, { message: "validation.countryRequired" }),
   industry: z.string().trim().min(1, { message: "validation.industryRequired" }),
   companySize: z.string().optional(),
+  bio: z.string().trim().max(500, { message: "validation.bioMax" }).optional(),
 });
 
 export const onboardingSchema = businessFieldsSchema;

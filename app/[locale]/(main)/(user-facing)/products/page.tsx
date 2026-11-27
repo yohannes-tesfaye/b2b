@@ -1,25 +1,29 @@
-import { LISTING_CATEGORIES } from "@/lib/listings";
-import {
-  DEFAULT_PAGE_SIZE,
-  getPublishedListings,
-  normalizeSearchQuery,
-} from "@/features/listings/queries";
+import type { Prisma } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { getCategories, getIndustries, getPopularTags } from "@/lib/taxonomy";
+import { normalizeSearchQuery } from "@/lib/search";
+import { countryName, normalizeCountryCode } from "@/lib/countries";
 import { ProductCard } from "@/components/shared/ProductCard";
 import { ProductFilters } from "@/components/product/product-filters";
 import { ProductPagination } from "@/components/product/product-pagination";
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
 import { Search } from "lucide-react";
 
-const PAGE_SIZE = DEFAULT_PAGE_SIZE;
+const PAGE_SIZE = 6;
 
 type SearchParams = Promise<{
   type?: string;
   category?: string;
   q?: string;
   sort?: string;
+  country?: string;
+  industry?: string;
+  tag?: string;
   page?: string;
 }>;
+
+const SORTS = ["newest", "oldest", "expiring", "views"] as const;
+type Sort = (typeof SORTS)[number];
 
 export default async function ProductPage({
   searchParams,
@@ -27,28 +31,94 @@ export default async function ProductPage({
   searchParams: SearchParams;
 }) {
   const sp = await searchParams;
-  const t = await getTranslations("product");
-  const type =
-    sp.type === "wanted" || sp.type === "available" ? sp.type : undefined;
-  const allowed = new Set<string>(LISTING_CATEGORIES.map((c) => c.value));
-  const categories = sp.category
-    ? Array.from(new Set(sp.category.split(",").filter((c) => allowed.has(c))))
+  const [categories, industries, tags] = await Promise.all([
+    getCategories(),
+    getIndustries(),
+    getPopularTags(),
+  ]);
+
+  const type = sp.type === "wanted" || sp.type === "available" ? sp.type : undefined;
+
+  const allowedCategories = new Set(categories.map((category) => category.value));
+  const selectedCategories = sp.category
+    ? Array.from(new Set(sp.category.split(",").filter((c) => allowedCategories.has(c))))
     : [];
+
   const q = normalizeSearchQuery(sp.q);
-  const sort =
-    sp.sort === "oldest" || sp.sort === "expiring" ? sp.sort : "newest";
+  const sort: Sort = SORTS.includes(sp.sort as Sort) ? (sp.sort as Sort) : "newest";
+
+  const allowedIndustries = new Set(industries.map((industry) => industry.value));
+  const industry = sp.industry && allowedIndustries.has(sp.industry) ? sp.industry : undefined;
+
+  const allowedTags = new Set(tags.map((tag) => tag.slug));
+  const tag = sp.tag && allowedTags.has(sp.tag) ? sp.tag : undefined;
+
+  const country = normalizeCountryCode(sp.country) ?? undefined;
+
   const requestedPage = Number.parseInt(sp.page ?? "1", 10);
   const page =
     Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
 
-  const { items, total, totalPages, currentPage } = await getPublishedListings({
-    q,
-    type,
-    categories,
-    sort,
-    page,
-    pageSize: PAGE_SIZE,
-  });
+  const and: Prisma.ListingWhereInput[] = [
+    { OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }] },
+  ];
+
+  if (type) and.push({ type });
+  if (selectedCategories.length) and.push({ category: { in: selectedCategories } });
+  if (country) and.push({ countryCode: country });
+  if (industry) and.push({ user: { industry } });
+  if (tag) and.push({ tags: { some: { tag: { slug: tag } } } });
+  if (q) {
+    // searchText already contains title, description, category and tag names,
+    // company name and location (see lib/search.ts). ILIKE is served by the GIN
+    // trigram index when pg_trgm is installed, and still correct without it.
+    and.push({
+      OR: [
+        { searchText: { contains: q, mode: "insensitive" } },
+        // Keep free-text columns searchable for rows written before the
+        // searchText backfill ran (or if the backfill ever fails).
+        { title: { contains: q, mode: "insensitive" } },
+      ],
+    });
+  }
+
+  const where: Prisma.ListingWhereInput = { status: "active", AND: and };
+
+  const orderBy =
+    sort === "oldest"
+      ? { createdAt: "asc" as const }
+      : sort === "expiring"
+      ? { expiresAt: "asc" as const }
+      : sort === "views"
+      ? { views: "desc" as const }
+      : { createdAt: "desc" as const };
+
+  const total = await prisma.listing.count({ where });
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+
+  const [listings, countryRows] = await Promise.all([
+    prisma.listing.findMany({
+      where,
+      orderBy,
+      skip: (currentPage - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    prisma.listing.groupBy({
+      by: ["countryCode"],
+      where: { status: "active", countryCode: { not: null } },
+      _count: { _all: true },
+    }),
+  ]);
+
+  const countries = countryRows
+    .filter((row): row is typeof row & { countryCode: string } => Boolean(row.countryCode))
+    .map((row) => ({
+      value: row.countryCode,
+      label: countryName(row.countryCode),
+      count: row._count._all,
+    }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
 
   const from = total ? (currentPage - 1) * PAGE_SIZE + 1 : 0;
   const to = Math.min(currentPage * PAGE_SIZE, total);
@@ -58,7 +128,7 @@ export default async function ProductPage({
       <div className="space-y-1.5">
         <div className="flex items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
-            {q ? t("searchResultsTitle", { query: q }) : "Products"}
+            Products
           </h1>
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
             {total}
@@ -69,7 +139,12 @@ export default async function ProductPage({
         </p>
       </div>
 
-      <ProductFilters />
+      <ProductFilters
+        categories={categories}
+        industries={industries}
+        tags={tags}
+        countries={countries}
+      />
 
       <div className="flex items-center justify-between text-xs text-muted-foreground lg:text-sm">
         <span>
@@ -83,10 +158,10 @@ export default async function ProductPage({
         </span>
       </div>
 
-      {items.length ? (
+      {listings.length ? (
         <>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
-            {items.map((listing) => (
+            {listings.map((listing) => (
               <ProductCard key={listing.id} listing={listing} />
             ))}
           </div>
@@ -96,29 +171,15 @@ export default async function ProductPage({
             totalPages={totalPages}
             query={{
               type,
-              category: categories.join(",") || undefined,
-              q,
+              category: selectedCategories.join(",") || undefined,
+              q: q || undefined,
               sort: sort !== "newest" ? sort : undefined,
+              country,
+              industry,
+              tag,
             }}
           />
         </>
-      ) : q ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-14 text-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <Search className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div>
-            <p className="font-semibold">
-              {t("noSearchResults", { query: q })}
-            </p>
-          </div>
-          <Link
-            href="/products"
-            className="mt-1 inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground"
-          >
-            {t("browseAllGoods")}
-          </Link>
-        </div>
       ) : (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed px-6 py-14 text-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">

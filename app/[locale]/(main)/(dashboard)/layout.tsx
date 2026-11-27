@@ -1,5 +1,5 @@
 import { DashboardShell } from "@/components/dashboard/dashboard-shell";
-import { requireAdmin } from "@/lib/dashboard-access";
+import { requireUser } from "@/lib/dashboard-access";
 import { prisma } from "@/lib/prisma";
 
 export default async function DashboardLayout({
@@ -7,10 +7,26 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const fullUser = await requireAdmin();
-  const pendingListings = await prisma.listing.count({
-    where: { status: "pending" },
-  });
+  const fullUser = await requireUser();
+
+  const [pendingListings, conversations] = await Promise.all([
+    prisma.listing.count({ where: { status: "pending" } }),
+    prisma.conversation.findMany({
+      where: { OR: [{ buyerId: fullUser.id }, { sellerId: fullUser.id }] },
+      select: {
+        buyerId: true,
+        sellerId: true,
+        buyerUnread: true,
+        sellerUnread: true,
+      },
+    }),
+  ]);
+
+  const unreadCount = conversations.reduce((total, conversation) => {
+    if (conversation.buyerId === fullUser.id) total += conversation.buyerUnread;
+    if (conversation.sellerId === fullUser.id) total += conversation.sellerUnread;
+    return total;
+  }, 0);
 
   const user = {
     name: fullUser.name ?? fullUser.email ?? "User",
@@ -30,7 +46,11 @@ export default async function DashboardLayout({
   };
 
   return (
-    <DashboardShell user={user} pendingListings={pendingListings}>
+    <DashboardShell
+      user={user}
+      pendingListings={pendingListings}
+      unreadCount={unreadCount}
+    >
       {children}
     </DashboardShell>
   );

@@ -1,0 +1,46 @@
+{
+  "inbox": {
+    "title": "መልዕክቶች",
+    "unread": "{count} ያልተነበቡ",
+    "searchPlaceholder": "ውይይቶችን ይፈልጉ...",
+    "tabs": {
+      "all": "ሁሉም",
+      "unread": "ያልተነበቡ",
+      "buying": "ግዢ",
+      "selling": "ሽያጭ"
+    },
+    "relative": {
+      "justNow": "አሁን",
+      "minutesAgo": "{minutes} ደቂቃ በፊት",
+      "hoursAgo": "{hours} ሰዓት በፊት",
+      "yesterday": "ትናንት",
+      "daysAgo": "{days} ቀን በፊት"
+    },
+    "noConversationsMatch": "ምንም ውይይት አልተገኘም",
+    "noMessagesYet": "ገና መልዕክት የለም",
+    "tryDifferentSearch": "ሌላ የፍለጋ ቃል ይሞክሩ።",
+    "emptyInbox": "የሚልኩት ወይም የሚቀበሉት ጥያቄዎች እዚህ ይታያሉ።",
+    "unknown": "ያልታወቀ",
+    "thread": {
+      "backToInbox": "ወደ ውስጥ መልዕክት ተመለስ",
+      "notFound": "ውይይት አልተገኘም",
+      "notAuthorized": "ፈቃድ የለም",
+      "noMessagesYet": "ገና መልዕክት የለም። ውይይቱን ይጀምሩ!",
+      "listingContext": "ማስታወቂያ",
+      "viewProfile": "መገለጫ ይመልከቱ"
+    },
+    "input": {
+      "placeholder": "መልዕክት ይጻፉ...",
+      "attach": "ፋይል ያያይዙ",
+      "send": "መልዕክት ላክ",
+      "attachmentRemove": "አያያዥ አስወግድ"
+    },
+    "dateSeparator": {
+      "today": "ዛሬ",
+      "yesterday": "ትናንት"
+    },
+    "listingRef": {
+      "viewListing": "ማስታወቂያ ይመልከቱ"
+    }
+  }
+}

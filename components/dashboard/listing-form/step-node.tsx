@@ -3,57 +3,72 @@
 import { Check } from "lucide-react";
 import { cn } from "cn";
 
-/** One step node: filled check, ringed current, muted upcoming, fill line. */
+/** One step node: clickable, filled check, ringed current, muted upcoming. */
 export function StepNode({
   index,
   step,
   label,
   last,
+  onSelect,
 }: {
   index: number;
   step: number;
   label: string;
   last: boolean;
+  onSelect?: (index: number) => void;
 }) {
   const done = index < step;
   const current = index === step;
 
   return (
     <li className={cn("flex items-center", !last && "flex-1")}>
-      <span
+      <button
+        type="button"
+        onClick={() => onSelect?.(index)}
         aria-current={current ? "step" : undefined}
+        aria-label={label}
         className={cn(
-          "relative grid size-(--spacing-8) shrink-0 place-items-center rounded-full text-xs font-semibold transition-all duration-300 motion-reduce:transition-none",
-          done && "bg-primary text-primary-foreground",
-          current && "bg-card text-primary ring-2 ring-primary/30",
-          !done && !current && "border border-border bg-card text-muted-foreground"
+          "group flex cursor-pointer items-center rounded-full outline-none focus-visible:ring-3 focus-visible:ring-warm/30",
+          current && "cursor-default"
         )}
       >
         <span
-          aria-hidden
           className={cn(
-            "col-start-1 row-start-1 transition-opacity duration-300 motion-reduce:transition-none",
-            done ? "opacity-0" : "opacity-100"
+            "relative grid size-(--spacing-8) shrink-0 place-items-center rounded-full text-xs font-semibold transition-all duration-300 motion-reduce:transition-none",
+            done && "bg-primary text-primary-foreground",
+            current && "bg-card text-primary ring-2 ring-primary/30",
+            !done &&
+              !current &&
+              "border border-border bg-card text-muted-foreground group-hover:border-primary/50 group-hover:text-primary",
+            done && "group-hover:ring-2 group-hover:ring-primary/30"
           )}
         >
-          {index + 1}
+          <span
+            aria-hidden
+            className={cn(
+              "col-start-1 row-start-1 transition-opacity duration-300 motion-reduce:transition-none",
+              done ? "opacity-0" : "opacity-100"
+            )}
+          >
+            {index + 1}
+          </span>
+          <Check
+            aria-hidden
+            className={cn(
+              "col-start-1 row-start-1 size-(--spacing-4) transition-transform duration-300 motion-reduce:transition-none",
+              done ? "scale-100" : "scale-0"
+            )}
+          />
         </span>
-        <Check
-          aria-hidden
+        <span
           className={cn(
-            "col-start-1 row-start-1 size-(--spacing-4) transition-transform duration-300 motion-reduce:transition-none",
-            done ? "scale-100" : "scale-0"
+            "ml-(--spacing-2) hidden text-xs font-medium transition-colors sm:inline",
+            current ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
           )}
-        />
-      </span>
-      <span
-        className={cn(
-          "ml-(--spacing-2) hidden text-xs font-medium transition-colors sm:inline",
-          current ? "text-foreground" : "text-muted-foreground"
-        )}
-      >
-        {label}
-      </span>
+        >
+          {label}
+        </span>
+      </button>
       {last ? null : (
         <span
           aria-hidden

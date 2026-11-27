@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useActionState } from "react";
+import { useEffect, useRef, useState, useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { useRouter } from "@/i18n/navigation";
@@ -48,7 +48,22 @@ export function useListingWizard({
     initialListingFormState
   );
 
+  const valuesRef = useRef<ListingDraftValues>(values);
+  // eslint-disable-next-line react-hooks/refs
+  valuesRef.current = values;
+
   useActionFeedback(state);
+
+  useEffect(() => {
+    if (state.status !== "error") return;
+    const idx = LISTING_STEP_SCHEMAS.findIndex(
+      (s) => !s.safeParse(valuesRef.current).success
+    );
+    if (idx >= 0) {
+      setStep(idx);
+      setShowAll(true);
+    }
+  }, [state]);
 
   useEffect(() => {
     if (mode !== "create") return;
@@ -88,6 +103,7 @@ export function useListingWizard({
   ) => {
     setEdited(true);
     setValues((prev) => ({ ...prev, [key]: value }));
+    setTouched((prev) => (prev.has(key) ? prev : new Set(prev).add(key)));
   };
 
   const setType = (type: ListingType) => {
@@ -112,6 +128,13 @@ export function useListingWizard({
   const goBack = () => {
     setShowAll(false);
     setStep((current) => Math.max(current - 1, 0));
+  };
+
+  /** Jump straight to any step via the clickable step indicator. */
+  const goTo = (index: number) => {
+    setShowAll(false);
+    const max = LISTING_STEP_SCHEMAS.length - 1;
+    setStep(Math.min(Math.max(index, 0), max));
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -141,11 +164,14 @@ export function useListingWizard({
     isPending,
     formAction,
     canContinue: parsedStep.success,
+    /** Server/client form-level message (e.g. "Please fix the highlighted fields."). */
+    formMessage: state.status === "error" ? (state.message ?? null) : null,
     change,
     setType,
     touch,
     goNext,
     goBack,
+    goTo,
     handleSubmit,
     handleCancel,
   };

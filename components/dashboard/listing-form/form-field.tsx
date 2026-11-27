@@ -45,9 +45,8 @@ export function FormField({
               {t(`fix.${FIX_KEY_BY_FIELD[id] ?? "generic"}`)}
             </span>
           </div>
-        ) : hint ? (
-          <p className="text-xs text-muted-foreground">{hint}</p>
         ) : null}
+        {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
       </FieldContent>
     </Field>
   );

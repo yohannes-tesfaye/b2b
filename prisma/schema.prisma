@@ -29,11 +29,17 @@ model User {
   country              String?
   industry             String?
   companySize          String?
+  bio                  String?
+  verified             Boolean                @default(false)
   sessions             Session[]
   accounts             Account[]
   listings             Listing[]
   reviewedListings     Listing[]              @relation("ListingReviews")
   listingStatusChanges ListingStatusHistory[]
+  favorites            Favorite[]
+  buyerConversations   Conversation[]         @relation("BuyerConversations")
+  sellerConversations  Conversation[]         @relation("SellerConversations")
+  messagesSent         Message[]
 
   @@unique([email])
   @@map("user")
@@ -130,14 +136,42 @@ model Listing {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Denormalised text used for trigram search (see lib/search.ts).
+  searchText String @default("")
+
+  // ISO-3166 alpha-2 code, so listings can be filtered by country even though
+  // `location` stays free text (city / region / port).
+  countryCode String?
+
   statusHistory ListingStatusHistory[]
+  tags          ListingTag[]
+  conversations Conversation[]
+  favoritedBy   Favorite[]
 
   @@index([userId])
   @@index([status])
   @@index([type])
   @@index([expiresAt])
   @@index([reviewedById])
+  @@index([countryCode])
   @@map("listing")
+}
+
+// ---------------------------------------------------------------------------
+// Favorites: a user's saved listings.
+// ---------------------------------------------------------------------------
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@index([userId])
+  @@index([listingId])
+  @@map("favorite")
 }
 
 model ListingStatusHistory {
@@ -154,4 +188,108 @@ model ListingStatusHistory {
   @@index([listingId])
   @@index([changedById])
   @@map("listing_status_history")
+}
+
+// ---------------------------------------------------------------------------
+// Taxonomy: categories, industries and free-form tags.
+//
+// Listings and users keep storing the *slug* (natural key) so existing data and
+// queries stay untouched; these tables own the display name, ordering, hierarchy
+// and activation state. Renaming a category therefore needs no data migration.
+// ---------------------------------------------------------------------------
+
+model Category {
+  id        String     @id @default(cuid())
+  slug      String     @unique
+  name      String
+  parentId  String?
+  parent    Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
+  children  Category[] @relation("CategoryTree")
+  sortOrder Int        @default(0)
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([parentId, sortOrder])
+  @@map("category")
+}
+
+model Industry {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  sortOrder Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("industry")
+}
+
+model Tag {
+  id        String       @id @default(cuid())
+  slug      String       @unique
+  name      String
+  createdAt DateTime     @default(now())
+  listings  ListingTag[]
+
+  @@map("tag")
+}
+
+model ListingTag {
+  listingId String
+  tagId     String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([listingId, tagId])
+  @@index([tagId])
+  @@map("listing_tag")
+}
+
+// ---------------------------------------------------------------------------
+// Messaging: one conversation per (listing, buyer), many messages inside.
+// ---------------------------------------------------------------------------
+
+model Conversation {
+  id                 String    @id @default(cuid())
+  listingId          String
+  listing            Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  buyerId            String
+  buyer              User      @relation("BuyerConversations", fields: [buyerId], references: [id], onDelete: Cascade)
+  sellerId           String
+  seller             User      @relation("SellerConversations", fields: [sellerId], references: [id], onDelete: Cascade)
+  subject            String
+  status             String    @default("open") // open | archived
+  buyerUnread        Int       @default(0)
+  sellerUnread       Int       @default(0)
+  buyerLastReadAt    DateTime?
+  sellerLastReadAt   DateTime?
+  lastMessageAt      DateTime  @default(now())
+  lastMessagePreview String    @default("")
+  messages           Message[]
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  // One thread per buyer per listing keeps inboxes tidy and blocks spam.
+  @@unique([listingId, buyerId])
+  @@index([buyerId, lastMessageAt])
+  @@index([sellerId, lastMessageAt])
+  @@map("conversation")
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  senderId       String
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  body           String
+  attachment     String?
+  /** True only for the initial inquiry created from a listing's contact form. */
+  viaListing     Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  @@index([conversationId, createdAt])
+  @@map("message")
 }

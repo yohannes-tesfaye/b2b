@@ -5,6 +5,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import {
   BadgeCheck,
   Building2,
+  ChevronRight,
   MoreHorizontal,
   Package,
   Users,
@@ -12,7 +13,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -71,17 +71,29 @@ function roleVariant(role: string) {
   return role === "admin" || role === "superadmin" ? "secondary" : "outline";
 }
 
-function RoleBadges({ role }: { role: string | null }) {
+function RoleBadges({
+  role,
+  max = Infinity,
+}: {
+  role: string | null;
+  max?: number;
+}) {
   const roles = parseRoles(role);
   const values = roles.length ? roles : ["buyer"];
+  const truncated = max && values.length > max;
+  const shown = truncated ? values.slice(0, max) : values;
+  const extra = truncated ? values.length - max : 0;
 
   return (
     <div className="flex flex-wrap gap-1">
-      {values.map((value) => (
+      {shown.map((value) => (
         <Badge key={value} variant={roleVariant(value)}>
           {roleLabel(value)}
         </Badge>
       ))}
+      {extra > 0 ? (
+        <Badge variant="outline">+{extra}</Badge>
+      ) : null}
     </div>
   );
 }
@@ -95,7 +107,7 @@ function UserCell({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <Avatar className="size-8">
+      <Avatar className="size-9 sm:size-8">
         {user.image ? (
           <AvatarImage src={user.image} alt={user.name || user.email} />
         ) : null}
@@ -128,14 +140,6 @@ function UserCell({
   );
 }
 
-function StatusBadge({ user }: { user: AdminUserRow }) {
-  return user.banned ? (
-    <Badge variant="destructive">Banned</Badge>
-  ) : (
-    <Badge variant="outline">Active</Badge>
-  );
-}
-
 function UserActions({
   user,
   isSelf,
@@ -153,7 +157,8 @@ function UserActions({
         render={
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
+            className="size-9 sm:size-8"
             aria-label={`Actions for ${user.name || user.email}`}
           />
         }
@@ -162,7 +167,7 @@ function UserActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuLabel>User</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => router.push(`/dashboard/user/${user.id}`)}>
+        <DropdownMenuItem onClick={() => router.push(`/admin/users/${user.id}`)}>
           View details
         </DropdownMenuItem>
         {isSelf ? (
@@ -260,7 +265,7 @@ export function AdminUsersTable({
                   <TableRow
                     key={user.id}
                     className="cursor-pointer"
-                    onClick={() => router.push(`/dashboard/user/${user.id}`)}
+                    onClick={() => router.push(`/admin/users/${user.id}`)}
                   >
                     <TableCell className="max-w-72">
                       <UserCell user={user} isSelf={isSelf} />
@@ -269,7 +274,11 @@ export function AdminUsersTable({
                       <RoleBadges role={user.role} />
                     </TableCell>
                     <TableCell>
-                      <StatusBadge user={user} />
+                      {user.banned ? (
+                        <Badge variant="destructive">Banned</Badge>
+                      ) : (
+                        <Badge variant="outline">Active</Badge>
+                      )}
                     </TableCell>
                     <TableCell className="max-w-48">
                       <div className="min-w-0">
@@ -317,21 +326,75 @@ export function AdminUsersTable({
         </Table>
       </div>
 
-      <div className="space-y-3 md:hidden">
-        {users.length ? (
-          users.map((user) => {
-            const isSelf = user.id === currentUserId;
-            return (
-              <Card
-                key={user.id}
-                className="cursor-pointer"
-                onClick={() => router.push(`/dashboard/user/${user.id}`)}
-              >
-                <CardContent className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="min-w-0 flex-1">
-                      <UserCell user={user} isSelf={isSelf} />
-                    </div>
+      <div className="md:hidden">
+        <div className="overflow-hidden rounded-xl border bg-card">
+          <div className="flex items-center justify-between border-b bg-muted/30 px-4 py-2.5 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {total} user{total === 1 ? "" : "s"}
+            </span>
+            <span className="capitalize">{query.sort}</span>
+          </div>
+          {users.length ? (
+            <ul className="divide-y">
+              {users.map((user) => {
+                const isSelf = user.id === currentUserId;
+                return (
+                  <li
+                    key={user.id}
+                    className="flex items-center gap-3 px-3 py-3 transition-colors active:bg-muted/60"
+                  >
+                    <Link
+                      href={`/admin/users/${user.id}`}
+                      className="flex min-w-0 flex-1 items-center gap-3"
+                    >
+                      <div className="relative shrink-0">
+                        <Avatar className="size-10">
+                          {user.image ? (
+                            <AvatarImage src={user.image} alt={user.name || user.email} />
+                          ) : null}
+                          <AvatarFallback className="text-xs">
+                            {initialsFrom(user.name || user.email)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span
+                          className={`absolute bottom-0 right-0 size-2.5 rounded-full ring-2 ring-card ${
+                            user.banned ? "bg-destructive" : "bg-emerald-500"
+                          }`}
+                        />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1">
+                          <span className="truncate text-sm font-medium">
+                            {user.name || "Unnamed"}
+                          </span>
+                          {user.emailVerified ? (
+                            <BadgeCheck
+                              className="size-3.5 shrink-0 text-primary"
+                              aria-label="Verified account"
+                            />
+                          ) : null}
+                          {isSelf ? (
+                            <Badge variant="outline" className="ml-0.5 shrink-0 text-[10px]">
+                              You
+                            </Badge>
+                          ) : null}
+                        </div>
+                        <span className="block truncate text-xs text-muted-foreground">
+                          {user.email}
+                        </span>
+                        <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <RoleBadges role={user.role} max={1} />
+                          {user.companyName ? (
+                            <span className="truncate">· {user.companyName}</span>
+                          ) : null}
+                          <span className="shrink-0">
+                            · {user._count.listings} listing
+                            {user._count.listings === 1 ? "" : "s"}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                    <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
                     <div onClick={(event) => event.stopPropagation()}>
                       <UserActions
                         user={user}
@@ -339,46 +402,26 @@ export function AdminUsersTable({
                         onAction={(type) => setDialog({ type, user })}
                       />
                     </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <StatusBadge user={user} />
-                    <RoleBadges role={user.role} />
-                  </div>
-
-                  <div className="flex items-end justify-between gap-3 text-xs text-muted-foreground">
-                    <div className="min-w-0">
-                      <p className="truncate">{user.companyName || "No company"}</p>
-                      <p className="truncate">
-                        {user.industry
-                          ? roleLabel(user.industry)
-                          : user.country || "—"}
-                      </p>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p>
-                        {user._count.listings} listing
-                        {user._count.listings === 1 ? "" : "s"}
-                      </p>
-                      <p>Joined {user.createdAt.toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })
-        ) : (
-          <div className="rounded-xl border p-6">
-            <EmptyState hasFilters={hasFilters} />
-          </div>
-        )}
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <div className="p-6">
+              <EmptyState hasFilters={hasFilters} />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">
-          {total} user{total === 1 ? "" : "s"} total
+        <p className="text-sm text-muted-foreground sm:hidden">
+          Page {query.page} of {totalPages}
         </p>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            {total} user{total === 1 ? "" : "s"} total
+          </p>
           <Select
             value={String(query.pageSize)}
             onValueChange={(value) =>
@@ -392,7 +435,7 @@ export function AdminUsersTable({
               )
             }
           >
-            <SelectTrigger className="w-24" aria-label="Users per page">
+            <SelectTrigger className="w-full sm:w-24" aria-label="Users per page">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -400,19 +443,21 @@ export function AdminUsersTable({
               <SelectItem value="20">20 / page</SelectItem>
             </SelectContent>
           </Select>
+        </div>
 
-          <Pagination className="mx-0 w-auto justify-start sm:justify-end">
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => goToPage(Math.max(1, query.page - 1))}
-                  disabled={query.page <= 1}
-                >
-                  Previous
-                </Button>
-              </PaginationItem>
+        <Pagination className="mx-0 w-auto justify-start sm:justify-end">
+          <PaginationContent>
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 sm:flex-none"
+                onClick={() => goToPage(Math.max(1, query.page - 1))}
+                disabled={query.page <= 1}
+              >
+                Previous
+              </Button>
+            </PaginationItem>
               {pages.map((page, index) => {
                 const previous = pages[index - 1];
                 return (
@@ -437,6 +482,7 @@ export function AdminUsersTable({
                 <Button
                   variant="outline"
                   size="sm"
+                  className="flex-1 sm:flex-none"
                   onClick={() => goToPage(Math.min(totalPages, query.page + 1))}
                   disabled={query.page >= totalPages}
                 >
@@ -445,7 +491,6 @@ export function AdminUsersTable({
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-        </div>
       </div>
 
       <BanUserDialog
@@ -481,7 +526,7 @@ function EmptyState({ hasFilters }: { hasFilters: boolean }) {
       </p>
       {hasFilters ? (
         <Button
-          render={<Link href="/dashboard/user" />}
+          render={<Link href="/admin/users" />}
           variant="outline"
           size="sm"
           nativeButton={false}

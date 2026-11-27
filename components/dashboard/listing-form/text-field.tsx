@@ -23,6 +23,13 @@ export function TextField({
   type = "text",
   min,
   max,
+  inputMode,
+  maxLength,
+  pattern,
+  digitsOnly,
+  autoCapitalize,
+  spellCheck,
+  autoComplete,
   onChange,
   onTouch,
 }: {
@@ -38,6 +45,13 @@ export function TextField({
   type?: string;
   min?: number;
   max?: number;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  maxLength?: number;
+  pattern?: string;
+  digitsOnly?: boolean;
+  autoCapitalize?: string;
+  spellCheck?: boolean;
+  autoComplete?: string;
   onChange: (value: string) => void;
   onTouch: () => void;
 }) {
@@ -48,7 +62,10 @@ export function TextField({
     "aria-invalid": Boolean(error),
     onChange: (
       event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => onChange(event.target.value),
+    ) => {
+      const raw = event.target.value;
+      onChange(digitsOnly ? raw.replace(/[^\d]/g, "") : raw);
+    },
     onBlur: onTouch,
   };
 
@@ -64,6 +81,8 @@ export function TextField({
         <textarea
           {...shared}
           rows={rows}
+          maxLength={maxLength}
+          spellCheck={spellCheck}
           className={cn(softFieldChrome, softTextareaClass)}
         />
       ) : (
@@ -72,6 +91,12 @@ export function TextField({
           type={type}
           min={min}
           max={max}
+          inputMode={inputMode}
+          maxLength={maxLength}
+          pattern={pattern}
+          autoCapitalize={autoCapitalize}
+          spellCheck={spellCheck}
+          autoComplete={autoComplete}
           className={cn(softFieldChrome, softInputClass)}
         />
       )}

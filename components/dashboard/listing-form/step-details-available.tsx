@@ -1,16 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { LISTING_LIMITS } from "@/lib/validation/listing";
+import { ListingImageInput } from "./listing-image-input";
 import { TextField } from "./text-field";
 import type { StepProps } from "./types";
 
 const FIELDS = [
-  { id: "price", label: "Price", placeholder: "e.g. USD 4.50 per kg" },
-  { id: "currency", label: "Currency", placeholder: "e.g. USD, EUR", optional: true },
-  { id: "moq", label: "Min. order qty", placeholder: "e.g. 300 kg", optional: true },
-  { id: "incoterms", label: "Incoterms", placeholder: "e.g. FOB, CIF, DDP", optional: true },
-  { id: "originCountry", label: "Country of origin", placeholder: "e.g. Ethiopia", optional: true },
-  { id: "deliveryOptions", label: "Delivery options", placeholder: "e.g. FOB Djibouti, 2–3 weeks" },
+  { id: "price", label: "Price", placeholder: "e.g. USD 4.50 per kg", maxLength: LISTING_LIMITS.price },
+  { id: "currency", label: "Currency", placeholder: "e.g. USD, EUR", optional: true, maxLength: LISTING_LIMITS.currency },
+  { id: "moq", label: "Min. order qty", placeholder: "e.g. 300 kg", optional: true, maxLength: LISTING_LIMITS.moq },
+  { id: "incoterms", label: "Incoterms", placeholder: "e.g. FOB, CIF, DDP", optional: true, maxLength: LISTING_LIMITS.incoterms },
+  { id: "originCountry", label: "Country of origin", placeholder: "e.g. Ethiopia", optional: true, maxLength: LISTING_LIMITS.originCountry },
+  { id: "deliveryOptions", label: "Delivery options", placeholder: "e.g. FOB Djibouti, 2–3 weeks", maxLength: LISTING_LIMITS.deliveryOptions },
 ] as const;
 
 /** Step 3 (available): seller offer details and optional media. */
@@ -48,6 +50,7 @@ export function StepDetailsAvailable({
         hint="Comma-separated, e.g. GOTS, ISO 9001, Organic."
         placeholder="e.g. GOTS, ISO 9001"
         optional
+        maxLength={LISTING_LIMITS.certifications}
         onChange={(value) => onChange("certifications", value)}
         onTouch={() => onTouch("certifications")}
       />
@@ -59,18 +62,13 @@ export function StepDetailsAvailable({
         placeholder="Packaging, dimensions, or other specs."
         optional
         multiline
+        maxLength={LISTING_LIMITS.technicalSpecs}
         onChange={(value) => onChange("technicalSpecs", value)}
         onTouch={() => onTouch("technicalSpecs")}
       />
-      <TextField
-        id="images"
-        label="Image URLs"
+      <ListingImageInput
         value={values.images}
         error={errors.images}
-        hint="One image URL per line, up to 6."
-        placeholder={"https://example.com/photo-1.jpg\nhttps://example.com/photo-2.jpg"}
-        optional
-        multiline
         onChange={(value) => onChange("images", value)}
         onTouch={() => onTouch("images")}
       />

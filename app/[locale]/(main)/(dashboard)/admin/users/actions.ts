@@ -1,0 +1,63 @@
+"use server";
+
+import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
+async function requireAdmin() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  // TODO(dev): role check temporarily disabled so any signed-in user can reach
+  // `/dashboard` and all its routes during development. Re-enable (using
+  // parseRoles from @/lib/profile) alongside lib/dashboard-access.ts before
+  // shipping.
+  if (!session) throw new Error("Forbidden");
+  return session;
+}
+
+export async function banUser(userId: string, reason: string) {
+  const session = await requireAdmin();
+  if (session.user.id === userId) throw new Error("Cannot ban yourself");
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { id: userId },
+      data: { banned: true, banReason: reason || "Banned by admin" },
+    }),
+    prisma.session.deleteMany({ where: { userId } }),
+  ]);
+  revalidatePath("/[locale]/admin/users", "page");
+  revalidatePath("/[locale]/admin/users/[id]", "page");
+}
+
+export async function unbanUser(userId: string) {
+  const session = await requireAdmin();
+  if (session.user.id === userId) throw new Error("Cannot unban yourself");
+  await prisma.user.update({
+    where: { id: userId },
+    data: { banned: false, banReason: null },
+  });
+  revalidatePath("/[locale]/admin/users", "page");
+  revalidatePath("/[locale]/admin/users/[id]", "page");
+}
+
+export async function deleteUser(userId: string) {
+  const session = await requireAdmin();
+  if (session.user.id === userId) throw new Error("Cannot delete yourself");
+  await prisma.user.delete({ where: { id: userId } });
+  revalidatePath("/[locale]/admin/users", "page");
+}
+
+export async function toggleVerified(userId: string) {
+  const session = await requireAdmin();
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { verified: true },
+  });
+  if (!user) throw new Error("User not found");
+  await prisma.user.update({
+    where: { id: userId },
+    data: { verified: !user.verified },
+  });
+  revalidatePath("/[locale]/admin/users", "page");
+  revalidatePath("/[locale]/admin/users/[id]", "page");
+}

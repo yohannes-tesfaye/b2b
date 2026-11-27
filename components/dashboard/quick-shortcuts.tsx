@@ -6,7 +6,7 @@ const shortcuts = [
   {
     icon: Package,
     title: "Available Listings",
-    href: "/dashboard/listing",
+    href: "/admin/listings",
   },
   {
     icon: Search,
@@ -33,7 +33,7 @@ export function QuickShortcuts() {
         {shortcuts.map((shortcut, index) => (
           <Link key={index} href={shortcut.href}>
             <Card className="border-border/50 bg-card hover:shadow-md hover:-translate-y-0.5 hover:border-primary/50 transition-all duration-200 cursor-pointer h-full">
-              <CardContent className="p-4 flex flex-col items-center justify-center text-center gap-3">
+              <CardContent className="p-3 sm:p-4 flex flex-col items-center justify-center text-center gap-3">
                 <div className="p-3 rounded-full bg-primary/10 text-primary">
                   <shortcut.icon className="h-6 w-6" />
                 </div>
@@ -47,7 +47,7 @@ export function QuickShortcuts() {
       </div>
       <Link href="#">
         <Card className="border-border/50 bg-card hover:shadow-md hover:-translate-y-0.5 hover:border-primary/50 transition-all duration-200 cursor-pointer">
-          <CardContent className="p-4 flex items-center gap-3">
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
             <div className="p-3 rounded-full bg-primary/10 text-primary">
               <Settings className="h-6 w-6" />
             </div>

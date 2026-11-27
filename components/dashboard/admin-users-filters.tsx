@@ -69,12 +69,12 @@ export function AdminUsersFilters({ query }: { query: AdminUserQuery }) {
   }, [localQ]);
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl border bg-card p-3">
+    <div className="flex flex-col gap-3 rounded-xl border bg-card p-3" aria-busy={isPending}>
       <Tabs
         value={query.status}
         onValueChange={(value) => update({ status: String(value) })}
       >
-        <TabsList className="w-full justify-start overflow-x-auto sm:w-auto">
+        <TabsList className="h-9 w-full justify-start overflow-x-auto snap-x sm:w-auto">
           {STATUS_TABS.map((tab) => (
             <TabsTrigger key={tab.value} value={tab.value} className="px-2.5">
               {tab.label}
@@ -83,12 +83,12 @@ export function AdminUsersFilters({ query }: { query: AdminUserQuery }) {
         </TabsList>
       </Tabs>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
         <Input
           placeholder="Search name, email, company, or country..."
           value={localQ}
           onChange={(event) => setLocalQ(event.target.value)}
-          className="w-full sm:w-64"
+          className="col-span-2 w-full sm:w-64"
           aria-label="Search users"
         />
 
@@ -96,7 +96,7 @@ export function AdminUsersFilters({ query }: { query: AdminUserQuery }) {
           value={query.role}
           onValueChange={(value) => value && update({ role: value })}
         >
-          <SelectTrigger className="w-40" aria-label="User role">
+          <SelectTrigger className="w-full sm:w-40" aria-label="User role">
             <SelectValue placeholder="Role" />
           </SelectTrigger>
           <SelectContent>
@@ -113,7 +113,7 @@ export function AdminUsersFilters({ query }: { query: AdminUserQuery }) {
           value={query.sort}
           onValueChange={(value) => value && update({ sort: value })}
         >
-          <SelectTrigger className="w-40" aria-label="Sort users">
+          <SelectTrigger className="w-full sm:w-40" aria-label="Sort users">
             <SelectValue placeholder="Sort" />
           </SelectTrigger>
           <SelectContent>
@@ -129,6 +129,7 @@ export function AdminUsersFilters({ query }: { query: AdminUserQuery }) {
           type="button"
           variant="ghost"
           size="sm"
+          className="col-span-2 w-full justify-center sm:w-auto"
           disabled={isPending}
           onClick={() => {
             setLocalQ("");

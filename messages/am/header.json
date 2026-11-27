@@ -23,6 +23,20 @@
     "closeMenu": "ማውጫ ዝጋ",
     "support": "ድጋፍ",
     "language": "ቋንቋ",
+    "bottomNav": {
+      "home": "መነሻ",
+      "products": "ምርቶች",
+      "messages": "መልዕክቶች",
+      "profile": "መገለጫ",
+      "post": "ለጥፍ"
+    },
+    "account": {
+      "listings": "የእኔ ማስታወቂያዎች",
+      "favorites": "ተወዳጆች",
+      "messages": "መልዕክቶች",
+      "newListing": "አዲስ ማስታወቂያ",
+      "verified": "ተረጋግጧል"
+    },
     "nav": {
       "home": "መነሻ",
       "products": "ምርቶች",

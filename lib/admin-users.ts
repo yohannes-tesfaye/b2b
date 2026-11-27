@@ -106,10 +106,12 @@ export async function getAdminUsers({
 export type AdminUserDetail = AdminUserRow & {
   phone: string | null;
   website: string | null;
+  bio: string | null;
   updatedAt: Date;
   _count: { listings: number; sessions: number };
   sessions: { id: string; createdAt: Date }[];
   listings: ListingRow[];
+  totals: { views: number; inquiries: number };
 };
 
 /**
@@ -120,16 +122,30 @@ export type AdminUserDetail = AdminUserRow & {
 export async function getAdminUserDetail(
   id: string
 ): Promise<AdminUserDetail | null> {
-  const user = await prisma.user.findUnique({
-    where: { id },
-    include: {
-      _count: { select: { listings: true, sessions: true } },
-      sessions: { orderBy: { createdAt: "desc" }, take: 1 },
-      listings: { orderBy: { createdAt: "desc" }, take: 5 },
-    },
-  });
+  const [user, stats] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id },
+      include: {
+        _count: { select: { listings: true, sessions: true } },
+        sessions: { orderBy: { createdAt: "desc" }, take: 1 },
+        listings: { orderBy: { createdAt: "desc" }, take: 5 },
+      },
+    }),
+    prisma.listing.aggregate({
+      where: { userId: id },
+      _sum: { views: true, inquiries: true },
+    }),
+  ]);
 
-  return user as AdminUserDetail | null;
+  if (!user) return null;
+
+  return {
+    ...(user as unknown as AdminUserDetail),
+    totals: {
+      views: stats._sum.views ?? 0,
+      inquiries: stats._sum.inquiries ?? 0,
+    },
+  };
 }
 
 export async function getAdminUserCounts() {

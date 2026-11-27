@@ -46,12 +46,12 @@ const alerts = [
 export function CommsAndAlerts() {
   return (
     <Card className="border-border/50 bg-card hover:shadow-md transition-shadow duration-200">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3">
         <CardTitle className="text-base font-semibold">
           Communications & Alerts
         </CardTitle>
       </CardHeader>
-      <CardContent className="pb-6">
+      <CardContent className="pb-4">
         <Tabs defaultValue="messages">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="messages" className="flex items-center gap-2">
@@ -66,7 +66,7 @@ export function CommsAndAlerts() {
           <TabsContent value="messages" className="space-y-3 mt-4">
             {messages.map((message) => (
               <Link key={message.id} href="#">
-                <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
+                <div className="flex items-start gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer">
                   <Avatar className="h-9 w-9">
                     <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
                       {message.avatar}

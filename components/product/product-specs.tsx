@@ -68,7 +68,7 @@ export function ProductSpecifications({
                     <Button
                       variant="ghost"
                       size="icon-lg"
-                      className="h-10 w-10 rounded-full"
+                      className="h-11 w-11 rounded-full"
                       aria-label="Close specifications"
                     />
                   }

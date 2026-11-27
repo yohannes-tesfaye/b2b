@@ -15,6 +15,7 @@ import { ProductShareSave } from "@/components/product/product-share-save";
 import { ProductDescription } from "@/components/product/product-description";
 import { ProductSpecifications } from "@/components/product/product-specs";
 import { ContactActions } from "@/components/product/product-contact";
+import { FavoriteButton } from "@/components/product/favorite-button";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import {
@@ -57,6 +58,7 @@ export default async function ProductDetailPage({
           createdAt: true,
         },
       },
+      _count: { select: { conversations: true } },
     },
   });
   if (!listing) notFound();
@@ -157,18 +159,18 @@ export default async function ProductDetailPage({
                 {listing.title}
               </h1>
 
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" /> {listing.location}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Eye className="h-3.5 w-3.5" /> {listing.views} views
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <MessageSquare className="h-3.5 w-3.5" /> {listing.inquiries}{" "}
-                  inquiries
-                </span>
-              </div>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5" /> {listing.location}
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <Eye className="h-3.5 w-3.5" /> {listing.views} views
+                  </span>
+                  <span className="inline-flex items-center gap-1">
+                    <MessageSquare className="h-3.5 w-3.5" />{" "}
+                    {listing._count?.conversations ?? listing.inquiries} inquiries
+                  </span>
+                </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <Fact
@@ -197,6 +199,7 @@ export default async function ProductDetailPage({
                 <ContactActions
                   email={owner?.email}
                   title={listing.title}
+                  listingId={listing.id}
                   isWanted={isWanted}
                   variant="dialog"
                 />
@@ -212,7 +215,7 @@ export default async function ProductDetailPage({
               <section className="rounded-2xl border bg-card p-4 lg:p-6">
                 <div className="flex items-center gap-3">
                   <Link
-                    href={`/${owner.id}/dashboard`}
+                    href={`/profile/${owner.id}`}
                     className="shrink-0 rounded-full ring-offset-background transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     aria-label={`View ${owner.name ?? "trader"}'s profile`}
                   >
@@ -233,7 +236,7 @@ export default async function ProductDetailPage({
                   </Link>
                   <div className="min-w-0 flex-1">
                     <Link
-                      href={`/${owner.id}/dashboard`}
+                      href={`/profile/${owner.id}`}
                       className="flex min-h-10 items-center gap-1 py-1 hover:underline"
                     >
                       <p className="truncate font-semibold">
@@ -270,22 +273,24 @@ export default async function ProductDetailPage({
                   <ContactActions
                     email={owner?.email}
                     title={listing.title}
+                    listingId={listing.id}
                     isWanted={isWanted}
                   />
+                  <FavoriteButton listingId={listing.id} size="md" showLabel />
                 </div>
 
                 {/* Desktop: keep a compact profile link */}
                 <Button
                   variant="ghost"
                   className="mt-3 hidden h-9 w-full rounded-xl text-xs font-medium text-muted-foreground lg:flex"
-                  render={<Link href={`/${owner.id}/dashboard`} />}
+                  render={<Link href={`/profile/${owner.id}`} />}
                   nativeButton={false}
                 >
                   View full profile
                   <Star className="h-3.5 w-3.5" />
                 </Button>
               </section>
-            ) : null}
+              ) : null}
           </div>
         </div>
 

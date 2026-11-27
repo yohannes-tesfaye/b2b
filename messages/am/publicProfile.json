@@ -1,0 +1,54 @@
+{
+  "publicProfile": {
+    "header": {
+      "verified": "ተረጋግጧል",
+      "companySize": "{size} ሰራተኞች",
+      "memberSince": "ከ{date} ጀምሮ አባል",
+      "listings": "ማስታወቂያዎች",
+      "active": "ንቁ",
+      "editProfile": "መገለጫ አስተካክል",
+      "message": "መልዕክት",
+      "openingChat": "ውይይት በመክፈት ላይ…",
+      "share": "መገለጫ አጋራ",
+      "copied": "የመገለጫ አገናኝ ተቀድቷል",
+      "website": "ድረ-ገጽ",
+      "country": "አገር",
+      "industry": "ዘርፍ"
+    },
+    "listings": {
+      "title": "ማስታወቂያዎች",
+      "count": "{count, plural, =0 {ማስታወቂያ የለም} one {1 ማስታወቂያ} other {# ማስታወቂያዎች}}",
+      "all": "ሁሉም",
+      "available": "ያሉ",
+      "wanted": "የሚፈለጉ",
+      "emptyPublic": "ንቁ ማስታወቂያ የለም",
+      "emptyPublicHint": "ለአዲስ ማስታወቂያዎች ቆይተው ይመልከቱ።",
+      "emptyOwner": "እስካሁን ማንኛውም ማስታወቂያ አልለጠፉም",
+      "emptyOwnerHint": "ገዢዎችን እና አቅራቢዎችን ለማግኘት የመጀመሪያ ማስታወቂያዎን ይለጥፉ።",
+      "emptyFiltered": "ለዚህ ማጣሪያ ማስታወቂያ የለም",
+      "clearFilter": "ማጣሪያ አጽዳ",
+      "postListing": "ማስታወቂያ ይለጥፉ",
+      "privateTitle": "የግል ማስታወቂያዎች",
+      "privateHint": "ለእርስዎ ብቻ የሚታይ",
+      "privateEmpty": "በመጠባበቅ ወይም ውድቅ የሆነ ማስታወቂያ የለም።",
+      "priceOnRequest": "ዋጋ በጥያቄ",
+      "budgetOpen": "በጀት ክፍት",
+      "daysLeft": "{days, plural, =0 {ዛሬ ያበቃል} one {1 ቀን ቀረ} other {# ቀናት ቀረ}}",
+      "expired": "ጊዜው አልፏል",
+      "views": "{count} እይታዎች",
+      "inquiries": "{count} ጥያቄዎች",
+      "quantity": "መጠን",
+      "rating": "{rating} ከ5",
+      "contact": "ያነጋግሩ",
+      "contacting": "ውይይት በመክፈት ላይ…",
+      "edit": "ማስታወቂያ አስተካክል"
+    },
+    "status": {
+      "pending": "ለማጽደቅ በመጠባበቅ",
+      "active": "ንቁ",
+      "rejected": "ውድቅ",
+      "expired": "ጊዜው አልፏል",
+      "closed": "ዝግ"
+    }
+  }
+}

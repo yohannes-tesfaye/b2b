@@ -1,8 +1,81 @@
-import { z } from "zod";
+﻿import { z } from "zod";
+import { normalizeCountryCode } from "@/lib/countries";
+import { parseTagSlugs } from "@/lib/slug";
 
 const optionalText = (max: number) => z.string().trim().max(max).default("");
 
+/** Single source of truth for length limits, used by Zod and by `maxLength`. */
+export const LISTING_LIMITS = {
+  titleMin: 3,
+  title: 160,
+  descriptionMin: 20,
+  description: 5000,
+  quantity: 60,
+  location: 120,
+  countryCode: 60,
+  tags: 300,
+  maxTags: 8,
+  durationMin: 1,
+  durationMax: 365,
+  durationDaysMaxLength: 3,
+  qualityStandard: 500,
+  deliveryTimeline: 200,
+  preferredRegion: 200,
+  budgetRange: 120,
+  technicalDocument: 500,
+  images: 8_000_000,
+  maxImages: 6,
+  price: 120,
+  currency: 20,
+  moq: 120,
+  certifications: 500,
+  incoterms: 120,
+  originCountry: 120,
+  deliveryOptions: 500,
+  technicalSpecs: 3000,
+} as const;
+
+const MAX_TAGS = LISTING_LIMITS.maxTags;
+
+/**
+ * Every text field the wizard submits. Server actions build their input from
+ * this list so FormData parsing can never drift from `listingSchema`.
+ */
+export const LISTING_FORM_FIELD_KEYS = [
+  "type",
+  "title",
+  "description",
+  "category",
+  "quantity",
+  "location",
+  "countryCode",
+  "tags",
+  "durationDays",
+  "qualityStandard",
+  "deliveryTimeline",
+  "preferredRegion",
+  "budgetRange",
+  "technicalDocument",
+  "images",
+  "price",
+  "currency",
+  "moq",
+  "certifications",
+  "incoterms",
+  "originCountry",
+  "deliveryOptions",
+  "technicalSpecs",
+] as const;
+
 const urlPattern = /^https?:\/\/[^\s]+$/i;
+
+/** Locally uploaded images are stored as resized base64 data URLs. */
+const dataImagePattern = /^data:image\/(png|jpe?g|webp|gif);base64,/i;
+
+/** A listing image is either an http(s) URL or an uploaded data URL. */
+export function isListingImageUrl(value: string): boolean {
+  return urlPattern.test(value) || dataImagePattern.test(value);
+}
 
 function addUrlIssue(
   value: string,
@@ -22,45 +95,70 @@ export const listingBaseSchema = z.object({
     title: z
       .string()
       .trim()
-      .min(3, "Title must be at least 3 characters.")
-      .max(160, "Title must be 160 characters or fewer."),
+      .min(LISTING_LIMITS.titleMin, `Title must be at least ${LISTING_LIMITS.titleMin} characters.`)
+      .max(LISTING_LIMITS.title, `Title must be ${LISTING_LIMITS.title} characters or fewer.`),
     description: z
       .string()
       .trim()
-      .min(20, "Description must be at least 20 characters.")
-      .max(5000, "Description must be 5,000 characters or fewer."),
+      .min(LISTING_LIMITS.descriptionMin, `Description must be at least ${LISTING_LIMITS.descriptionMin} characters.`)
+      .max(LISTING_LIMITS.description, `Description must be ${LISTING_LIMITS.description.toLocaleString("en-US")} characters or fewer.`),
     category: z.string().trim().min(1, "Select a category."),
     quantity: z
       .string()
       .trim()
       .min(1, "Enter a quantity.")
-      .max(60, "Quantity must be 60 characters or fewer."),
+      .max(LISTING_LIMITS.quantity, `Quantity must be ${LISTING_LIMITS.quantity} characters or fewer.`),
     location: z
       .string()
       .trim()
       .min(1, "Enter a location.")
-      .max(120, "Location must be 120 characters or fewer."),
-    durationDays: z.coerce
-      .number()
-      .int("Enter a whole number of days.")
-      .min(1, "Duration must be at least 1 day.")
-      .max(365, "Duration must be 365 days or fewer."),
+      .max(LISTING_LIMITS.location, `Location must be ${LISTING_LIMITS.location} characters or fewer.`),
+    countryCode: z
+      .string()
+      .trim()
+      .max(LISTING_LIMITS.countryCode)
+      .default("")
+      .transform((value) => normalizeCountryCode(value) ?? "")
+      .refine((value) => value === "" || /^[A-Z]{2}$/.test(value), {
+        message: "Select a valid country.",
+      }),
+    tags: z
+      .string()
+      .trim()
+      .max(LISTING_LIMITS.tags, "Tags are too long.")
+      .default("")
+      .refine((value) => parseTagSlugs(value, MAX_TAGS + 1).length <= MAX_TAGS, {
+        message: `Add up to ${MAX_TAGS} tags.`,
+      }),
+    durationDays: z
+      .string()
+      .trim()
+      .min(1, "Enter a listing duration in days.")
+      .regex(/^\d+$/, "Use a whole number of days, e.g. 30.")
+      .transform((value) => Number(value))
+      .pipe(
+        z
+          .number()
+          .int("Enter a whole number of days.")
+          .min(LISTING_LIMITS.durationMin, `Duration must be at least ${LISTING_LIMITS.durationMin} day.`)
+          .max(LISTING_LIMITS.durationMax, `Duration must be ${LISTING_LIMITS.durationMax} days or fewer.`)
+      ),
 
-    qualityStandard: optionalText(500),
-    deliveryTimeline: optionalText(200),
-    preferredRegion: optionalText(200),
-    budgetRange: optionalText(120),
-    technicalDocument: optionalText(500),
+    qualityStandard: optionalText(LISTING_LIMITS.qualityStandard),
+    deliveryTimeline: optionalText(LISTING_LIMITS.deliveryTimeline),
+    preferredRegion: optionalText(LISTING_LIMITS.preferredRegion),
+    budgetRange: optionalText(LISTING_LIMITS.budgetRange),
+    technicalDocument: optionalText(LISTING_LIMITS.technicalDocument),
 
-    images: z.string().max(4000, "Image URLs are too long.").default(""),
-    price: optionalText(120),
-    currency: optionalText(20),
-    moq: optionalText(120),
-    certifications: optionalText(500),
-    incoterms: optionalText(120),
-    originCountry: optionalText(120),
-    deliveryOptions: optionalText(500),
-    technicalSpecs: optionalText(3000),
+    images: z.string().max(LISTING_LIMITS.images, "Image URLs are too long.").default(""),
+    price: optionalText(LISTING_LIMITS.price),
+    currency: optionalText(LISTING_LIMITS.currency),
+    moq: optionalText(LISTING_LIMITS.moq),
+    certifications: optionalText(LISTING_LIMITS.certifications),
+    incoterms: optionalText(LISTING_LIMITS.incoterms),
+    originCountry: optionalText(LISTING_LIMITS.originCountry),
+    deliveryOptions: optionalText(LISTING_LIMITS.deliveryOptions),
+    technicalSpecs: optionalText(LISTING_LIMITS.technicalSpecs),
 });
 
 type WantedRequirementValues = Pick<
@@ -135,23 +233,31 @@ function refineImages(values: ImageValues, ctx: z.RefinementCtx) {
     .map((line) => line.trim())
     .filter(Boolean);
 
-  if (images.length > 6) {
+  if (images.length > LISTING_LIMITS.maxImages) {
     ctx.addIssue({
       code: "custom",
       path: ["images"],
-      message: "Add up to 6 image URLs.",
+      message: `Add up to ${LISTING_LIMITS.maxImages} images.`,
     });
   }
-  images.forEach((image) => addUrlIssue(image, "images", ctx));
+  images.forEach((image) => {
+    if (image && !isListingImageUrl(image)) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["images"],
+        message: "Enter a valid image URL starting with http:// or https://, or upload an image.",
+      });
+    }
+  });
 }
 
 export const listingSchema = listingBaseSchema.superRefine((values, ctx) => {
+  refineImages(values, ctx);
   if (values.type === "wanted") {
     refineWanted(values, ctx);
     return;
   }
   refineAvailable(values, ctx);
-  refineImages(values, ctx);
 });
 
 export const listingTypeStepSchema = listingBaseSchema.pick({ type: true });
@@ -179,12 +285,12 @@ export const listingDetailsStepSchema = listingBaseSchema
     images: true,
   })
   .superRefine((values, ctx) => {
+    refineImages(values, ctx);
     if (values.type === "wanted") {
       refineWanted(values, ctx);
       return;
     }
     refineAvailable(values, ctx);
-    refineImages(values, ctx);
   });
 
 /** One schema per wizard step, in order. Index 3 validates the whole listing. */
@@ -240,3 +346,4 @@ export function listingIssuesToFieldErrors(
   }
   return fieldErrors;
 }
+

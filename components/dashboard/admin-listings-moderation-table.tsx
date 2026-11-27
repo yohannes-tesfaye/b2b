@@ -4,13 +4,13 @@ import { useMemo, useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import {
   BadgeCheck,
+  ChevronRight,
   MoreHorizontal,
   Package,
   ShieldCheck,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
@@ -95,7 +95,7 @@ function OwnerCell({ listing }: { listing: AdminListingRow }) {
 }
 
 function Thumbnail({ listing }: { listing: AdminListingRow }) {
-  const image = listing.type === "available" ? listing.images[0] : null;
+  const image = listing.images?.[0] ?? null;
 
   if (image) {
     return (
@@ -132,7 +132,8 @@ function ListingActions({
         render={
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon"
+            className="size-9 sm:size-8"
             aria-label={`Actions for ${listing.title}`}
           />
         }
@@ -142,7 +143,7 @@ function ListingActions({
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuLabel>Listing</DropdownMenuLabel>
         <DropdownMenuItem
-          onClick={() => router.push(`/dashboard/listing/${listing.id}`)}
+          onClick={() => router.push(`/admin/listings/${listing.id}`)}
         >
           View details
         </DropdownMenuItem>
@@ -190,8 +191,13 @@ export function AdminListingsModerationTable({
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [dialog, setDialog] = useState<DialogState>(null);
 
-  const pendingOnPage = useMemo(
-    () => listings.filter((listing) => listing.status === "pending"),
+  // Selectable for bulk moderation: anything not already rejected/closed.
+  const selectableOnPage = useMemo(
+    () =>
+      listings.filter(
+        (listing) =>
+          listing.status !== "rejected" && listing.status !== "closed"
+      ),
     [listings]
   );
   const selectedListings = useMemo(
@@ -210,12 +216,12 @@ export function AdminListingsModerationTable({
     );
   };
 
-  const allPendingSelected =
-    pendingOnPage.length > 0 &&
-    pendingOnPage.every((listing) => selectedIds.includes(listing.id));
-  const somePendingSelected =
-    !allPendingSelected &&
-    pendingOnPage.some((listing) => selectedIds.includes(listing.id));
+  const allSelectableSelected =
+    selectableOnPage.length > 0 &&
+    selectableOnPage.every((listing) => selectedIds.includes(listing.id));
+  const someSelectableSelected =
+    !allSelectableSelected &&
+    selectableOnPage.some((listing) => selectedIds.includes(listing.id));
 
   const goToPage = (page: number) => {
     router.replace(adminListingsHref({ ...query, page }));
@@ -245,11 +251,11 @@ export function AdminListingsModerationTable({
   return (
     <div className="space-y-4">
       {selectedIds.length ? (
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border bg-muted/50 p-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-lg border bg-muted/50 p-2">
           <p className="text-sm font-medium">
             {selectedIds.length} selected
           </p>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
             <Button
               size="sm"
               variant="outline"
@@ -271,6 +277,7 @@ export function AdminListingsModerationTable({
             <Button
               size="sm"
               variant="ghost"
+              className="col-span-2 sm:col-span-1"
               onClick={() => setSelectedIds([])}
             >
               Clear
@@ -285,15 +292,16 @@ export function AdminListingsModerationTable({
             <TableRow>
               <TableHead className="w-10">
                 <Checkbox
-                  checked={allPendingSelected}
-                  indeterminate={somePendingSelected}
-                  disabled={!pendingOnPage.length}
+                  className="size-5"
+                  checked={allSelectableSelected}
+                  indeterminate={someSelectableSelected}
+                  disabled={!selectableOnPage.length}
                   onCheckedChange={(checked) =>
                     setSelectedIds(
-                      checked ? pendingOnPage.map((listing) => listing.id) : []
+                      checked ? selectableOnPage.map((listing) => listing.id) : []
                     )
                   }
-                  aria-label="Select all pending listings on this page"
+                  aria-label="Select all listings on this page"
                 />
               </TableHead>
               <TableHead>Listing</TableHead>
@@ -314,11 +322,12 @@ export function AdminListingsModerationTable({
                 <TableRow
                   key={listing.id}
                   className="cursor-pointer"
-                  onClick={() => router.push(`/dashboard/listing/${listing.id}`)}
+                  onClick={() => router.push(`/admin/listings/${listing.id}`)}
                 >
                   <TableCell onClick={(event) => event.stopPropagation()}>
-                    {listing.status === "pending" ? (
+                    {listing.status !== "rejected" && listing.status !== "closed" ? (
                       <Checkbox
+                        className="size-5"
                         checked={selectedIds.includes(listing.id)}
                         onCheckedChange={(checked) =>
                           toggleSelected(listing.id, checked)
@@ -326,7 +335,7 @@ export function AdminListingsModerationTable({
                         aria-label={`Select ${listing.title}`}
                       />
                     ) : (
-                      <span className="block size-4" />
+                      <span className="block size-5" />
                     )}
                   </TableCell>
                   <TableCell className="max-w-72">
@@ -334,7 +343,7 @@ export function AdminListingsModerationTable({
                       <Thumbnail listing={listing} />
                       <div className="min-w-0">
                         <Link
-                          href={`/dashboard/listing/${listing.id}`}
+                          href={`/admin/listings/${listing.id}`}
                           onClick={(event) => event.stopPropagation()}
                           className="block truncate text-sm font-medium hover:underline"
                         >
@@ -397,81 +406,95 @@ export function AdminListingsModerationTable({
         </Table>
       </div>
 
-      <div className="space-y-3 md:hidden">
-        {listings.length ? (
-          listings.map((listing) => (
-            <Card
-              key={listing.id}
-              className="cursor-pointer"
-              onClick={() => router.push(`/dashboard/listing/${listing.id}`)}
-            >
-              <CardContent className="space-y-3">
-                <div className="flex items-start gap-3">
-                  {listing.status === "pending" ? (
-                    <div onClick={(event) => event.stopPropagation()}>
-                      <Checkbox
-                        checked={selectedIds.includes(listing.id)}
-                        onCheckedChange={(checked) =>
-                          toggleSelected(listing.id, checked)
-                        }
-                        aria-label={`Select ${listing.title}`}
-                      />
-                    </div>
-                  ) : null}
-                  <Thumbnail listing={listing} />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {listing.title}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {listing.location}
-                    </p>
-                  </div>
-                  <div onClick={(event) => event.stopPropagation()}>
-                    <ListingActions
-                      listing={listing}
-                      onAction={(type) => openDialog(type, listing)}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-1.5">
-                  <ListingStatusBadge
-                    status={listing.status}
-                    expiresAt={listing.expiresAt}
-                  />
-                  <Badge
-                    variant={listing.type === "wanted" ? "secondary" : "outline"}
-                  >
-                    {typeLabel(listing.type)}
-                  </Badge>
-                  <Badge variant="outline">
-                    {categoryLabel(listing.category)}
-                  </Badge>
-                </div>
-
-                <div className="flex items-end justify-between gap-3 text-xs text-muted-foreground">
-                  <OwnerCell listing={listing} />
-                  <div className="text-right">
-                    <p>{formatListingDate(listing.createdAt)}</p>
-                    <p>{daysLeftLabel(listing.expiresAt)}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <div className="rounded-xl border p-6">
-            <EmptyState pending={emptyPending} hasFilters={hasFilters} />
+      <div className="md:hidden">
+        <div className="overflow-hidden rounded-xl border bg-card">
+          <div className="flex items-center justify-between border-b bg-muted/30 px-4 py-2.5 text-xs text-muted-foreground">
+            <span className="font-medium text-foreground">
+              {total} listing{total === 1 ? "" : "s"}
+            </span>
+            <span className="capitalize">{query.sort}</span>
           </div>
-        )}
+          {listings.length ? (
+            <ul className="divide-y">
+              {listings.map((listing) => (
+                <li
+                  key={listing.id}
+                  className="flex items-center gap-3 px-3 py-3 transition-colors active:bg-muted/60"
+                >
+                  {listing.status !== "rejected" && listing.status !== "closed" ? (
+                    <Checkbox
+                      className="size-5 shrink-0"
+                      checked={selectedIds.includes(listing.id)}
+                      onCheckedChange={(checked) =>
+                        toggleSelected(listing.id, checked)
+                      }
+                      aria-label={`Select ${listing.title}`}
+                    />
+                  ) : null}
+                  <Link
+                    href={`/admin/listings/${listing.id}`}
+                    className="flex min-w-0 flex-1 items-center gap-3"
+                  >
+                    <Thumbnail listing={listing} />
+                    <div className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium">
+                        {listing.title}
+                      </span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {listing.location}
+                        {categoryLabel(listing.category)
+                          ? ` · ${categoryLabel(listing.category)}`
+                          : ""}
+                      </span>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <ListingStatusBadge
+                          status={listing.status}
+                          expiresAt={listing.expiresAt}
+                        />
+                        <Badge
+                          variant={
+                            listing.type === "wanted" ? "secondary" : "outline"
+                          }
+                          className="text-[10px]"
+                        >
+                          {typeLabel(listing.type)}
+                        </Badge>
+                        <span
+                          className={`text-xs ${
+                            effectiveStatus(listing) === "expired"
+                              ? "text-destructive"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {daysLeftLabel(listing.expiresAt)}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
+                  <ListingActions
+                    listing={listing}
+                    onAction={(type) => openDialog(type, listing)}
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="p-6">
+              <EmptyState pending={emptyPending} hasFilters={hasFilters} />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-muted-foreground">
-          {total} listing{total === 1 ? "" : "s"} total
+        <p className="text-sm text-muted-foreground sm:hidden">
+          Page {query.page} of {totalPages}
         </p>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-muted-foreground">
+            {total} listing{total === 1 ? "" : "s"} total
+          </p>
           <Select
             value={String(query.pageSize)}
             onValueChange={(value) =>
@@ -485,7 +508,7 @@ export function AdminListingsModerationTable({
               )
             }
           >
-            <SelectTrigger className="w-24" aria-label="Listings per page">
+            <SelectTrigger className="w-full sm:w-24" aria-label="Listings per page">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -493,52 +516,54 @@ export function AdminListingsModerationTable({
               <SelectItem value="20">20 / page</SelectItem>
             </SelectContent>
           </Select>
-
-          <Pagination className="mx-0 w-auto justify-start sm:justify-end">
-            <PaginationContent>
-              <PaginationItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => goToPage(Math.max(1, query.page - 1))}
-                  disabled={query.page <= 1}
-                >
-                  Previous
-                </Button>
-              </PaginationItem>
-              {pages.map((page, index) => {
-                const previous = pages[index - 1];
-                return (
-                  <PaginationItem key={page} className="hidden sm:block">
-                    {previous && page - previous > 1 ? (
-                      <span className="px-1 text-xs text-muted-foreground">…</span>
-                    ) : null}
-                    <Button
-                      variant={page === query.page ? "outline" : "ghost"}
-                      size="icon-sm"
-                      onClick={() => goToPage(page)}
-                      aria-current={page === query.page ? "page" : undefined}
-                      aria-label={`Page ${page}`}
-                      className="hidden sm:inline-flex"
-                    >
-                      {page}
-                    </Button>
-                  </PaginationItem>
-                );
-              })}
-              <PaginationItem>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => goToPage(Math.min(totalPages, query.page + 1))}
-                  disabled={query.page >= totalPages}
-                >
-                  Next
-                </Button>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
         </div>
+
+        <Pagination className="mx-0 w-auto justify-start sm:justify-end">
+          <PaginationContent>
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 sm:flex-none"
+                onClick={() => goToPage(Math.max(1, query.page - 1))}
+                disabled={query.page <= 1}
+              >
+                Previous
+              </Button>
+            </PaginationItem>
+            {pages.map((page, index) => {
+              const previous = pages[index - 1];
+              return (
+                <PaginationItem key={page} className="hidden sm:block">
+                  {previous && page - previous > 1 ? (
+                    <span className="px-1 text-xs text-muted-foreground"></span>
+                  ) : null}
+                  <Button
+                    variant={page === query.page ? "outline" : "ghost"}
+                    size="icon-sm"
+                    onClick={() => goToPage(page)}
+                    aria-current={page === query.page ? "page" : undefined}
+                    aria-label={`Page ${page}`}
+                    className="hidden sm:inline-flex"
+                  >
+                    {page}
+                  </Button>
+                </PaginationItem>
+              );
+            })}
+            <PaginationItem>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 sm:flex-none"
+                onClick={() => goToPage(Math.min(totalPages, query.page + 1))}
+                disabled={query.page >= totalPages}
+              >
+                Next
+              </Button>
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
 
       <ApproveListingDialog
@@ -596,7 +621,7 @@ function EmptyState({
             : "Nothing to show for this view."}
       </p>
       {!pending && hasFilters ? (
-        <Button render={<Link href="/dashboard/listing" />} variant="outline" size="sm" nativeButton={false}>
+        <Button render={<Link href="/admin/listings" />} variant="outline" size="sm" nativeButton={false}>
           Clear filters
         </Button>
       ) : null}

@@ -10,7 +10,6 @@ export function FormNav({
   total,
   canContinue,
   isPending,
-  mode,
   onBack,
   onNext,
   onCancel,
@@ -28,32 +27,28 @@ export function FormNav({
   const last = step >= total - 1;
 
   return (
-    <div className="flex flex-wrap items-start justify-between gap-(--spacing-3) border-t border-border pt-(--spacing-4)">
-      <Button type="button" variant="outline" onClick={onBack}>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between border-t border-border pt-(--spacing-4)">
+      <Button type="button" variant="outline" onClick={onBack} className="w-full sm:w-auto">
         <ChevronLeft className="size-(--spacing-4)" /> {t("back")}
       </Button>
       <div className="flex flex-col items-end gap-(--spacing-1)">
-        <div className="flex flex-wrap items-center gap-(--spacing-2)">
-          <Button type="button" variant="ghost" onClick={onCancel}>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-(--spacing-2)">
+          <Button type="button" variant="ghost" onClick={onCancel} className="w-full sm:w-auto">
             {t("cancel")}
           </Button>
-          {last ? (
-            <Button type="submit" disabled={isPending}>
-              {isPending
-                ? t("saving")
-                : mode === "create"
-                ? t("submitCreate")
-                : t("submitEdit")}
-            </Button>
-          ) : (
+          {/* On the review step, the Submit button lives inside the review card.
+              The footer never renders a submit so a click can't fall through
+              from "Next" onto publishing. */}
+          {!last ? (
             <Button
               type="button"
               onClick={onNext}
               disabled={!canContinue || isPending}
+              className="w-full sm:w-auto"
             >
               {t("next")} <ChevronRight className="size-(--spacing-4)" />
             </Button>
-          )}
+          ) : null}
         </div>
         {!last && !canContinue ? (
           <p className="text-xs text-muted-foreground">{t("disabledHint")}</p>
