@@ -13,6 +13,8 @@ interface ListingGridProps {
   isPrivate?: boolean;
   isOwner?: boolean;
   showFilters?: boolean;
+  sellerVerified?: boolean;
+  sellerId?: string;
 }
 
 export function ListingGrid({
@@ -20,6 +22,8 @@ export function ListingGrid({
   isPrivate = false,
   isOwner = false,
   showFilters = false,
+  sellerVerified = false,
+  sellerId,
 }: ListingGridProps) {
   const t = useTranslations("publicProfile");
   const [filter, setFilter] = useState<"all" | "available" | "wanted">("all");
@@ -44,6 +48,10 @@ export function ListingGrid({
         <div className="flex gap-2 overflow-x-auto pb-1">
           {(["all", "available", "wanted"] as const).map((key) => {
             const active = filter === key;
+            const count =
+              key === "all"
+                ? listings.length
+                : listings.filter((l) => l.type === key).length;
             const label =
               key === "all"
                 ? t("listings.all")
@@ -61,6 +69,7 @@ export function ListingGrid({
                 className="shrink-0"
               >
                 {label}
+                <span className="ml-1.5 text-xs opacity-70">{count}</span>
               </Button>
             );
           })}
@@ -109,13 +118,16 @@ export function ListingGrid({
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-3">
-          {filtered.map((listing) => (
+          {filtered.map((listing, index) => (
             <ListingGridItem
               key={listing.id}
+              priority={index < 2}
               listing={listing}
               isPrivate={isPrivate}
               isOwner={isOwner}
               showMetrics={isOwner}
+              sellerVerified={sellerVerified}
+              sellerId={sellerId}
             />
           ))}
         </div>

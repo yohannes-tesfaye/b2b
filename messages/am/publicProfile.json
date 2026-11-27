@@ -36,7 +36,12 @@
       "daysLeft": "{days, plural, =0 {ዛሬ ያበቃል} one {1 ቀን ቀረ} other {# ቀናት ቀረ}}",
       "expired": "ጊዜው አልፏል",
       "views": "{count} እይታዎች",
-      "inquiries": "{count} ጥያቄዎች"
+      "inquiries": "{count} ጥያቄዎች",
+      "quantity": "መጠን",
+      "rating": "{rating} ከ5",
+      "contact": "ያነጋግሩ",
+      "contacting": "ውይይት በመክፈት ላይ…",
+      "edit": "ማስታወቂያ አስተካክል"
     },
     "status": {
       "pending": "ለማጽደቅ በመጠባበቅ",

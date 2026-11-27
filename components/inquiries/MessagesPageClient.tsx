@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Search, Inbox } from "lucide-react";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 
 interface ConversationItem {
@@ -34,6 +34,7 @@ export function MessagesPageClient({
   initialFilter,
 }: MessagesPageClientProps) {
   const t = useTranslations();
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState(initialFilter);
 
@@ -150,9 +151,13 @@ export function MessagesPageClient({
                 }`}
               >
                 <div className="relative shrink-0">
-                  <a
-                    href={`/profile/${counterpart.id}`}
-                    onClick={(e) => e.stopPropagation()}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      router.push(`/profile/${counterpart.id}`);
+                    }}
                     className="block"
                   >
                     {counterpart.image ? (
@@ -168,7 +173,7 @@ export function MessagesPageClient({
                           .toUpperCase()}
                       </div>
                     )}
-                  </a>
+                  </button>
                   {unread > 0 ? (
                     <span className="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
                       {unread}
@@ -178,9 +183,17 @@ export function MessagesPageClient({
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-2">
-                    <Link href={`/profile/${counterpart.id}`} className="truncate text-sm font-semibold hover:underline">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        router.push(`/profile/${counterpart.id}`);
+                      }}
+                      className="truncate text-sm font-semibold hover:underline"
+                    >
                       {counterpart.companyName || counterpart.name || t("inbox.unknown")}
-                    </Link>
+                    </button>
                     <span className="shrink-0 text-[10px] text-muted-foreground">
                       {relativeTime(conv.lastMessageAt)}
                     </span>

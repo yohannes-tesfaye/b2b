@@ -36,7 +36,12 @@
       "daysLeft": "{days, plural, =0 {Ends today} one {1 day left} other {# days left}}",
       "expired": "Expired",
       "views": "{count} views",
-      "inquiries": "{count} inquiries"
+      "inquiries": "{count} inquiries",
+      "quantity": "Quantity",
+      "rating": "{rating} out of 5",
+      "contact": "Contact",
+      "contacting": "Opening chat…",
+      "edit": "Edit listing"
     },
     "status": {
       "pending": "Pending approval",

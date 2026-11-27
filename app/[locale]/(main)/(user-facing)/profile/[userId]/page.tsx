@@ -52,7 +52,11 @@ export default async function PublicProfilePage({
       images: true,
       location: true,
       price: true,
+      currency: true,
       budgetRange: true,
+      quantity: true,
+      originCountry: true,
+      countryCode: true,
       views: true,
       inquiries: true,
       createdAt: true,
@@ -85,6 +89,8 @@ export default async function PublicProfilePage({
           listings={activeListings}
           isOwner={isOwner}
           showFilters
+          sellerVerified={user.verified}
+          sellerId={user.id}
         />
       </div>
 

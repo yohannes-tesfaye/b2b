@@ -170,3 +170,5 @@ export function formatListingDate(value: Date | string | null | undefined): stri
     day: "numeric",
   }).format(date);
 }
+
+export const DEFAULT_LISTING_RATING = 4.5;

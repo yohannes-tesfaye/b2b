@@ -7,7 +7,11 @@ export type PublicProfileListing = {
   images: string[];
   location: string;
   price: string | null;
+  currency: string | null;
   budgetRange: string | null;
+  quantity: string;
+  originCountry: string | null;
+  countryCode: string | null;
   views: number;
   inquiries: number;
   createdAt: Date | string;
